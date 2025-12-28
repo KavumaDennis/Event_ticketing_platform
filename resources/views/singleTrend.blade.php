@@ -24,11 +24,10 @@
                         </div>
                     </div>
                 </div>
-
-                <img src="{{ $trend->image ? asset('storage/'.$trend->image) : asset('default.jpg') }}  " alt="{{ $trend->title }}" class="w-full h-[300px] object-cover rounded-3xl border border-green-400/15">
+                <img src="{{ $trend->image ? asset('storage/'.$trend->image) : asset('default.jpg') }}  " alt="{{ $trend->title }}" class="w-full h-[300px] object-cover rounded-3xl">
             </div>
 
-            <div class="relative bg-black/30 border border-white/5 rounded-3xl  h-[520px] p-3 backdrop-blur-xl shadow-lg flex flex-col">
+            <div class="relative bg-black/30  rounded-3xl  h-[520px] p-3 backdrop-blur-xl shadow-lg flex flex-col">
                 <div class="prose prose-invert max-w-none text-white/70 text-sm font-mono p-2">
                     <p id="trend-body-{{ $trend->id }}" class="overflow-hidden max-h-16">
                         {{ $trend->body }}
@@ -154,43 +153,17 @@
 
 
         <section class=" col-span-4  w-full">
-            <div class="">
-                <h1 class="text-xl font-medium text-orange-400/70 mb-2">
-                    Top Organizers
-                </h1>
-
-                <div class="flex flex-col gap-5 bg-green-400/10 p-3 rounded-4xl">
-
-                    @foreach($topOrganizers as $organizer)
-                    <div class="flex items-center gap-5 p-2 border border-green-400/20 bg-green-400/10 rounded-2xl">
-                        <div class="border border-green-400/15  w-fit rounded-[50%]">
-                            <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('default.jpg') }}" alt="{{ $organizer->business_name }}" class='size-13 rounded-[50%]' alt="" />
-                        </div>
-                        <div class="flex items-center justify-between w-4/5">
-                            <div>
-                                <p class="font-medium text-sm text-white/80">{{ $organizer->business_name }}</p>
-                                <div class="text-xs text-white/60">{{ $organizer->followers_count ?? $org->followers->count() }} followers</div>
-                            </div>
-                            <a href="{{ route('organizer.details', $organizer->id) }}" class="text-xs text-black/90 font-medium font-mono bg-orange-400/70 rounded-3xl px-2 py-1">Details</a>
-                        </div>
-                    </div>
-                    @endforeach
-
-                </div>
-            </div>
-
-            <div class="">
-                <h1 class="text-xl font-medium text-orange-400/70 mt-6 mb-3">
+            <div class="flex flex-col h-full justify-between gap-5">
+                <h1 class="text-xl font-medium text-orange-400/70">
                     Explore More Trends
                 </h1>
-
-                <div class="grid grid-cols-1 gap-4">
+                <div class="flex flex-col justify-between flex-1">
                     @foreach($randomTrends as $randTrend)
-                    <a href="{{ route('trends.show', $randTrend->id) }}" class="flex items-center gap-3 p-3 bg-green-400/10 rounded-3xl hover:bg-black/80 transition">
+                    <a href="{{ route('trends.show', $randTrend->id) }}" class="flex items-center gap-3 h-fit p-3 bg-green-400/10 rounded-3xl hover:bg-black/80 transition">
                         <img src="{{ $randTrend->image ? asset('storage/'.$randTrend->image) : asset('default.jpg') }}" class="w-16 h-16 rounded-2xl object-cover" alt="{{ $randTrend->title }}">
                         <div class="flex flex-col">
                             <h2 class="text-white/80 font-medium">{{ $randTrend->title }}</h2>
-                            <p class="text-orange-400/60 text-sm">{{ Str::limit($randTrend->body, 50) }}</p>
+                            <p class="text-orange-400/60 text-sm">{{ Str::limit($randTrend->body, 45) }}</p>
                         </div>
                     </a>
                     @endforeach

@@ -13,15 +13,26 @@
 
         <!-- FIXED SIDEBAR -->
         <nav class="col-span-2 bg-green-400/10 rounded-2xl p-4 h-fit hidden lg:block overflow-y-auto text-white/80">
-            <a href="{{ route('user.dashboard.overview') }}" class="block py-2">Overview</a>
-            <a href="{{ route('user.dashboard.profile') }}" class="block py-2">Profile</a>
-            <a href="{{ route('user.dashboard.events') }}" class="block py-2">Events</a>
-            <a href="{{ route('user.dashboard.trends') }}" class="block py-2">Trends</a>
+            @if(auth()->user()->is_admin)
+            <a href="{{ route('admin.dashboard') }}" class="block py-2 text-purple-400 font-bold mb-2">
+                <i class="fas fa-shield-alt mr-2"></i> Admin Panel
+            </a>
+            @endif
+            <div class="space-y-1 mb-8">
+                <a href="{{ route('user.dashboard.overview') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.overview') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Overview</a>
+                <a href="{{ route('user.dashboard.trends') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.trends') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Trends</a>
+                {{-- <a href="{{ route('user.dashboard.following') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.following') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Following</a> --}}
+                {{-- <a href="{{ route('user.dashboard.followers') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.followers') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Followers</a> --}}
+                <a href="{{ route('user.dashboard.reviews') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.reviews') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">My Reviews</a>
+                <a href="{{ route('user.dashboard.events') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.events') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Events</a>
+            </div>
 
             <hr class="my-3 border-white/10" />
+            <a href="{{ route('user.dashboard.tickets') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.tickets') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">My Tickets</a>
+            <a href="{{ route('user.dashboard.orders') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.orders') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Orders & Payments</a>
+            <a href="{{ route('user.dashboard.security') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.security') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Security Settings</a>
 
-            <a href="{{ route('user.dashboard.tickets') }}" class="block py-2">My Tickets</a>
-            <a href="{{ route('user.dashboard.orders') }}" class="block py-2">Orders & Payments</a>
+            <a href="{{ route('user.dashboard.support') }}" class="block py-3 px-4 rounded-xl font-medium text-sm {{ request()->routeIs('user.dashboard.support') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">Help & Support</a>
 
             <hr class="my-3 border-white/10" />
             <p class="text-sm text-white/60">Signed in as</p>
@@ -43,10 +54,10 @@
                     <span class="text-xs mr-1 text-black/90 font-bold font-mono">Create Event</span>
                 </div>
 
-                <a href="" class="flex items-center justify-center bg-orange-400/70 border border-green-400/10 size-9 text-black/90 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house">
-                        <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-                        <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+                <a href="{{ route('user.dashboard.notifications') }}" class="flex items-center justify-center bg-orange-400/70 border border-green-400/10 size-9 text-black/90 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-icon lucide-bell">
+                        <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+                        <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg>
                 </a>
 
 

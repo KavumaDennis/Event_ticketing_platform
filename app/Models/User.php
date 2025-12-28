@@ -26,6 +26,8 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
+        'username',
+        'is_admin',
     ];
 
     /**
@@ -123,6 +125,16 @@ class User extends Authenticatable
             Ticket::class,
             TicketPurchase::class
         );
+    }
+
+    public function ticketTransfers()
+    {
+        return $this->hasMany(TicketTransfer::class, 'sender_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 
 

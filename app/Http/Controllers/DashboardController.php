@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\Trend;
 use App\Models\Organizer;
+use App\Models\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -40,12 +41,21 @@ class DashboardController extends Controller
             ->take(4)
             ->get();
 
+        // Recommendations (simple logic: popular events near future)
+        $recommendations = Event::with('organizer')
+            ->withCount('likes')
+            ->where('event_date', '>=', now())
+            ->orderByDesc('likes_count')
+            ->take(4)
+            ->get();
+
         return view('dashboard.overview', compact(
             'user',
             'trends',
             'followedOrganizers',
             'saved',
-            'topOrganizers'
+            'topOrganizers',
+            'recommendations'
         ));
     }
 
@@ -260,14 +270,7 @@ class DashboardController extends Controller
     }
 
 
-    public function notifications()
-    {
-        $user = Auth::user();
 
-        $notifications = $user->notifications()->latest()->get();
-
-        return view('dashboard.notifications', compact('notifications'));
-    }
 
 
     public function savedEvents()
@@ -300,12 +303,26 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $tickets = $user->tickets()
+        $allTickets = $user->tickets()
             ->with(['event.organizer'])
             ->latest()
             ->get();
 
-        return view('dashboard.tickets', compact('tickets', 'user'));
+        $upcoming = $allTickets->filter(function($t) {
+            return \Carbon\Carbon::parse($t->event->event_date)->isFuture();
+        });
+
+        $past = $allTickets->filter(function($t) {
+            return \Carbon\Carbon::parse($t->event->event_date)->isPast();
+        });
+
+        // Current schema doesn't have a status on Ticket model, 
+        // but we can check the purchase status.
+        $cancelled = $allTickets->filter(function($t) {
+            return $t->purchase->status === 'failed';
+        });
+
+        return view('dashboard.tickets', compact('user', 'upcoming', 'past', 'cancelled'));
     }
 
     public function viewTicket(Ticket $ticket)
@@ -322,5 +339,88 @@ class DashboardController extends Controller
 
 
 
+
+    public function myReviews()
+    {
+        $user = Auth::user();
+        
+        // Past tickets for events not yet reviewed by this user
+        $pastTickets = $user->tickets()
+            ->whereHas('event', function($q) {
+                $q->where('event_date', '<', now());
+            })
+            ->with('event')
+            ->get();
+
+        $reviewedEventIds = \App\Models\Review::where('user_id', $user->id)->pluck('event_id')->toArray();
+        
+        $toReview = $pastTickets->filter(function($t) use ($reviewedEventIds) {
+            return !in_array($t->event_id, $reviewedEventIds);
+        });
+
+        $myReviews = \App\Models\Review::where('user_id', $user->id)->with('event')->latest()->get();
+
+        return view('dashboard.reviews', compact('user', 'toReview', 'myReviews'));
+    }
+
+    public function notifications()
+    {
+        $user = Auth::user();
+        $notifications = $user->notifications()->latest()->get();
+        return view('dashboard.notifications', compact('user', 'notifications'));
+    }
+
+
+
+    public function organizerProfile()
+    {
+        $user = Auth::user();
+        $organizer = $user->organizer; 
+        return view('dashboard.organizer-profile', compact('organizer', 'user'));
+    }
+
+    public function following()
+    {
+        $user = Auth::user();
+        $following = $user->followedOrganizers()->withCount('followers')->get();
+        return view('dashboard.following', compact('following', 'user'));
+    }
+
+    public function followers()
+    {
+        $user = Auth::user();
+        $organizer = $user->organizer;
+        
+        $followers = $organizer ? $organizer->followers()->latest()->get() : collect([]);
+
+        return view('dashboard.followers', compact('followers', 'organizer', 'user'));
+    }
+
+    public function security()
+    {
+        $user = Auth::user();
+        return view('dashboard.security', compact('user'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|current_password',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'password' => \Hash::make($request->password),
+        ]);
+
+        return back()->with('success', 'Password updated successfully!');
+    }
+
+    public function support()
+    {
+        $user = Auth::user();
+        return view('dashboard.support', compact('user'));
+    }
 
 }

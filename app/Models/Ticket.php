@@ -26,4 +26,15 @@ class Ticket extends Model
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
+
+    // A ticket can have many transfer attempts
+    public function transfers()
+    {
+        return $this->hasMany(TicketTransfer::class);
+    }
+
+    public function isPendingTransfer()
+    {
+        return $this->transfers()->where('status', 'pending')->exists();
+    }
 }

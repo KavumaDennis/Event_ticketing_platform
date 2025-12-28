@@ -164,11 +164,61 @@ class MomoController extends Controller
      */
     public function checkPayment(TicketPurchase $purchase)
     {
-        if ($purchase->status === 'paid') {
-            if ($purchase->tickets()->count() === 0) {
-                return response()->json(['status' => 'pending']);
-            }
+        // If still pending, actively check status from MTN
+        if ($purchase->status === 'pending') {
+            try {
+                $mtnStatus = $this->mtn->getPaymentStatus($purchase->reference_id);
+                // Log::info('Manual Status Check', $mtnStatus);
 
+                if (isset($mtnStatus['status'])) {
+                    $remoteStatus = strtoupper($mtnStatus['status']);
+
+                    if ($remoteStatus === 'SUCCESSFUL') {
+                        $purchase->update([
+                            'status'  => 'paid',
+                            'paid_at' => now(),
+                        ]);
+
+                        // Determine if we need to generate tickets (copy-paste logic or clean later)
+                        // For now, let the next block handle ticket generation check
+                    } elseif ($remoteStatus === 'FAILED') {
+                        $purchase->update(['status' => 'failed']);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Log::error('Status check failed', ['error' => $e->getMessage()]);
+            }
+        }
+
+        // Re-fetch to get updated status
+        $purchase->refresh();
+
+        if ($purchase->status === 'paid') {
+            // Generate tickets if paid & not generated
+            if ($purchase->tickets()->count() === 0) {
+                 $qrFolder = public_path('storage/qrcodes');
+                if (!file_exists($qrFolder)) {
+                    mkdir($qrFolder, 0777, true);
+                }
+
+                for ($i = 0; $i < $purchase->quantity; $i++) {
+                    $ticketCode = strtoupper(Str::random(12));
+                    $ticket = Ticket::create([
+                        'ticket_purchase_id' => $purchase->id,
+                        'event_id'           => $purchase->event_id,
+                        'ticket_code'        => $ticketCode,
+                        'ticket_type'        => $purchase->ticket_type,
+                        'quantity'           => 1,
+                    ]);
+
+                    $qrPath = "{$qrFolder}/{$ticketCode}.png";
+                    $qrCode = QrCode::create($ticketCode)->setSize(300)->setMargin(10)->setEncoding(new Encoding('UTF-8'));
+                    (new PngWriter())->write($qrCode)->saveToFile($qrPath);
+
+                    $ticket->update(['qr_code_path' => "storage/qrcodes/{$ticketCode}.png"]);
+                }
+            }
+            
             return response()->json([
                 'status'    => 'paid',
                 'redirect'  => route('ticket.view', $purchase->id),

@@ -5,7 +5,7 @@
 @section('content')
 <div class="grid grid-cols-12 gap-6">
     <div class="col-span-8">
-   <h2 class="text-2xl mb-3">Manage Your Events</h2>
+        <h2 class="text-2xl text-white/70 mb-3">Manage Your Events</h2>
         <div class="flex items-center gap-3 w-fit mb-4">
             <a href="{{ route('events.create') }}" class="text-xs px-10 text-black/90 font-medium font-mono bg-orange-400/70 text-center rounded-3xl p-2 w-full">
                 Create an Event
@@ -77,32 +77,35 @@
     {{-- Right sidebar --}}
     <aside class="col-span-4 relative">
         <div class="absolute top-0 right-0 w-full flex flex-col gap-5">
-
             {{-- Saved Events --}}
-            <div class="p-4 bg-green-400/10 rounded-3xl flex flex-col gap-3 relative">
-                <h4 class="font-semibold text-orange-400/70 text-sm">Saved events</h4>
-                @foreach($saved as $s)
-                @php $ev = $s->event; @endphp
-                <div class="flex border border-green-400/20 bg-green-400/10 rounded-2xl p-2 relative">
-                    <div class="pb-5">
-                        <div class="font-medium text-sm">{{ $ev->event_name }}</div>
-                        <div class="text-white/60 text-xs">{{ $ev->organizer?->business_name ?? 'Unknown' }}</div>
+
+            <div class="p-4 border-green-400/20 bg-green-400/10  rounded-3xl ">
+                <h4 class="font-semibold text-orange-400/70 text-sm mb-3">Saved events</h4>
+                <div class="h-[340px] overflow-hidden overflow-y-scroll flex flex-col gap-3 rounded-2xl">
+                    @foreach($saved as $s)
+                    @php $ev = $s->event; @endphp
+                    <div class="flex border border-green-400/20 bg-green-400/10 rounded-2xl p-2 relative">
+                        <div class="pb-5">
+                            <div class="font-medium text-white/80 text-sm">{{ $ev->event_name }}</div>
+                            <div class="text-white/60 text-xs font-mono">{{ $ev->organizer?->business_name ?? 'Unknown' }}</div>
+                        </div>
+                        <div class="flex items-center p-0.5 w-fit bg-orange-400/70 gap-1 rounded-3xl absolute bottom-2 right-2">
+                            <a href="{{ route('event.show', $ev->id) }}" class='flex gap-1 items-center'>
+                                <span class='p-2 rounded-[50%] bg-black/95 text-orange-400/80'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ticket-icon lucide-ticket">
+                                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                                        <path d="M13 5v2" />
+                                        <path d="M13 17v2" />
+                                        <path d="M13 11v2" />
+                                    </svg>
+                                </span>
+                                <span class='text-xs pr-2 font-semibold text-black/90'>Get Tickets</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="flex items-center p-0.5 w-fit bg-orange-400/70 gap-1 rounded-3xl absolute bottom-2 right-2">
-                        <a href="{{ route('event.show', $ev->id) }}" class='flex gap-1 items-center'>
-                            <span class='p-2 rounded-[50%] bg-black/95 text-orange-400/80'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ticket-icon lucide-ticket">
-                                    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                                    <path d="M13 5v2" />
-                                    <path d="M13 17v2" />
-                                    <path d="M13 11v2" />
-                                </svg>
-                            </span>
-                            <span class='text-xs pr-2 font-semibold text-black/90'>Get Tickets</span>
-                        </a>
-                    </div>
+
+                    @endforeach
                 </div>
-                @endforeach
             </div>
 
             {{-- Organizer Profile --}}
@@ -111,9 +114,12 @@
                 <h3 class="text-orange-400/70 text-sm font-semibold">Your Organizer Profile</h3>
                 <div class="flex items-center gap-3 mt-2">
                     <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('default.jpg') }}" class="w-12 h-12 rounded-full object-cover">
-                    <div>
+                    <div class="w-full">
                         <p class="text-white/80 font-medium">{{ $organizer->business_name }}</p>
-                        <p class="text-xs text-white/50">{{ $organizer->business_email }}</p>
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-white/50">{{ $organizer->business_email }}</p>
+                            <a href="{{ route('user.dashboard.organizerProfile', $organizer->id) }}" class="text-xs text-black/90 font-medium font-mono bg-orange-400/70 rounded-3xl px-2 py-1">Details</a>
+                        </div>
                     </div>
                 </div>
             </div>

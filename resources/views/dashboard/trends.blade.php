@@ -14,7 +14,7 @@
 
 
     {{-- LIST USER TRENDS --}}
-    <h2 class="text-2xl mb-3">Your Trends</h2>
+    <h2 class="text-2xl text-white/70 mb-3">Your Trends</h2>
     <a href="{{ route('trends.create') }}" id="editProfileBtn" class="text-xs px-10 text-black/90 font-medium font-mono bg-orange-400/70 text-center rounded-3xl p-2 w-full">
         Create Trend
     </a>
@@ -67,34 +67,34 @@
 </div>
 
 {{-- EDIT MODAL --}}
-<div id="editModal" class="hidden fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50">
+<div id="editModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
 
-    <div class="bg-green-400 w-full max-w-lg p-6 rounded-xl shadow-xl relative">
+    <div class="bg-green-400/30 w-full max-w-lg p-4 rounded-3xl shadow-xl relative">
 
         <button onclick="closeEditModal()" class="absolute top-3 right-3 text-gray-600">✖</button>
 
-        <h2 class="text-xl font-bold mb-4">Edit Trend</h2>
+        <h2 class="text-xl font-bold mb-4 text-orange-400/70">Edit Trend</h2>
 
         <form id="editForm" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
             <div class="mb-3">
-                <label class="block font-semibold">Title</label>
-                <input type="text" id="edit_title" name="title" class="w-full border p-2 rounded" required>
+                <label class="block font-semibold text-white/70">Title</label>
+                <input type="text" id="edit_title" name="title" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-orange-400" required>
             </div>
 
             <div class="mb-3">
-                <label class="block font-semibold">Body</label>
-                <textarea id="edit_body" name="body" class="w-full border p-2 rounded"></textarea>
+                <label class="block font-semibold text-white/70">Body</label>
+                <textarea id="edit_body" name="body" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-orange-400"></textarea>
             </div>
 
             <div class="mb-3">
-                <label class="block font-semibold">Replace Image</label>
-                <input type="file" name="image" class="w-full border p-2 rounded">
+                <label class="block font-semibold text-white/70">Replace Image</label>
+                <input type="file" name="image" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-orange-400">
             </div>
 
-            <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            <button class="px-4 py-2 bg-orange-400/70 rounded-3xl">
                 Update Trend
             </button>
         </form>

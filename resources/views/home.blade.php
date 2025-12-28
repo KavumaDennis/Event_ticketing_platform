@@ -47,8 +47,8 @@
                 <div class="flex flex-col gap-4 p-2 px-4">
                     <div class="flex justify-between">
                         <div class="flex justify-between items-center gap-3">
-                            <span class="px-3 p-1 bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">Blur</span>
-                            <span class="px-3 p-1 bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">Blur</span>
+                            <span class="px-3 p-1 bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">Events</span>
+                            <span class="px-3 p-1 bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">EXperience</span>
                         </div>
                         <div class="size-9 flex justify-center items-center rounded-[50%] bg-[#b0a6df]/90 border border-black/70 text-black/90 font-bold">
                             <i class="fa-solid fa-tent"></i>
@@ -82,8 +82,8 @@
                 <div class="flex flex-col gap-4 p-2 px-4">
                     <div class="flex justify-between">
                         <div class="flex justify-between items-center gap-3">
-                            <span class="px-3 p-1  bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">Blur</span>
-                            <span class="px-3 p-1  bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">Blur</span>
+                            <span class="px-3 p-1  bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">Lifestyle</span>
+                            <span class="px-3 p-1  bg-green-400/10 border border-green-400/20 text-white/60 font-mono rounded-2xl font-medium text-xs">News</span>
                         </div>
                         <div class="size-9 flex justify-center items-center rounded-[50%] bg-[#b0a6df]/90 border border-black/70 text-black/90 font-bold">
                             <i class="fa-solid fa-chart-simple"></i>
@@ -203,7 +203,7 @@
                 <div class="w-full flex flex-col justify-between col-span-1 p-4 bg-black/20 rounded-2xl">
                     <!-- Review Card -->
                     <div class="flex flex-col mb-4">
-                        <img :src="currentReview.user_photo" class="size-15 rounded-[50%] object-cover mb-4" alt="Reviewer photo" />
+                        <img :src="currentReview.user_photo" class="size-15 rounded-[50%] object-cover" alt="Reviewer photo" />
                         <div class="text-white/70 text-sm font-mono max-h-40 overflow-y-auto p-2 w-full">
                             <p x-text="currentReview.body"></p>
                         </div>
@@ -421,9 +421,7 @@
                             </p>
                         </div>
                         <div class="absolute bottom-1 right-1 flex items-center gap-1 bg-orange-400/80 rounded-3xl w-fit h-9 p-0.5">
-
                             <!-- LIKE BUTTON -->
-
                             <div class="flex items-center h-full gap-[3px]">
                                 <button class="like-btn cursor-pointer h-full w-8 flex items-center justify-center bg-black/90 border border-black/10 rounded-[50%] font-medium" data-event="{{ $event->id }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart 
@@ -435,7 +433,8 @@
                                 <!-- Like count -->
                                 <span id="likes-count-{{ $event->id }}" class="text-black text-sm font-medium after:ml-0.5 relative after:w-1 after:bg-black/90 after:rounded-xl after:h-3 flex items-center">
                                     {{ $event->likes->count() }}
-                                </span></div>
+                                </span>
+                            </div>
 
                             <div class="p-2 bg-black/90 flex items-center justify-center border border-black/10 rounded-[50%] h-full w-8 text-orange-400 cursor-pointer save-btn" data-event="{{ $event->id }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark-icon lucide-bookmark
@@ -443,9 +442,6 @@
                                     <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
                                 </svg>
                             </div>
-
-
-
                             <a href="{{ route('event.show', $event->id) }}" class="h-full flex items-center justify-center px-3 z-30 cursor-pointer text-xs font-mono bg-black/90 border border-black/10 rounded-3xl font-medium text-orange-400/80">
                                 More
                             </a>

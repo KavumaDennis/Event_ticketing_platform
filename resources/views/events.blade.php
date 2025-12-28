@@ -71,7 +71,7 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                                     <path d="M13 11v2" />
                                                 </svg>
                                             </span>
-                                            <span class='text-sm pr-2 font-semibold font-mono'>Get Tickets</span>
+                                            <span class='text-xs pr-2 font-medium font-mono'>Get Tickets</span>
                                         </div>
                                     </a>
                                     <div class="size-9 flex items-center justify-center rounded-[50%] text-black/90 border border-green-400/20 bg-green-400/10" data-event="{{ $event->id }}">

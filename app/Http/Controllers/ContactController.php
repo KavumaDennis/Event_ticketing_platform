@@ -9,7 +9,8 @@ class ContactController extends Controller
 {
     //
     public function index(){
-        return view('contact');
+        $faqs = \App\Models\Faq::all();
+        return view('contact', compact('faqs'));
     }
 
     public function submit(Request $request){

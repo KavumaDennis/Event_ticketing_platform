@@ -4,6 +4,7 @@ use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
+    AdminController,
     AuthController,
     ContactController,
     EventsController,
@@ -12,6 +13,7 @@ use App\Http\Controllers\{
     OrganizersController,
     SavedEventController,
     TrendsController,
+    FaqController,
     HomeController,
     OrganizerFollowController,
     MomoController,
@@ -21,12 +23,43 @@ use App\Http\Controllers\{
     DashboardController
 };
 
+// ADMIN DASHBOARD
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('admin.dashboard');
+
+    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+
+    Route::get('/organizers', [AdminController::class, 'organizers'])->name('admin.organizers');
+    Route::post('/organizers/{organizer}/verify', [AdminController::class, 'verifyOrganizer'])->name('admin.organizers.verify');
+    Route::delete('/organizers/{organizer}', [AdminController::class, 'deleteOrganizer'])->name('admin.organizers.delete');
+
+    Route::get('/events', [AdminController::class, 'events'])->name('admin.events');
+    Route::delete('/events/{event}', [AdminController::class, 'deleteEvent'])->name('admin.events.delete');
+
+    Route::get('/finance', [AdminController::class, 'finance'])->name('admin.finance');
+
+    Route::get('/faqs', [AdminController::class, 'faqs'])->name('admin.faqs');
+    Route::post('/faqs', [AdminController::class, 'storeFaq'])->name('admin.faqs.store');
+    Route::put('/faqs/{faq}', [AdminController::class, 'updateFaq'])->name('admin.faqs.update');
+    Route::delete('/faqs/{faq}', [AdminController::class, 'deleteFaq'])->name('admin.faqs.delete');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [DashboardController::class, 'overview'])->name('user.dashboard.overview'); // A - sidebar
+    Route::get('/user/dashboard/organizer-profile', [DashboardController::class, 'organizerProfile'])->name('user.dashboard.organizerProfile');
+    Route::get('/user/dashboard/following', [DashboardController::class, 'following'])->name('user.dashboard.following');
+    Route::get('/user/dashboard/followers', [DashboardController::class, 'followers'])->name('user.dashboard.followers');
     Route::get('/user/dashboard/profile', [DashboardController::class, 'profile'])->name('user.dashboard.profile'); // B - profile style
     Route::put('/user/dashboard/profile', [DashboardController::class, 'updateProfile'])->name('user.dashboard.updateProfile');
     Route::get('/user/dashboard/events', [DashboardController::class, 'events'])->name('user.dashboard.events'); // C - cards grid
     Route::get('/user/dashboard/trends', [DashboardController::class, 'trends'])->name('user.dashboard.trends'); // C - cards grid
+    Route::get('/user/dashboard/security', [DashboardController::class, 'security'])->name('user.dashboard.security');
+    Route::put('/user/dashboard/security', [DashboardController::class, 'updatePassword'])->name('user.dashboard.updatePassword');
+    Route::get('/user/dashboard/support', [DashboardController::class, 'support'])->name('user.dashboard.support');
+    Route::get('/user/dashboard/reviews', [DashboardController::class, 'myReviews'])->name('user.dashboard.reviews');
+    Route::get('/user/dashboard/notifications', [DashboardController::class, 'notifications'])->name('user.dashboard.notifications');
+    Route::get('/user/dashboard/saved', [DashboardController::class, 'savedEvents'])->name('user.dashboard.saved');
 
     // New Ticketing Features
     Route::get('/user/dashboard/tickets', [DashboardController::class, 'myTickets'])->name('user.dashboard.tickets');
@@ -37,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/trends/{trend}', [TrendsController::class, 'update'])->name('trends.update');
     // Delete Trend
     Route::delete('/trends/{trend}', [TrendsController::class, 'destroy'])->name('trends.destroy');
+
 
     // Update Event
     Route::put('/events/{event}', [EventsController::class, 'update'])->name('events.update');
@@ -139,6 +173,8 @@ Route::get('/momo/init', [MomoController::class, 'init'])->name('momo.init'); //
 Route::post('/momo/pay', [MomoController::class, 'pay'])->name('momo.pay');   // Calls MTN API
 Route::post('/momo/callback', [MomoController::class, 'callback'])->name('momo.callback'); // Receives webhook
 Route::get('/momo/check/{purchase}', [MomoController::class, 'checkPayment']);
+
+
 Route::get('/momo/token-test', function (App\Services\MtnService $mtn) {
     dd($mtn->getAccessToken());
 });
@@ -146,6 +182,9 @@ Route::get('/momo/token-test', function (App\Services\MtnService $mtn) {
 // Ticket Viewing & Downloading
 Route::get('/ticket/{code}', [TicketController::class, 'show'])->name('ticket.show');
 Route::get('/ticket/{code}/download', [TicketController::class, 'download'])->name('ticket.download');
+Route::post('/ticket/{ticket}/transfer', [TicketController::class, 'transfer'])->name('ticket.transfer');
+Route::get('/ticket/transfer/accept/{token}', [TicketController::class, 'processTransfer'])->name('ticket.transfer.accept');
+Route::post('/ticket/transfer/{transfer}/cancel', [TicketController::class, 'cancelTransfer'])->name('ticket.transfer.cancel');
 
 
 

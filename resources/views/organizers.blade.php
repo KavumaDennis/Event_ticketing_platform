@@ -18,7 +18,7 @@
 
                 <!-- Become Organizer Button -->
                 <a href="{{ route('organizer.create') }}">
-                    <div class="p-1 flex gap-1 items-center bg-orange-400/60 text-black/60 font-medium text-sm w-fit rounded-4xl">
+                    <div class="p-0.5 flex gap-1 items-center bg-orange-400/60 text-black/60 font-medium text-sm w-fit rounded-4xl">
                         <span class="text-orange-400">
                             <p class="size-8 flex items-center justify-center rounded-full text-orange-400/80 bg-black/95 border border-green-400/15 text-md">
                                 <i class="fa-solid fa-plus"></i>
@@ -73,11 +73,9 @@
             </div>
 
             <!-- RIGHT SECTION -->
-            <div class="w-full h-full flex flex-col justify-between">
-
+            <div class="w-full h-full flex flex-col gap-5 justify-between">
                 <!-- Carousel Container -->
-                <div class="w-full h-[61vh] relative overflow-hidden rounded-4xl opacity-70" x-data="imageCarousel({{ count($carouselImages) }})">
-
+                <div class="w-full flex-1 relative overflow-hidden rounded-3xl opacity-70" x-data="imageCarousel({{ count($carouselImages) }})">
                     <div class="relative w-full h-full">
                         @foreach($carouselImages as $index => $image)
                         <div x-show="currentSlide === {{ $index }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
@@ -108,14 +106,14 @@
 
                 <!-- Bottom Text + Tiny Tags -->
                 <div class="flex flex-col justify-between gap-3">
-                    <h1 class="text-orange-400/60 font-medium">
+                    <h1 class="text-orange-400/60 font-medium font-mono">
                         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi, tempore.
                     </h1>
 
                     <div class="flex gap-5 items-center justify-between">
                         <p class="text-white/80 w-fit text-sm">The biggest trends</p>
 
-                        <ul class="flex justify-between items-center gap-5 p-1 border border-green-400/20 bg-green-400/10 rounded-3xl w-auto">
+                        <ul class="flex justify-between items-center gap-5 p-1 border border-green-400/20 bg-green-400/10 rounded-3xl">
                             @for($i = 0; $i < 6; $i++) <li class="p-1 px-3 rounded-3xl text-xs bg-black/70 font-mono text-orange-400/60">Thing</li>
                                 @endfor
                         </ul>
@@ -139,7 +137,7 @@
             <div class="h-fit col-span-1 w-full bg-green-400/10 p-3 rounded-3xl">
                 <div class="flex justify-between mb-5">
                     <div class="flex items-center gap-3">
-                        <div class="p-[1px] bg-orange-400/70 border border-green-400/15 rounded-[50%] overflow-hidden">
+                        <div class="p-0.5 bg-orange-400/70 border border-green-400/15 rounded-[50%] overflow-hidden">
                             <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('mood.png') }}" class='size-11 rounded-[50%] object-cover' alt="" />
                         </div>
                         <p class='text-orange-400/60 text-sm font-semibold'>

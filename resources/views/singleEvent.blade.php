@@ -58,22 +58,24 @@
                         <span x-text="quantity"></span>
                     </div>
 
-                    <div class="p-2 px-3 flex items-center text-sm bg-orange-400/70 rounded-3xl font-medium border border-green-400/20">
+                    <div class="p-2 px-3 flex items-center text-sm font-mono bg-orange-400/70 rounded-3xl font-medium border border-green-400/20">
                         Ugx <span class="ml-1" x-text="total.toLocaleString()"></span>
                     </div>
 
                     <div>
-                       
-
                         <form action="{{ route('payment.page', $event->id) }}" method="GET">
                             <input type="hidden" name="ticket_type" id="ticket_type_input">
                             <input type="number" name="quantity" id="quantity_input" class="hidden">
 
                             <button type="submit" class="buy-btn flex gap-1 items-center bg-orange-400/70 rounded-3xl p-0.5 border border-green-400/20">
                                 <span class='size-8 text-sm flex items-center justify-center rounded-[50%] bg-black/95 text-orange-400/70'>
-                                    <i class="fa-solid fa-ticket"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ticket">
+                                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                                        <path d="M13 5v2" />
+                                        <path d="M13 17v2" />
+                                        <path d="M13 11v2" /></svg>
                                 </span>
-                                <span class='text-sm pr-2 font-semibold font-mono'>Purchase Tickets</span>
+                                <span class='text-sm pr-2 font-medium font-mono'>Purchase Tickets</span>
                             </button>
                         </form>
 
@@ -168,40 +170,41 @@
 </x-layout>
 
 <script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('ticketHandler', (prices) => ({
-        selected: 'regular',
-        quantity: 1,
-        prices,
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('ticketHandler', (prices) => ({
+            selected: 'regular'
+            , quantity: 1
+            , prices,
 
-        get total() {
-            return (this.prices[this.selected] ?? 0) * this.quantity;
-        },
+            get total() {
+                return (this.prices[this.selected] ?? 0) * this.quantity;
+            },
 
-        selectType(type) {
-            this.selected = type;
+            selectType(type) {
+                this.selected = type;
 
-            // update hidden input
-            document.getElementById('ticket_type_input').value = type;
-        },
+                // update hidden input
+                document.getElementById('ticket_type_input').value = type;
+            },
 
-        increase() {
-            this.quantity++;
-            document.getElementById('quantity_input').value = this.quantity;
-        },
-
-        decrease() {
-            if (this.quantity > 1) {
-                this.quantity--;
+            increase() {
+                this.quantity++;
                 document.getElementById('quantity_input').value = this.quantity;
-            }
-        }
-    }));
-});
+            },
 
-// initialize default values
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('ticket_type_input').value = 'regular';
-    document.getElementById('quantity_input').value = 1;
-});
+            decrease() {
+                if (this.quantity > 1) {
+                    this.quantity--;
+                    document.getElementById('quantity_input').value = this.quantity;
+                }
+            }
+        }));
+    });
+
+    // initialize default values
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('ticket_type_input').value = 'regular';
+        document.getElementById('quantity_input').value = 1;
+    });
+
 </script>

@@ -109,88 +109,44 @@
     <div class="grid grid-cols-2 gap-20 mt-20 p-5">
         <div class="w-full flex flex-col justify-between h-auto">
             <div class="">
-                <h1 class='text-3xl tracking-wide leading-15 text-white/80 mb-5'>How it works</h1>
-                <p class='text-sm text-white/60 font-mono font-light w-[90%] pl-1'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores magnam obcaecati rem, tempore nostrum voluptate? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores magnam obcaecati rem, tempore nostrum voluptate?</p>
-            </div>
+                <h1 class='text-3xl tracking-wide leading-15 text-white/80 mb-5'>Frequently Asked Questions</h1>
 
-            <div class="flex justify-between items-end">
-                <div class="flex justify-between items-center gap-4 bg-orange-400/70 border border-green-400/10 p-1 rounded-3xl">
-                    <p class='text-3xl p-2 rounded-[50%] bg-black/95 text-orange-400/60'><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook-icon lucide-facebook">
-                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
-                    </p>
-                    <p class='text-3xl p-2 rounded-[50%] bg-black/95 text-orange-400/60'><svg xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram-icon lucide-instagram">
-                            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
-                    </p>
-                    <p class='text-3xl p-2 rounded-[50%] bg-black/95 text-orange-400/60'><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter-icon lucide-twitter">
-                            <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
-                    </p>
-                    <p class='text-3xl p-2 rounded-[50%] bg-black/95 text-orange-400/60'><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-youtube-icon lucide-youtube">
-                            <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-                            <path d="m10 15 5-3-5-3z" /></svg>
-                    </p>
+                <div class="flex flex-col gap-3">
+                    @foreach($faqs as $faq)
+                    <div class="bg-green-400/10 rounded-4xl overflow-hidden">
+                        <button onclick="toggleFaq({{ $faq->id }})" class="w-full p-1.5 pl-4 flex justify-between items-center text-left text-white/80 transition-colors">
+                            <span class="font-medium">{{ $faq->question }}</span>
+                            <span id="icon-{{ $faq->id }}" class="p-3 border border-green-400/10 rounded-[50%] text-orange-400/70 transform transition-transform duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-down-dash-icon lucide-arrow-big-down-dash">
+                                    <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z" />
+                                    <path d="M9 4h6" /></svg>
+                            </span>
+                        </button>
+                        <div id="answer-{{ $faq->id }}" class="hidden p-4 pt-0 text-white/60 text-sm font-light">
+                            {{ $faq->answer }}
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
-
-                <p class='text-orange-400/70 font-medium'>Akavaako</p>
             </div>
+
+            <script>
+                function toggleFaq(id) {
+                    const answer = document.getElementById('answer-' + id);
+                    const icon = document.getElementById('icon-' + id);
+
+                    if (answer.classList.contains('hidden')) {
+                        answer.classList.remove('hidden');
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        answer.classList.add('hidden');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+
+            </script>
+
 
         </div>
-
-
-        <div class="flex flex-col gap-5">
-            <div class="p-2 pl-4 bg-green-400/10 rounded-4xl">
-                <div class=" flex justify-between items-center">
-                    <p class='text-white/70 font-light'>Create an account</p>
-                    <div class="p-3 border border-green-400/10 rounded-[50%] text-orange-400/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-down-dash-icon lucide-arrow-big-down-dash">
-                            <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z" />
-                            <path d="M9 4h6" /></svg>
-                    </div>
-                </div>
-            </div>
-            <div class="p-2 pl-4 bg-green-400/10 rounded-4xl">
-                <div class=" flex justify-between items-center">
-                    <p class='text-white/70 font-light'>Create an account</p>
-                    <div class="p-3 border border-green-400/10 rounded-[50%] text-orange-400/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-down-dash-icon lucide-arrow-big-down-dash">
-                            <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z" />
-                            <path d="M9 4h6" /></svg>
-                    </div>
-                </div>
-            </div>
-            <div class="p-2 pl-4 bg-green-400/10 rounded-4xl">
-                <div class=" flex justify-between items-center">
-                    <p class='text-white/70 font-light'>Create an account</p>
-                    <div class="p-3 border border-green-400/10 rounded-[50%] text-orange-400/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-down-dash-icon lucide-arrow-big-down-dash">
-                            <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z" />
-                            <path d="M9 4h6" /></svg>
-                    </div>
-                </div>
-            </div>
-            <div class="p-2 pl-4 bg-green-400/10 rounded-4xl">
-                <div class=" flex justify-between items-center">
-                    <p class='text-white/70 font-light'>Create an account</p>
-                    <div class="p-3 border border-green-400/10 rounded-[50%] text-orange-400/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-down-dash-icon lucide-arrow-big-down-dash">
-                            <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z" />
-                            <path d="M9 4h6" /></svg>
-                    </div>
-                </div>
-            </div>
-            <div class="p-2 pl-4 bg-green-400/10 rounded-4xl">
-                <div class=" flex justify-between items-center">
-                    <p class='text-white/70 font-light'>Create an account</p>
-                    <div class="p-3 border border-green-400/10 rounded-[50%] text-orange-400/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-down-dash-icon lucide-arrow-big-down-dash">
-                            <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z" />
-                            <path d="M9 4h6" /></svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
 
 </x-layout>
