@@ -4,15 +4,15 @@
 
 @section('content')
 <div class="px-6 pb-20">
-    <div class="flex justify-between items-center mb-5">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
             <h1 class="text-2xl text-white/70">My Tickets</h1>
             <p class="text-orange-400/70 font-mono text-sm">Manage your event access and gifts</p>
         </div>
-        <div class="bg-green-400/10 p-1 rounded-2xl flex border border-green-400/5">
-            <button onclick="switchTab('upcoming')" id="tab-upcoming" class="tab-btn px-6 py-2 rounded-xl text-sm font-bold transition-all bg-orange-500 text-black">Upcoming</button>
-            <button onclick="switchTab('past')" id="tab-past" class="tab-btn px-6 py-2 rounded-xl text-sm font-bold transition-all text-zinc-500 hover:text-white">Past Events</button>
-            <button onclick="switchTab('cancelled')" id="tab-cancelled" class="tab-btn px-6 py-2 rounded-xl text-sm font-bold transition-all text-zinc-500 hover:text-white">Cancelled</button>
+        <div class="bg-green-400/10 p-1 rounded-2xl flex border border-green-400/5 w-full sm:w-auto overflow-x-auto">
+            <button onclick="switchTab('upcoming')" id="tab-upcoming" class="tab-btn flex-1 sm:flex-none px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-orange-500 text-black whitespace-nowrap">Upcoming</button>
+            <button onclick="switchTab('past')" id="tab-past" class="tab-btn flex-1 sm:flex-none px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-zinc-500 hover:text-white whitespace-nowrap">Past Events</button>
+            <button onclick="switchTab('cancelled')" id="tab-cancelled" class="tab-btn flex-1 sm:flex-none px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-zinc-500 hover:text-white whitespace-nowrap">Cancelled</button>
         </div>
     </div>
 
@@ -20,15 +20,15 @@
     <div id="content-upcoming" class="tab-content transition-all duration-500">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             @forelse($upcoming as $ticket)
-            <div class="bg-green-400/10 rounded-3xl overflow-hidden group hover:border-orange-500/30 transition-all duration-500 relative">
-                <div class="flex h-40">
+            <div class="overflow-hidden group hover:border-orange-500/30 transition-all duration-500 relative">
+                <div class="flex flex-col sm:flex-row sm:h-40 gap-3">
                     {{-- Event Graphic --}}
-                    <div class="w-1/3 relative overflow-hidden">
-                        <img src="{{ $ticket->event->event_image ? asset('storage/'.$ticket->event->event_image) : asset('default.jpg') }}" class="h-full w-full object-cover">
+                    <div class="w-full sm:w-1/3 h-32 sm:h-full relative overflow-hidden">
+                        <img src="{{ $ticket->event->event_image ? asset('storage/'.$ticket->event->event_image) : asset('default.jpg') }}" class="h-full w-full object-cover rounded-3xl">
                     </div>
 
                     {{-- Ticket Info --}}
-                    <div class="flex-1 p-3 flex flex-col justify-between">
+                    <div class="flex-1 p-3 flex flex-col justify-between bg-green-400/10  rounded-3xl">
                         <div>
                             <div class="flex justify-between items-start">
                                 <span class="px-3 py-1 bg-orange-500/10 text-orange-400/80 text-[10px] font-black uppercase tracking-widest rounded-full border border-orange-500/20">
@@ -40,19 +40,19 @@
                             <p class="text-zinc-500 text-sm mt-1"><i class="far fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($ticket->event->event_date)->format('D, M d, Y') }}</p>
                         </div>
 
-                        <div class="flex gap-3">
-                            <a href="{{ route('dashboard.ticket.view', $ticket) }}" class="flex-1 font-mono py-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 rounded-3xl text-xs font-bold text-center transition-all">
-                                VIEW QR-CODE
+                        <div class="flex gap-3 mt-4 sm:mt-0">
+                            <a href="{{ route('dashboard.ticket.view', $ticket) }}" class="flex-1 text-center font-bold bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-2 text-orange-400/50 font-mono">
+                                View qr-code
                             </a>
-                            <button onclick="openTransferModal({{ $ticket->id }}, '{{ $ticket->event->event_name }}')" class="px-4 font-mono py-2 bg-orange-400/70 rounded-3xl text-xs font-bold transition-all ">
-                                GIFT TICKET
+                            <button onclick="openTransferModal({{ $ticket->id }}, '{{ $ticket->event->event_name }}')" class="flex-1 text-xs p-2 font-mono font-medium bg-orange-400/70 rounded-2xl text-black/90">
+                                Gift ticket
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
             @empty
-            <div class="col-span-2 py-20 bg-zinc-900/40 border border-dashed border-zinc-800 rounded-[2.5rem] text-center">
+            <div class="col-span-2 p-8 bg-green-400/5 border border-dashed border-green-400/20 rounded-3xl text-center">
                 <i class="fas fa-ticket-alt text-4xl text-zinc-800 mb-4 block"></i>
                 <p class="text-zinc-600 font-bold">No upcoming tickets found.</p>
                 <a href="{{ route('home') }}" class="text-orange-500 text-sm mt-4 inline-block hover:underline">Explore Events</a>
@@ -65,7 +65,7 @@
     <div id="content-past" class="tab-content hidden transition-all duration-500">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             @forelse($past as $ticket)
-            <div class="bg-zinc-900/50 border border-zinc-800 rounded-[2.5rem] p-6 opacity-60 hover:opacity-100 transition-opacity">
+            <div class="bg-green-400/10 rounded-2xl p-6 hover:opacity-100 transition-opacity">
                 <div class="flex justify-between items-start">
                     <div>
                         <h3 class="text-lg font-bold text-white/70">{{ $ticket->event->event_name }}</h3>
@@ -74,9 +74,9 @@
                     <a href="{{ route('user.dashboard.support') }}" class="text-[10px] uppercase font-bold text-zinc-500 hover:text-white">Report Issue</a>
                 </div>
                 <div class="mt-6 flex gap-3">
-                    <button class="flex-1 py-2 bg-zinc-800 text-zinc-400 rounded-xl text-xs font-bold cursor-not-allowed">EVENT ENDED</button>
+                    <button class="flex-1 py-2 bg-zinc-800 text-zinc-400 rounded-xl text-xs font-bold cursor-not-allowed font-mono">EVENT ENDED</button>
                     {{-- Add review logic here --}}
-                    <a href="{{ route('user.dashboard.support') }}" class="px-4 py-2 border border-zinc-800 text-zinc-500 rounded-xl text-xs font-bold hover:bg-zinc-800 transition-all">RATE EVENT</a>
+                    <a href="{{ route('user.dashboard.support') }}" class="px-4 py-2 bg-orange-500/70 text-black/90 rounded-xl text-xs font-bold transition-all font-mono">RATE EVENT</a>
                 </div>
             </div>
             @empty
@@ -104,10 +104,10 @@
 </div>
 
 {{-- Transfer Modal --}}
-<div id="transferModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2.5rem] p-10 relative overflow-hidden">
+<div id="transferModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-green-400/30 backdrop-blur-[1px] w-full max-w-lg p-4 shadow-xl relative">
         <div class="absolute -right-20 -top-20 size-60 bg-green-500/5 rounded-full blur-3xl"></div>
-        
+
         <h2 class="text-3xl font-black text-white/70 font-mono tracking-tighter mb-2">GIFT TICKET</h2>
         <p class="text-orange-400/70 text-sm mb-8" id="transferEventName"></p>
 
@@ -115,14 +115,12 @@
             @csrf
             <div class="mb-6">
                 <label class="block text-zinc-500 text-xs font-bold uppercase mb-2 ml-1">Recipient Email</label>
-                <input type="email" name="recipient_email" required
-                       class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl py-4 px-6 text-white text-sm focus:outline-none focus:border-green-500/50 transition-all"
-                       placeholder="friend@example.com">
+                <input type="email" name="recipient_email" required class="w-full p-3 rounded-xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" placeholder="friend@example.com">
             </div>
 
             <div class="flex gap-4">
-                <button type="button" onclick="closeTransferModal()" class="flex-1 py-3 bg-orange-400/70 font-mono text-black/90 font-medium rounded-3xl">Cancel</button>
-                <button type="submit" class="flex-1 py-3 bg-green-400/70 text-zinc-900 font-medium font-mono rounded-3xl hover:bg-green-400">Send Gift</button>
+                <button type="button" onclick="closeTransferModal()" class="flex-1 py-2 bg-orange-400/70 font-mono text-black/90 font-medium rounded-3xl">Cancel</button>
+                <button type="submit" class="flex-1 py-2 bg-green-400/70 text-zinc-900 font-medium font-mono rounded-3xl hover:bg-green-400">Send Gift</button>
             </div>
         </form>
     </div>
@@ -159,8 +157,7 @@
     function closeTransferModal() {
         document.getElementById('transferModal').classList.add('hidden');
     }
+
 </script>
 @endpush
 @endsection
-
-

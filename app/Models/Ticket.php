@@ -37,4 +37,9 @@ class Ticket extends Model
     {
         return $this->transfers()->where('status', 'pending')->exists();
     }
+
+    public function latestAcceptedTransfer()
+    {
+        return $this->hasOne(TicketTransfer::class)->where('status', 'accepted')->latestOfMany();
+    }
 }

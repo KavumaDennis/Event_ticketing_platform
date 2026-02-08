@@ -12,10 +12,11 @@
             margin: 0;
             padding: 0;
             width: 100%;
+           
         }
         .container {
             width: fit-content;
-            height: 100%;
+            height: fit-content;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -129,6 +130,10 @@
                     <td class="info-cell" width="50%">
                         <div class="label">Attendee</div>
                         <div class="value">{{ $ticket->purchase->user->first_name }} {{ $ticket->purchase->user->last_name }}</div>
+                        @php $transfer = $ticket->latestAcceptedTransfer; @endphp
+                        @if($transfer)
+                            <div style="font-size: 8px; color: #fb923c; margin-top: 5px; font-style: italic;">Sent by {{ $transfer->sender->first_name }}</div>
+                        @endif
                     </td>
                     <td class="info-cell" width="50%">
                         <div class="label">Ticket Type</div>

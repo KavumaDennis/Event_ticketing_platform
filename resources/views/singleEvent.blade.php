@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="grid grid-cols-2 grid-rows-1 gap-10 p-5 overflow-hidden" x-data="ticketHandler({
+    <div class="grid md:grid-cols-1 lg:grid-cols-2 grid-rows-1 gap-10 p-5 overflow-hidden" x-data="ticketHandler({
             regular: {{ $event->regular_price ?? 0 }},
             vip: {{ $event->vip_price ?? 0 }},
             vvip: {{ $event->vvip_price ?? 0 }}
@@ -7,22 +7,22 @@
 
         <!-- Event Image -->
         <div class="w-full h-fit">
-            <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('img3.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class="w-full h-[482px] opacity-80 object-cover rounded-4xl" alt="{{ $event->event_name }}" />
+            <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('img3.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class="w-full h-[200px] md:h-[300px] lg:h-[482px] opacity-80 object-cover rounded-4xl" alt="{{ $event->event_name }}" />
         </div>
 
         <!-- Event Info -->
-        <div class="flex flex-col justify-center my-auto gap-5 h-fit">
+        <div class="grid grid-cols-2 lg:flex flex-col justify-center my-auto gap-5 h-fit">
 
-            <h1 class="text-2xl text-orange-400/80">{{ $event->event_name }}</h1>
+            <h1 class="text-2xl col-span-2 text-orange-400/80">{{ $event->event_name }}</h1>
 
-            <p class="text-sm text-white/60 font-mono font-light w-[80%]">
+            <p class="text-sm col-span-2 text-white/60 font-mono font-light w-full md:w-[80%]">
                 {{ $event->description ?? 'No description available.' }}
             </p>
 
             <!-- Ticket Section -->
 
             @csrf
-            <div class="p-2 w-fit rounded-3xl bg-green-400/10 border border-green-400/5">
+            <div class="p-2 lg:w-fit rounded-3xl col-span-2 md:col-span-1 bg-green-400/10 border border-green-400/5 md:w-full h-fit">
                 <div class="flex gap-3 mb-5">
                     <label @click="selectType('regular')" :class="selected === 'regular' ? 'bg-orange-400/70 text-black border border-green-400/10' : 'text-white/60 border-white/50'" class="p-1 px-2 text-sm flex items-center font-medium border rounded-3xl">
                         <input type="radio" name="ticket_type" value="regular" class="hidden">
@@ -41,7 +41,7 @@
                 </div>
 
                 <!-- Quantity Navigation -->
-                <div class="flex items-center gap-5">
+                <div class="flex items-center justify-between gap-5">
                     <div class="flex gap-3 bg-orange-400/70 p-0.5 rounded-3xl">
                         <button type="button" @click="decrease" class='size-8 text-sm flex justify-center items-center bg-black text-orange-400/70 p-2 rounded-[50%]'>
                             <i class="fa-solid fa-minus"></i>
@@ -54,7 +54,7 @@
 
                     <input type="hidden" name="quantity" x-model="quantity">
 
-                    <div class="size-9 rounded-[50%] flex justify-center items-center bg-green-400/10 border border-green-400/20 text-white/80 text-lg font-semibold">
+                    <div class="size-9 rounded-[14px] flex justify-center items-center bg-green-400/10 border border-green-400/20 text-white/80 text-lg font-semibold">
                         <span x-text="quantity"></span>
                     </div>
 
@@ -88,7 +88,7 @@
 
 
             <!-- Event Details -->
-            <div class="flex flex-col gap-3">
+            <div class="col-span-2 md:col-span-1 flex flex-col gap-3">
                 <div class="flex items-center gap-2">
                     <span class='relative pr-3 text-orange-400/80 font-medium flex items-center after:content-[""] after:bg-orange-400/80 after:absolute  after:w-[3px] after:h-3 after:rounded-lg after:right-0'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-icon lucide-map-pin">
@@ -131,17 +131,17 @@
             </div>
 
             <!-- Organizer -->
-            <div class="flex justify-between">
+            <div class="col-span-2 md:col-span-1 flex justify-between">
                 <div class="mt-3 flex gap-3 items-center">
-                    <span class='p-1 px-2 bg-orange-400/70 rounded-lg text-sm font-medium'>Organized By</span>
-                    <a href="{{ route('organizer.details',$event->organizer_id ) }}" class='font-medium text-white/70 text-sm underline'>
+                    <span class='text-xs p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90'>Organized By</span>
+                    <a href="{{ route('organizer.details',$event->organizer_id ) }}" class='font-medium text-white/60 text-sm underline'>
                         {{ optional($event->organizer)->business_name ?? 'Unknown Organizer' }}
                     </a>
                 </div>
                 <div class="flex items-center gap-3">
                     {{-- Like Button --}}
                     <div class="flex items-center gap-1">
-                        <button class="like-btn cursor-pointer size-8 flex items-center justify-center border border-green-400/20 bg-green-400/10 rounded-[50%] font-medium" data-event="{{ $event->id }}">
+                        <button class="like-btn cursor-pointer size-9 flex items-center justify-center border border-green-400/20 bg-green-400/10 rounded-[14px] font-medium" data-event="{{ $event->id }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart 
          {{ Auth::check() && $event->isLikedBy(Auth::user()) ? 'text-red-500' : 'text-orange-400/80' }}">
                                 <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
@@ -154,7 +154,7 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <button id="share-btn" class="size-8 flex items-center justify-center rounded-[50%] bg-black/80 border border-green-400/20 text-orange-400/70 hover:bg-orange-400/80 hover:text-black transition" data-link="{{ url()->current() }}" title="Share Event">
+                        <button id="share-btn" class="size-9 flex items-center justify-center rounded-[14px] bg-black/80 border border-green-400/20 text-orange-400/70 hover:bg-orange-400/80 hover:text-black transition" data-link="{{ url()->current() }}" title="Share Event">
                             <i class="fa-solid fa-share-nodes"></i>
                         </button>
                     </div>

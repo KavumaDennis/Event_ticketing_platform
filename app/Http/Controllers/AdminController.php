@@ -9,6 +9,7 @@ use App\Models\Trend;
 use App\Models\TicketPurchase;
 use App\Models\Faq;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -160,6 +161,26 @@ class AdminController extends Controller
     {
         $faq->delete();
         return back()->with('success', 'FAQ deleted.');
+    }
+
+    // MANAGE REVIEWS
+    public function reviews()
+    {
+        $reviews = \App\Models\Review::with(['user', 'event'])->latest()->paginate(20);
+        return view('admin.reviews', compact('reviews'));
+    }
+
+    public function deleteReview(\App\Models\Review $review)
+    {
+        $review->delete();
+        return back()->with('success', 'Review deleted.');
+    }
+
+    public function notifications()
+    {
+        $user = Auth::user();
+        $notifications = $user->notifications()->latest()->get();
+        return view('dashboard.notifications', compact('user', 'notifications'));
     }
 
 }

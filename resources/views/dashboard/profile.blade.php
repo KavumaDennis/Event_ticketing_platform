@@ -3,7 +3,7 @@
 @section('title','Cards')
 
 @section('content')
-<div class="grid grid-cols-4 gap-6 relative">
+<div class="flex flex-col lg:grid lg:grid-cols-4 gap-6 relative">
     <div class="flex flex-col gap-3 relative">
         <div class="col-span-1 p-4 bg-green-400/10 h-fit rounded-2xl">
             <h3 class="font-semibold text-white/70">Your Profile</h3>
@@ -46,13 +46,13 @@
         </a>
 
         {{-- Modal Overlay --}}
-        <div id="editProfileModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-            <div class="bg-gray-700 rounded-4xl w-full max-w-lg p-6 relative">
+        <div id="editProfileModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+            <div class="bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-green-400/30 backdrop-blur-[1px] w-full max-w-lg p-4 shadow-xl relative">
 
                 {{-- Close Button --}}
                 <button id="closeModal" class="absolute top-3 right-3 text-white/60 hover:text-white text-xl">&times;</button>
 
-                <h2 class="font-semibold text-orange-400/70 mb-4">Edit Profile</h2>
+                <h2 class="text-xl font-bold mb-4 text-orange-400/70">Edit Profile</h2>
 
                 <form action="{{ route('user.dashboard.updateProfile') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-3">
 
@@ -62,8 +62,8 @@
                     {{-- First Name --}}
                     <div class="grid grid-cols-2 gap-5">
                         <div class="flex flex-col gap-1 col-span-1">
-                            <label class="text-white/60 text-sm">First Name</label>
-                            <input type="text" name="first_name" value="{{ Auth::user()->first_name }}" class="p-2 rounded-xl bg-green-400/20 border border-green-400/20 text-white outline-none">
+                            <label class="text-white/60 font-medium ml-1 text-sm">First Name</label>
+                            <input type="text" name="first_name" value="{{ Auth::user()->first_name }}" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                             @error('first_name')
                             <p class="text-red-400 text-xs">{{ $message }}</p>
                             @enderror
@@ -71,37 +71,39 @@
 
                         {{-- Last Name --}}
                         <div class="flex flex-col gap-1 col-span-1">
-                            <label class="text-white/60 text-sm">Last Name</label>
-                            <input type="text" name="last_name" value="{{ Auth::user()->last_name }}" class="p-2 rounded-xl bg-green-400/20 border border-green-400/20 text-white outline-none">
+                            <label class="text-white/60 font-medium ml-1 text-sm">Last Name</label>
+                            <input type="text" name="last_name" value="{{ Auth::user()->last_name }}" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                             @error('last_name')
                             <p class="text-red-400 text-xs">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-2 gap-5">
+                        {{-- Email --}}
+                        <div class="flex flex-col gap-1">
+                            <label class="text-white/60 font-medium ml-1 text-sm">Email</label>
+                            <input type="email" name="email" value="{{ Auth::user()->email }}" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
+                            @error('email')
+                            <p class="text-red-400 text-xs">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    {{-- Email --}}
-                    <div class="flex flex-col gap-1">
-                        <label class="text-white/60 text-sm">Email</label>
-                        <input type="email" name="email" value="{{ Auth::user()->email }}" class="p-2 rounded-xl bg-green-400/20 border border-green-400/20 text-white outline-none">
-                        @error('email')
-                        <p class="text-red-400 text-xs">{{ $message }}</p>
-                        @enderror
+                        {{-- Username --}}
+                        <div class="flex flex-col gap-1">
+                            <label class="text-white/60 font-medium ml-1 text-sm">Username</label>
+                            <input type="text" name="username" value="{{ Auth::user()->username }}" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
+                            @error('username')
+                            <p class="text-red-400 text-xs">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
-                    {{-- Username --}}
-                    <div class="flex flex-col gap-1">
-                        <label class="text-white/60 text-sm">Username</label>
-                        <input type="text" name="username" value="{{ Auth::user()->username }}" class="p-2 rounded-xl bg-green-400/20 border border-green-400/20 text-white outline-none">
-                        @error('username')
-                        <p class="text-red-400 text-xs">{{ $message }}</p>
-                        @enderror
-                    </div>
 
                     {{-- Bio --}}
                     <div class="flex flex-col gap-1">
-                        <label class="text-white/60 text-sm">Bio</label>
-                        <textarea name="bio" rows="3" class="p-2 rounded-xl bg-green-400/20 border border-green-400/20 text-white outline-none">{{ Auth::user()->bio }}</textarea>
+                        <label class="text-white/60 font-medium ml-1 text-sm">Bio</label>
+                        <textarea name="bio" rows="3" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">{{ Auth::user()->bio }}</textarea>
                         @error('bio')
                         <p class="text-red-400 text-xs">{{ $message }}</p>
                         @enderror
@@ -109,13 +111,18 @@
 
                     {{-- Profile Picture --}}
                     <div class="flex flex-col gap-1">
-                        <label class="text-white/60 text-sm">Profile Picture</label>
-                        <input type="file" name="profile_pic" class="p-2 rounded-xl bg-[#2a2a3d] text-white outline-none">
+                        <label class="text-white/60 font-medium ml-1 text-sm">Profile Picture</label>
+                        <div class="flex justify-between items-center gap-3">
+                            <input type="file" name="profile_pic" class="w-full flex-1 p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
 
-                        {{-- Current Photo Preview --}}
-                        @if(Auth::user()->profile_pic)
-                        <img src="{{ asset('storage/' . Auth::user()->profile_pic) }}" class="w-20 h-20 rounded-full mt-2 object-cover">
-                        @endif
+                            {{-- Current Photo Preview --}}
+                            @if(Auth::user()->profile_pic)
+                            <div class="bg-orange-400/70 p-0.5 rounded-full border border-orange-400/30">
+                            <img src="{{ asset('storage/' . Auth::user()->profile_pic) }}" class="w-10 h-10 rounded-full object-cover">
+                            </div>
+                            @endif
+
+                        </div>
 
                         @error('profile_pic')
                         <p class="text-red-400 text-xs">{{ $message }}</p>
@@ -134,18 +141,16 @@
 
     </div>
 
-    <div class="col-span-3 p-4 bg-green-400/10 rounded-3xl">
-        <h3 class="font-semibold mb-3 text-orange-400/70">Saved Events</h3>
-        <div class="grid grid-cols-3 gap-3">
-            @foreach($latestEvents as $ev)
-            <div class="w-full h-fit p-1  rounded-3xl bg-green-400/10 border border-green-400/20">
-                <div class="w-full h-[100px] relative p-2">
+    <div class="col-span-12 lg:col-span-3">
+        <h3 class="text-xs p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90 mb-3 tracking-tighter">Followed Organizers' Events</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            @forelse($followedOrganizersEvents as $ev)
+            <div class="w-full h-fit p-1 ">
+                <div class="w-full h-[100px] rounded-2xl bg-green-400/10 relative p-2">
                     <img src="{{ $ev->event_image ? asset('storage/'.$ev->event_image) : asset('img3.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class="absolute mix-blend-lighten z-0 top-0 left-0 object-cover w-full h-full rounded-[20px]" alt="{{ $ev->event_name }}" />
 
                     <div class="flex flex-col gap-2 z-10">
-                        <h1 class='text-orange-400/80 z-10 uppercase font-medium'>{{ $ev->event_name }}</h1>
-
-                         <div class="absolute bottom-1 right-1 flex items-center gap-1 bg-orange-400/80 rounded-3xl w-fit h-9 p-0.5">
+                        <div class="absolute bottom-1 right-1 flex items-center gap-1 bg-orange-400/80 rounded-3xl w-fit h-9 p-0.5">
                             <!-- LIKE BUTTON -->
                             <div class="flex items-center h-full gap-[3px]">
                                 <button class="like-btn cursor-pointer h-full w-8 flex items-center justify-center bg-black/90 border border-black/10 rounded-[50%] font-medium" data-event="{{ $ev->id }}">
@@ -166,8 +171,15 @@
                         </div>
                     </div>
                 </div>
+                <h1 class='text-white/80 z-10 text-sm font-medium mx-1 mt-1 line-clamp-1'>{{ $ev->event_name }}</h1>
+                <p class='text-green-400/80 text-[10px] mx-1 font-mono'>by {{ $ev->organizer?->business_name ?? 'Unknown' }}</p>
             </div>
-            @endforeach
+            @empty
+            <div class="col-span-12 p-8 bg-green-400/5 border border-dashed border-green-400/20 rounded-3xl text-center">
+                <p class="text-zinc-500 text-sm mb-2">No events from organizers you follow.</p>
+                <a href="{{ route('organizers') }}" class="text-orange-400 text-xs font-bold hover:underline">Find organizers to follow</a>
+            </div>
+            @endforelse
         </div>
 
 

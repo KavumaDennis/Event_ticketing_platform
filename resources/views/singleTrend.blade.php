@@ -3,28 +3,50 @@
     <section class="grid grid-cols-14 gap-5 p-5">
         <section class="col-span-10 grid grid-cols-2 gap-3 w-full h-fit">
 
-            <div class="h-[520px] flex flex-col justify-between">
-                <a href="{{ route('trends') }}" class="inline-flex w-fit items-center gap-1 p-1 rounded-3xl bg-orange-400/70 hover:text-orange-300 transition">
-                    <div class="size-8 rounded-[50%] bg-black/90 border border-green-400/10 flex items-center justify-center">
-                        <i class="fa-solid fa-arrow-left text-orange-400/80"></i>
+            <div class="h-[520px] flex flex-col gap-3 justify-between">
+                <div class="p-0.5 w-fit rounded-3xl bg-orange-400/70 hover:text-orange-300 transition">
+                    <a href="{{ route('trends') }}" class="flex items-center gap-1 ">
+                        <div class="size-8 rounded-[50%] bg-black/90 border border-green-400/10 flex items-center justify-center">
+                            <i class="fa-solid fa-arrow-left text-orange-400/80"></i>
+                        </div>
+                        <p class="text-black/90 text-xs font-medium font-mono pr-1">Back to Trends</p>
+                    </a>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <div class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-1 text-orange-400/50 font-mono w-fit">
+                        {{ $trend->event->event_name }}
                     </div>
-                    <p class="text-black/90 text-sm font-medium pr-1">Back to Trends</p>
-                </a>
+                    <a href="{{ route('event.show', $trend->event->id) }}" class="text-xs p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90">
+                        Event Details
+                    </a>
+                </div>
 
-                <div class="bg-green-400/10 p-5 rounded-3xl w-fit">
-                    <h1 class="text-3xl font-medium text-orange-400/90 mb-4">{{ $trend->title }}</h1>
-                    <div class="flex gap-5 items-center text-sm text-white/50">
-                        <div class="flex items-center gap-3 ">
-                            <i class="fa-solid fa-user text-orange-400/80"></i>
-                            <span>By {{ $trend->user?->first_name ?? 'Unknown' }} {{ $trend->user?->last_name ?? '' }}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-calendar text-orange-400/80"></i>
-                            <span>{{ $trend->created_at->format('M d, Y') }}</span>
-                        </div>
+
+                {{-- <div class="p-0.5 rounded-3xl text-black/90 bg-orange-400/70 border border-green-400/15 w-fit">
+                    <a href="{{ route('trends.show', $trend->id) }}" class='flex gap-1 items-center'>
+                <span class='text-black/95 '>
+                    <p class='size-8 flex items-center justify-center rounded-[50%]  text-orange-400/70 bg-black/90 border border-green-400/15 text-md'>
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </p>
+                </span>
+                <span class='text-xs pr-2 font-medium font-mono'>More Details</span>
+                </a>
+            </div> --}}
+
+            <div class="bg-green-400/10 p-3 py-2 flex-1 flex flex-col justify-between rounded-3xl w-fit">
+                <h1 class="text-2xl font-medium text-orange-400/70 mb-4">{{ $trend->title }}</h1>
+                <div class="flex gap-5 items-center text-sm font-mono font-bold text-white/40">
+                    <div class="flex items-center gap-3 ">
+                        <i class="fa-solid fa-user text-orange-400/80"></i>
+                        <span>By {{ $trend->user?->first_name ?? 'Unknown' }} {{ $trend->user?->last_name ?? '' }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-calendar text-orange-400/80"></i>
+                        <span>{{ $trend->created_at->format('M d, Y') }}</span>
                     </div>
                 </div>
-                <img src="{{ $trend->image ? asset('storage/'.$trend->image) : asset('default.jpg') }}  " alt="{{ $trend->title }}" class="w-full h-[300px] object-cover rounded-3xl">
+            </div>
+            <img src="{{ $trend->image ? asset('storage/'.$trend->image) : asset('default.jpg') }}  " alt="{{ $trend->title }}" class="w-full h-[300px] overflow-hidden object-cover rounded-4xl">
             </div>
 
             <div class="relative bg-black/30  rounded-3xl  h-[520px] p-3 backdrop-blur-xl shadow-lg flex flex-col">
@@ -46,7 +68,7 @@
                         {{-- Profile --}}
                         <img src="{{ $comment->user?->profile_pic
                         ? asset('storage/'.$comment->user->profile_pic)
-                        : asset('default.jpg') }}" class="w-8 h-8 rounded-full object-cover mt-1" alt="Profile">
+                        : asset('user-default.jpg') }}" class="w-8 h-8 rounded-full object-cover mt-1" alt="Profile">
 
                         <div class="flex-1">
 
@@ -100,16 +122,16 @@
                 <div class="bg-black/30 absolute bottom-3 right-3 left-3 border border-white/10 rounded-2xl p-2 w-[95%] mt-6">
                     <div class="flex items-center justify-between">
                         <div class="flex gap-3 text-white items-center">
-                            <button class="trend-like-btn size-8 flex justify-center items-center rounded-[50%] bg-green-400/10 border border-green-400/20" data-trend-id="{{ $trend->id }}" data-is-liked="{{ isset($trend->is_liked) && $trend->is_liked ? 'true' : 'false' }}">
+                            <button class="trend-like-btn size-8 flex justify-center items-center rounded-xl bg-green-400/10 border border-green-400/20" data-trend-id="{{ $trend->id }}" data-is-liked="{{ isset($trend->is_liked) && $trend->is_liked ? 'true' : 'false' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart {{ isset($trend->is_liked) && $trend->is_liked ? 'text-red-500' : 'text-white/70' }}">
                                     <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
                                 </svg>
                             </button>
 
-                            <span>
+                            <button id="comment_btn" onclick="openCommentInput()">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle">
                                     <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" /></svg>
-                            </span>
+                            </button>
                             <span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share">
                                     <path d="M12 2v13" />
@@ -129,21 +151,24 @@
 
                     {{-- Comment Input --}}
                     @auth
-                    <div class="bg-green-400/20 backdrop-blur-xl rounded-2xl p-1 mt-2">
-                        <form id="commentForm" data-trend="{{ $trend->id }}" method="POST" action="{{ route('trends.comment', $trend->id) }}" class="flex items-center gap-2 h-full">
-                            @csrf
-                            <input type="text" name="comment" maxlength="500" placeholder="Add a comment..." class="flex-1 p-2 bg-black/50 text-white rounded-xl outline-none placeholder:text-white/60" />
-                            <button type="submit" class="bg-orange-400/80 font-mono text-sm rounded-xl px-3 py-2 hover:bg-orange-400 transition h-full">
-                                Post
-                            </button>
-                        </form>
+                    <div id="write_comment" class="hidden">
+                        <div class="bg-green-400/20 backdrop-blur-xl rounded-2xl p-1 mt-2">
+                            <form id="commentForm" data-trend="{{ $trend->id }}" method="POST" action="{{ route('trends.comment', $trend->id) }}" class="flex items-center gap-2 h-full">
+                                @csrf
+                                <input type="text" name="comment" maxlength="500" placeholder="Add a comment..." class="flex-1 p-2 bg-black/50 text-white rounded-xl outline-none placeholder:text-white/60" />
+                                <button type="submit" class="bg-orange-400/80 font-mono text-sm rounded-xl px-3 py-2 hover:bg-orange-400 transition h-full">
+                                    Post
+                                </button>
+                            </form>
+                        </div>
+                        @else
+                        <div class="text-center text-sm text-white/50 py-4">
+                            <a href="{{ route('login') }}" class="text-orange-400 hover:underline">
+                                Log in
+                            </a> to join the conversation
+                        </div>
                     </div>
-                    @else
-                    <div class="text-center text-sm text-white/50 py-4">
-                        <a href="{{ route('login') }}" class="text-orange-400 hover:underline">
-                            Log in
-                        </a> to join the discussion
-                    </div>
+
                     @endauth
                 </div>
             </div>
@@ -153,17 +178,17 @@
 
 
         <section class=" col-span-4  w-full">
-            <div class="flex flex-col h-full justify-between gap-5">
-                <h1 class="text-xl font-medium text-orange-400/70">
+            <div class="flex flex-col h-full justify-between gap-3">
+                <h1 class="text-xs p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90">
                     Explore More Trends
                 </h1>
                 <div class="flex flex-col justify-between flex-1">
                     @foreach($randomTrends as $randTrend)
-                    <a href="{{ route('trends.show', $randTrend->id) }}" class="flex items-center gap-3 h-fit p-3 bg-green-400/10 rounded-3xl hover:bg-black/80 transition">
-                        <img src="{{ $randTrend->image ? asset('storage/'.$randTrend->image) : asset('default.jpg') }}" class="w-16 h-16 rounded-2xl object-cover" alt="{{ $randTrend->title }}">
+                    <a href="{{ route('trends.show', $randTrend->id) }}" class="flex items-center gap-3 h-fit p-2.5 bg-green-400/10 rounded-3xl hover:bg-black/80 transition">
+                        <img src="{{ $randTrend->image ? asset('storage/'.$randTrend->image) : asset('user-default.jpg') }}" class="w-15 h-15 rounded-2xl object-cover" alt="{{ $randTrend->title }}">
                         <div class="flex flex-col">
-                            <h2 class="text-white/80 font-medium">{{ $randTrend->title }}</h2>
-                            <p class="text-orange-400/60 text-sm">{{ Str::limit($randTrend->body, 45) }}</p>
+                            <h2 class="text-white/80 font-medium text-sm">{{ $randTrend->title }}</h2>
+                            <p class="text-orange-400/60 text-xs">{{ Str::limit($randTrend->body, 45) }}</p>
                         </div>
                     </a>
                     @endforeach
@@ -186,6 +211,8 @@
     // Get CSRF token from meta tag
     const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
+
+
     // Submit comment
     $(document).on('submit', '#commentForm', function(e) {
         e.preventDefault();
@@ -195,6 +222,8 @@
         const input = form.find('input[name="comment"]');
         const comment = input.val().trim();
         const btn = form.find('button[type="submit"]');
+
+
 
         if (!comment) return;
 
@@ -318,5 +347,16 @@
             }
         });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.openCommentInput = function() {
+            if (write_comment.classList.contains('hidden')) {
+                write_comment.classList.toggle('hidden')
+            } else {
+                write_comment.classList.add('hidden')
+            }
+        }
+
+    })
 
 </script>

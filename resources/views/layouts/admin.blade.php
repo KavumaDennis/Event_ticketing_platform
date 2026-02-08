@@ -6,13 +6,71 @@
     <title>@yield('title', 'Admin Dashboard')</title>
     @vite('resources/css/app.css')
     <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
-    {{-- Google Fonts if needed can go here --}}
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
-<body class="bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed bg-blend-multiply">
+<body x-data="{ sidebarOpen: false }" class="bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed bg-blend-multiply">
 
-    <div class="grid grid-cols-12 gap-3 p-2 text-zinc-100 h-screen overflow-hidden">
+    {{-- Mobile Sidebar Overlay --}}
+    <div x-show="sidebarOpen" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+         @click="sidebarOpen = false" x-cloak></div>
+
+    {{-- Mobile Sidebar --}}
+    <div x-show="sidebarOpen"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="-translate-x-full"
+         x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="translate-x-0"
+         x-transition:leave-end="-translate-x-full"
+         class="fixed inset-y-0 left-0 w-64 bg-zinc-950/95 border-r border-white/10 z-50 lg:hidden p-6 overflow-y-auto text-zinc-100"
+         x-cloak>
+        <div class="flex justify-between items-center mb-8">
+            <span class="text-orange-400 font-bold tracking-tighter">ADMIN PANEL</span>
+            <button @click="sidebarOpen = false" class="text-white/60">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <a href="{{ route('admin.dashboard') }}" class="block p-3 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Overview</a>
+            <a href="{{ route('admin.users') }}" class="block p-3 rounded-xl {{ request()->routeIs('admin.users') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Users</a>
+            <a href="{{ route('admin.organizers') }}" class="block p-3 rounded-xl {{ request()->routeIs('admin.organizers') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Organizers</a>
+            <a href="{{ route('admin.events') }}" class="block p-3 rounded-xl {{ request()->routeIs('admin.events') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Events</a>
+            <a href="{{ route('admin.finance') }}" class="block p-3 rounded-xl {{ request()->routeIs('admin.finance') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Finance</a>
+            <a href="{{ route('admin.faqs') }}" class="block p-3 rounded-xl {{ request()->routeIs('admin.faqs') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">FAQs</a>
+            <a href="{{ route('admin.reviews') }}" class="block p-3 rounded-xl {{ request()->routeIs('admin.reviews') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Reviews</a>
+            <hr class="border-white/10 my-4">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="w-full text-left p-3 text-zinc-500 hover:text-white transition-colors">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="h-screen flex flex-col lg:grid lg:grid-cols-12 gap-3 p-3 overflow-hidden">
+
+        {{-- Mobile Top Bar --}}
+        <div class="lg:hidden flex justify-between items-center p-4 bg-green-400/10 rounded-2xl mb-2">
+            <button @click="sidebarOpen = true" class="text-orange-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+            <span class="text-white/70 font-bold tracking-tighter">AKAVAAKO ADMIN</span>
+            <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xs">
+                {{ substr(auth()->user()->first_name, 0, 1) }}
+            </div>
+        </div>
+
         {{-- SIDEBAR --}}
-        <aside class="w-full col-span-2 rounded-2xl h-fit flex flex-col gap-3">
+        <aside class="w-full col-span-2 rounded-2xl h-fit hidden lg:flex flex-col gap-3 overflow-hidden">
             <div class="p-3 text-center font-mono font-medium bg-green-400/10 rounded-xl">
                 <span class="text-md text-orange-400/70 tracking-tighter">
                     ADMIN PANEL
@@ -68,7 +126,13 @@
                         <path d="M12 17h.01" /></svg>
                     <span class='font-medium flex items-center pl-2.5 relative after:content-[""] after:bg-zinc-400 after:absolute after:w-[3px] after:h-[10px] after:rounded-lg after:left-0'>FAQs</span>
                 </a>
-                <div class="p-4 border-t border-zinc-800">
+
+                <a href="{{ route('admin.reviews') }}" class="flex items-center gap-2 text-sm px-4 py-3 rounded-xl {{ request()->routeIs('admin.reviews') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                    <span class='font-medium flex items-center pl-2.5 relative after:content-[""] after:bg-zinc-400 after:absolute after:w-[3px] after:h-[10px] after:rounded-lg after:left-0'>Reviews</span>
+                </a>
+                <div class="p-4 pb-0 border-t border-zinc-800">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors w-full">

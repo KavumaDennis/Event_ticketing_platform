@@ -1,6 +1,6 @@
 <x-layout>
     <section class="p-5">
-        <div class="grid grid-cols-2 gap-10 p-5 bg-green-400/10 rounded-4xl">
+        <div class="grid  lg:grid-cols-2 gap-10 p-5 bg-green-400/10 rounded-4xl">
             <div class="col-span-1 flex flex-col gap-3 justify-center">
                 <h1 class="text-2xl text-orange-400/70">Lorem ipsum dolor sit amet consectetur adipisicing.</h1>
                 <p class="text-white/70 font-mono font-light text-sm">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum optio quo hic nisi. Quas, dolores!</p>
@@ -39,7 +39,7 @@
     </section>
 
     <section class="p-5">
-        <div class="grid grid-cols-4 gap-5">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             <div class="w-full h-60 rounded-3xl flex flex-col justify-between pt-5">
                 <div class="flex flex-col gap-5">
                     <p class="font-mono font-light text-white/70 text-sm">Become an organizer</p>
@@ -52,7 +52,7 @@
                                 <i class="fa-solid fa-plus"></i>
                             </p>
                         </span>
-                        <span class='pr-2 text-black/90'>Become an organizer</span>
+                        <span class='pr-2 text-black/90 font-mono text-xs'>Become an organizer</span>
                     </div>
                 </a>
             </div>
@@ -65,13 +65,13 @@
             <div class="w-full h-60 rounded-3xl bg-green-400/10 flex flex-col justify-between p-5">
                 <h1 class="text-orange-400/70 text-2xl">Hey organizer, Akavaako offers a better experience when you have an account </h1>
                 <div class="flex justify-between items-center gap-3 p-1 bg-orange-400/60 border border-green-400/10 rounded-3xl pl-3">
-                    <a href="{{ route('events.create') }}" class='text-black/80 font-medium text-xs'>Create an event</a>
+                    <a href="{{ route('events.create') }}" class='text-black/80 font-medium font-mono text-xs'>Create an event</a>
                     @guest
                     <a href="{{ route('show.login') }}" class='bg-black/90 border border-green-400/15 text-xs font-medium text-orange-400/60 p-2 px-3 rounded-3xl flex items-center'>Log In</a>
                     @endguest
 
                     @auth
-                    <a href="" class='bg-black/90 border border-green-400/15 text-xs font-medium text-orange-400/60 p-2 px-3 rounded-3xl flex items-center'>Manage events</a>
+                    <a href="{{ route('user.dashboard.events') }}" class='bg-black/90 border border-green-400/15 text-xs font-medium text-orange-400/60 p-2 px-3 rounded-3xl flex items-center font-mono text-xs'>Manage events</a>
                     @endauth
                 </div>
             </div>
@@ -81,30 +81,25 @@
     <section class="p-5">
         <div class="flex items-center justify-between mb-5">
             <h1 class="text-3xl text-white/60">Discover fellow organizers</h1>
-            <div class="flex  gap-3 bg-orange-400 p-1 rounded-3xl">
-                <span class='bg-black text-orange-400 p-2 rounded-2xl'>
-                    <LuArrowBigLeftDash /></span>
-                <span class='bg-black text-orange-400 p-2 rounded-2xl'>
-                    <LuArrowBigRightDash /></span>
-            </div>
+           
         </div>
-        <div class="grid grid-cols-4 gap-5">
-            @foreach($organizers as $organizer)
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+             @foreach($organizers as $organizer)
             <div class="h-fit col-span-1 w-full bg-green-400/10 p-3 rounded-3xl">
                 <div class="flex justify-between mb-5">
                     <div class="flex items-center gap-3">
-                        <div class="p-px bg-orange-400/70 border border-green-400/15 rounded-[50%] overflow-hidden">
-                            <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('mood.png') }}" class='size-11 rounded-[50%] object-cover' alt="{{ $organizer->business_name }}" />
+                        <div class="p-0.5 bg-orange-400/70 border border-green-400/15 rounded-[50%] overflow-hidden">
+                            <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('mood.png') }}" class='size-11 rounded-[50%] object-cover' alt="" />
                         </div>
                         <p class='text-orange-400/60 text-sm font-semibold'>
                             {{ $organizer->business_name }}
                         </p>
                     </div>
                     <div class="text-sm text-white/70 bg-black/60 flex items-center border border-green-400/15 rounded-md h-fit px-1">
-                        <span class='pr-2 text-sm font-medium flex items-center relative after:content-[""] after:bg-orange-400/80 after:absolute after:w-[3px] after:h-[12px] after:rounded-lg after:right-0'>
+                        <span class='pr-2.5 text-sm font-medium flex items-center relative after:content-[""] after:bg-orange-400/80 after:absolute after:w-[3px] after:h-3 after:rounded-lg after:right-0'>
                             Events
                         </span>
-                        <span class='pl-2'>{{ $organizer->events_count }}</span>
+                        <span class='pl-1'>{{ $organizer->events_count }}</span>
                     </div>
                 </div>
                 <div class="flex justify-between items-center pt-5 border-t border-white/30">
@@ -128,14 +123,15 @@
                                 <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
                                 <path d="m10 15 5-3-5-3z" /></svg>
                         </p>
+
                     </div>
-                    <a href="{{ route('organizer.details', $organizer->id) }}" class='p-1 flex gap-1 items-center bg-black/95 border border-green-400/15 text-sm w-fit rounded-4xl'>
+                    <a href="{{ route('organizer.details', $organizer->id) }}" class='p-1 flex gap-1 items-center bg-black/70 border border-green-400/15 text-sm w-fit rounded-4xl'>
                         <span>
                             <p class='size-8 flex items-center justify-center rounded-[50%] text-black/90 bg-orange-400/70 border border-green-400/10 text-md'>
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </p>
                         </span>
-                        <span class='pr-2 text-sm text-orange-400/60 font-medium'>Details</span>
+                        <span class='pr-2 text-xs font-mono text-orange-400/60 font-medium'>Details</span>
                     </a>
                 </div>
             </div>
@@ -149,23 +145,18 @@
             <h1 class="text-3xl text-white/60">
                 Follow trends to create events that capture audiances
             </h1>
-            <div class="w-fit bg-orange-400/70 border border-green-400/15 p-1 rounded-3xl  flex items-center gap-1 cursor-pointer">
-                <div class="size-8 flex justify-center items-center bg-black text-orange-400/80 border border-green-400/15 p-2 rounded-[50%]">
-                    <i class="fa-solid fa-filter"></i>
-                </div>
-                <span class='text-sm font-medium mr-1'>Trend Filters</span>
-            </div>
+          
         </div>
-        <div class="grid grid-cols-4 gap-7">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
             @foreach($trends as $trend)
             <div class="col-span-1 h-full flex flex-col gap-2">
                 <div class="overflow-hidden w-full h-[150px]">
-                    <img src="{{ $trend->image ? asset('storage/'.$trend->image) : asset('img1.jpg') }}" class='h-full w-full rounded-3xl object-cover opacity-70' alt="{{ $trend->title }}" />
+                    <img src="{{ $trend->image ? asset('storage/'.$trend->image) : asset('default.jpg') }}" class='h-full w-full rounded-3xl object-cover opacity-80' alt="{{ $trend->title }}" />
                 </div>
 
                 <div class="flex justify-between items-center">
                     <div class="text-white/70 flex items-center gap-2">
-                        <button class="trend-like-btn size-8 flex justify-center items-center rounded-[50%] border border-green-400/20 bg-green-400/10" data-trend-id="{{ $trend->id }}" data-is-liked="{{ isset($trend->is_liked) && $trend->is_liked ? 'true' : 'false' }}">
+                        <button class="trend-like-btn size-8 flex justify-center items-center rounded-xl ml-2 bg-green-400/10 border border-green-400/20" data-trend-id="{{ $trend->id }}" data-is-liked="{{ isset($trend->is_liked) && $trend->is_liked ? 'true' : 'false' }}">
                             {{-- <i class="fa-solid fa-heart {{ isset($trend->is_liked) && $trend->is_liked ? 'text-red-500' : 'text-white/70' }}"></i> --}}
                             <p class="{{ isset($trend->is_liked) && $trend->is_liked ? 'text-red-500' : 'text-white/70' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart ">
@@ -173,23 +164,26 @@
                                 </svg>
                             </p>
                         </button>
-                        <span class="text-sm text-white/70 font-medium trend-likes-count" data-trend-id="{{ $trend->id }}">
-                            {{ $trend->likes_count ?? 0 }} Likes
-                        </span>
+                        <div class="flex gap-1 items-center text-sm text-white/70 font-medium">
+                            <span class=" trend-likes-count" data-trend-id="{{ $trend->id }}">
+                                {{ $trend->likes_count ?? 0 }}
+                            </span>
+                            <span>Likes</span>
+                        </div>
                     </div>
 
                     <a href="{{ route('trends.show', $trend->id) }}" class="w-fit bg-orange-400/70 border border-green-400/15 p-0.5 rounded-3xl flex items-center gap-1 cursor-pointer">
-                        <p class="size-8 flex items-center justify-center rounded-[50%] text-orange-400/80 bg-black/95 border border-green-400/15 text-md">
+                        <p class="size-8 flex items-center justify-center rounded-[50%] text-orange-400/80 bg-black/95 border border-green-400/15">
                             <i class="fa-solid fa-ellipsis-vertical"></i>
                         </p>
-                        <span class="text-sm font-medium mr-1">Read More</span>
+                        <span class="text-xs font-mono font-medium mr-1">Read Post</span>
                     </a>
                 </div>
 
                 <div class="p-4 h-[150px] bg-green-400/10 rounded-3xl">
-                    <h2 class="text-lg font-semibold text-orange-400/80 mb-2">{{ $trend->title }}</h2>
+                    <h2 class="text-md font-semibold text-orange-400/70 mb-2">{{ $trend->title }}</h2>
                     <p class="text-sm font-light font-mono text-white/70 line-clamp-3">
-                        {{ Str::limit($trend->body, 150) }}
+                        {{ Str::limit($trend->body, 200) }}
                     </p>
                 </div>
             </div>

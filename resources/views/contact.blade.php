@@ -13,27 +13,27 @@
             <p class='w-[50%] text-center text-white/60 font-light font-mono text-sm'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Qui, unde? adipisicing elit. Qui, unde?</p>
             <div class="flex gap-20  bg-orange-400/60 w-fit p-1 rounded-4xl">
                 <div class="flex gap-2 items-center">
-                    <span class=' p-3 rounded-[50%] bg-black/90 text-orange-400/60 border border-green-400/10'>
+                    <span class=' p-2.5 rounded-[50%] bg-black/90 text-orange-400/60 border border-green-400/10'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone-icon lucide-phone">
                             <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg></span>
-                    <span class='text-black/90 font-medium text-sm'>+256 759160763</span>
+                    <span class='text-black/90 font-medium text-sm mr-2'>+256 759160763</span>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <span class=' p-3 rounded-[50%] bg-black/90 text-orange-400/60 border border-green-400/10'>
+                    <span class=' p-2.5 rounded-[50%] bg-black/90 text-orange-400/60 border border-green-400/10'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-at-sign-icon lucide-at-sign">
                             <circle cx="12" cy="12" r="4" />
                             <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" /></svg>
                     </span>
-                    <span class='text-black/90 font-medium text-sm'>kavumadennis11@gmail.com</span>
+                    <span class='text-black/90 font-medium text-sm mr-2'>kavumadennis11@gmail.com</span>
                 </div>
 
                 <div class="flex gap-2 items-center">
-                    <span class=' p-3 rounded-[50%] bg-black/90 text-orange-400/60 border border-green-400/10'>
+                    <span class=' p-2.5 rounded-[50%] bg-black/90 text-orange-400/60 border border-green-400/10'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-icon lucide-map-pin">
                             <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
                             <circle cx="12" cy="10" r="3" /></svg>
                     </span>
-                    <span class='text-black/90 font-medium text-sm'>Bugiri, Entebbe</span>
+                    <span class='text-black/90 font-medium text-sm mr-2'>Bugiri, Entebbe</span>
                 </div>
             </div>
 
@@ -64,7 +64,7 @@
 
 
         <div class="w-[45%] mt-10 mx-auto">
-            <form action="{{ route('contact.submit') }}" method="POST" class="flex flex-col gap-5 w-full p-4 rounded-4xl bg-green-400/10">
+            <form action="{{ route('contact.submit') }}" method="POST" class="flex flex-col gap-5 w-full p-5 rounded-2xl border border-green-400/10 bg-green-400/10">
                 @csrf
 
                 @if(session('success'))
@@ -73,27 +73,27 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col gap-2 text-white/60 font-light text-sm">
-                        <label for="name" class='ml-1'>Name</label>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder='Enter your name' class='p-3 rounded-l-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30 backdrop-blur-4xl' />
+                        <label for="name" class='text-white/60 font-medium ml-1 text-sm'>Name</label>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder='Enter your name' class='p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70' />
                         @error('name')<span class="text-red-400 text-xs">{{ $message }}</span>@enderror
                     </div>
 
-                    <div class="flex flex-col gap-2 text-white/60 font-light text-sm">
-                        <label for="phone" class='ml-1'>Phone number</label>
-                        <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder='Enter your phone number' class='p-3 rounded-r-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30 backdrop-blur-4xl' />
+                    <div class="flex flex-col gap-2 ">
+                        <label for="phone" class='text-white/60 font-medium ml-1 text-sm'>Phone number</label>
+                        <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder='Enter your phone number' class='p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70' />
                         @error('phone')<span class="text-red-400 text-xs">{{ $message }}</span>@enderror
                     </div>
                 </div>
 
-                <div class="flex flex-col col-span-2 gap-2 text-white/60 font-light text-sm">
-                    <label for="email" class='ml-1'>Email</label>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder='Enter your email' class='p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30 backdrop-blur-4xl' />
+                <div class="flex flex-col col-span-2 gap-2">
+                    <label for="email" class='text-white/60 font-medium ml-1 text-sm'>Email</label>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder='Enter your email' class='p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70' />
                     @error('email')<span class="text-red-400 text-xs">{{ $message }}</span>@enderror
                 </div>
 
-                <div class="col-span-2 flex flex-col gap-2 text-white/60 font-light text-sm">
-                    <label for="message" class='ml-1'>Write your message</label>
-                    <textarea id="message" name="message" class='p-3 rounded-2xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30 backdrop-blur-4xl w-full min-h-44'>{{ old('message') }}</textarea>
+                <div class="col-span-2 flex flex-col gap-2">
+                    <label for="message" class='ml-1 text-white/60 font-medium text-sm'>Write your message</label>
+                    <textarea id="message" name="message" placeholder="Leave your message !!" class='p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 w-full min-h-44'>{{ old('message') }}</textarea>
                     @error('message')<span class="text-red-400 text-xs">{{ $message }}</span>@enderror
                 </div>
 

@@ -7,17 +7,17 @@
     @vite('resources/css/app.css')
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
-<body class="bg-black/70 bg-[url('/public/bg-img.png')] bg-cover bg-center bg-fixed bg-blend-multiply relative">
+<body class="overflow-y-auto bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-purple-400/10">
 
-    <section class="w-full grid grid-cols-2 gap-2 h-screen p-1">
+    <section class="w-full grid-cols-1 grid md:grid-cols-2 gap-2 h-screen p-1">
         <!-- Left Section -->
-        <div class="h-full w-full rounded-4xl pl-20 flex items-center bg-[url('/public/bg-img.png')] bg-blend-darken bg-black/70 border border-purple-400/10">
+        <div class="h-full w-full px-10 flex items-center bg-green-400/10 border border-green-400/10">
 
-            <form action="{{ route('organizer_store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-5 w-full max-w-md" x-data="{ imagePreview: null }">
+            <form action="{{ route('organizer_store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-5 w-full" x-data="{ imagePreview: null }">
                 @csrf
 
                 <div>
-                    <h1 class="text-orange-400/70 text-4xl font-semibold">Create Organizer Page</h1>
+                    <h1 class="text-orange-400/70 text-4xl font-semibold">Create Organizer Profile</h1>
                     <p class="font-light font-mono text-white/60">Let’s get to know you better so we can help you.</p>
                 </div>
 
@@ -65,7 +65,7 @@
                 <!-- Business Name -->
                 <div class="flex flex-col gap-2">
                     <label for="business_name" class="text-white/60 font-medium ml-1 text-sm">Business name</label>
-                    <input type="text" id="business_name" name="business_name" placeholder="Enter business name" value="{{ old('business_name') }}" class="p-3 w-full text-white/70 rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/50 backdrop-blur-4xl focus:outline-orange-400/50">
+                    <input type="text" id="business_name" name="business_name" placeholder="Enter business name" value="{{ old('business_name') }}" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                     @error('business_name')
                     <p class="text-red-400 text-xs ml-1">{{ $message }}</p>
                     @enderror
@@ -74,7 +74,7 @@
                 <!-- Business Email -->
                 <div class="flex flex-col gap-2">
                     <label for="business_email" class="text-white/60 font-medium ml-1 text-sm">Business email</label>
-                    <input type="email" id="business_email" name="business_email" placeholder="Enter business email" value="{{ old('business_email') }}" class="p-3 w-full text-white/70 rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/50 backdrop-blur-4xl focus:outline-orange-400/50">
+                    <input type="email" id="business_email" name="business_email" placeholder="Enter business email" value="{{ old('business_email') }}" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                     @error('business_email')
                     <p class="text-red-400 text-xs ml-1">{{ $message }}</p>
                     @enderror
@@ -83,7 +83,7 @@
                 <!-- Business Website -->
                 <div class="flex flex-col gap-2">
                     <label for="business_website" class="text-white/60 font-medium ml-1 text-sm">Business website</label>
-                    <input type="text" id="business_website" name="business_website" placeholder="e.g., www.organizer.com" value="{{ old('business_website') }}" class="p-3 w-full text-white/70 rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/50 backdrop-blur-4xl focus:outline-orange-400/50">
+                    <input type="text" id="business_website" name="business_website" placeholder="e.g., www.organizer.com" value="{{ old('business_website') }}" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                     @error('business_website')
                     <p class="text-red-400 text-xs ml-1">{{ $message }}</p>
                     @enderror
@@ -97,7 +97,7 @@
         </div>
 
         <!-- Right Section -->
-        <div class="h-full w-full bg-black/50 bg-[url('/public/img4.jpg')] bg-cover bg-center rounded-4xl"></div>
+        <div class="h-full w-full hidden md:block bg-black/50 bg-[url('/public/img4.jpg')] bg-cover bg-center"></div>
     </section>
 
 </body>

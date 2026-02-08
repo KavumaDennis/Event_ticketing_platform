@@ -54,6 +54,10 @@ class EventsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+        if ($request->ajax()) {
+            return view('partials.events-grid', compact('events'))->render();
+        }
+
         // Get all categories
         $categories = Event::select('category')->distinct()->pluck('category');
 
@@ -61,6 +65,35 @@ class EventsController extends Controller
             'events' => $events,
             'categories' => $categories,
             'event' => $topEvent
+        ]);
+    }
+
+    public function categoryPage(Request $request, $category)
+    {
+        $query = Event::query()->where('category', $category);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('event_name', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        $events = $query->with(['organizer', 'likes'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        if ($request->ajax()) {
+            return view('partials.events-grid', compact('events'))->render();
+        }
+
+        $categories = Event::select('category')->distinct()->pluck('category');
+
+        return view('categories', [
+            'events' => $events,
+            'category' => $category,
+            'categories' => $categories
         ]);
     }
 
@@ -81,7 +114,7 @@ class EventsController extends Controller
 
         $topOrganizers = Organizer::withCount('events')
             ->orderByDesc('events_count')
-            ->take(3)
+            ->take(4)
             ->get();
         return view('create_event', [
             'organizerName' => $organizer?->business_name ?? null,

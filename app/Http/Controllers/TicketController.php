@@ -104,6 +104,12 @@ class TicketController extends Controller
             'reference_id' => 'TRANSFER-' . $transfer->token,
         ]);
 
+        // Decrement original purchase quantity if it's more than 1
+        $originalPurchase = $transfer->ticket->purchase;
+        if ($originalPurchase && $originalPurchase->quantity > 0) {
+            $originalPurchase->decrement('quantity');
+        }
+
         $transfer->ticket->update([
             'ticket_purchase_id' => $newPurchase->id,
         ]);

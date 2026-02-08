@@ -49,13 +49,31 @@ class DashboardController extends Controller
             ->take(4)
             ->get();
 
+        // Recent Tickets
+        $recentTickets = Ticket::whereHas('purchase', function($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })
+        ->with(['event'])
+        ->latest()
+        ->take(3)
+        ->get();
+
+        // Top Categories (derived from events)
+        $topCategories = Event::select('category', \DB::raw('count(*) as event_count'))
+            ->groupBy('category')
+            ->orderByDesc('event_count')
+            ->take(6)
+            ->get();
+
         return view('dashboard.overview', compact(
             'user',
             'trends',
             'followedOrganizers',
             'saved',
             'topOrganizers',
-            'recommendations'
+            'recommendations',
+            'recentTickets',
+            'topCategories'
         ));
     }
 
@@ -116,7 +134,10 @@ class DashboardController extends Controller
             'saved_count' => $user->savedEvents()->count(),
         ];
 
-        $latestEvents = Event::with('organizer')
+        $followedOrganizersIds = $user->followedOrganizers()->pluck('organizers.id');
+
+        $followedOrganizersEvents = Event::whereIn('organizer_id', $followedOrganizersIds)
+            ->with('organizer')
             ->latest()
             ->take(8)
             ->get();
@@ -129,7 +150,7 @@ class DashboardController extends Controller
         return view('dashboard.profile', compact(
             'user',
             'stats',
-            'latestEvents',
+            'followedOrganizersEvents',
             'latestTrends'
         ));
     }
@@ -303,10 +324,13 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $allTickets = $user->tickets()
-            ->with(['event.organizer'])
-            ->latest()
-            ->get();
+        // Use a more direct query to avoid potential hasManyThrough attribute collisions
+        $allTickets = Ticket::whereHas('purchase', function($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })
+        ->with(['event.organizer', 'purchase'])
+        ->latest()
+        ->get();
 
         $upcoming = $allTickets->filter(function($t) {
             return \Carbon\Carbon::parse($t->event->event_date)->isFuture();

@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="w-full">
-        <div class="grid grid-cols-5 w-full h-screen overflow-y-auto bg-[url(/public/bg-img.png)] bg-blend-darken bg-black/75 border border-purple-400/10">
+        <div class="grid grid-cols-5 w-full h-screen overflow-y-auto bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-purple-400/10">
             <div class="col-span-2 w-full p-1 h-full flex flex-col justify-between">
                 <div class="bg-green-400/10 border border-green-400/10 p-5 h-full w-full flex flex-col justify-center items-center">
                     <p class="text-white/70 mb-3">AKAVAAKO</p>
@@ -21,10 +21,22 @@
                         <p class="text-white/70 font-mono font-medium text-xs text-center w-[80%]">
                             Hello user, log in to get access to the best features Akavaako has to offer
                         </p>
+                        @if(session('error'))
+                        <div class="px-4 py-2 bg-red-500/20 border border-red-500 text-red-100 rounded-xl mb-4 text-sm">
+                            {{ session('error') }}
+                        </div>
+                        @endif
+
+                        @if(session('success'))
+                        <div class="px-4 py-2 bg-green-500/20 border border-green-500 text-green-100 rounded-xl mb-4 text-sm">
+                            {{ session('success') }}
+                        </div>
+                        @endif
+
                         @if($errors->any())
-                        <ul class="px-4 py-2 bg-red-100">
+                        <ul class="px-4 py-2 bg-red-100 rounded-xl mb-4 w-full">
                             @foreach($errors->all() as $error)
-                            <li class="my-2 text-red-500">{{ $error }}</li>
+                            <li class="my-2 text-red-500 text-sm italic list-disc ml-4">{{ $error }}</li>
                             @endforeach
                         </ul>
                         @endif
@@ -32,31 +44,31 @@
                             @csrf
                             <div class="flex flex-col w-full gap-2">
                                 <label htmlFor="" class="text-white/60 font-medium ml-1 text-sm">Email</label>
-                                <input type="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30 placeholder-white/40 backdrop-blur-4xl" />
+                                <input type="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" />
                             </div>
                             <div class="flex flex-col w-full gap-2">
                                 <label htmlFor="" class="text-white/60 font-medium ml-1 text-sm">Password</label>
-                                <input type="password" name="password" placeholder="Enter your password" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30 placeholder-white/40 backdrop-blur-4xl" />
+                                <input type="password" name="password" autocomplete="current-password" placeholder="Enter your password" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" />
                             </div>
                             <div class="flex justify-between items-center text-sm text-blue-400/60 font-light">
                                 <div class="flex gap-2 items-center">
-                                    <input type="checkbox" name="" id="">
-                                    <p class="text-white/80 font-medium">Remember me</p>
+                                    <input type="checkbox" name="remember" id="remember">
+                                    <label for="remember" class="text-white/80 font-medium cursor-pointer">Remember me</label>
                                 </div>
 
-                                <a>
+                                <a href="{{ route('password.request') }}">
                                     <p class="pr-3 underline">Forgot Password</p>
                                 </a>
                             </div>
-                            <button class="w-full p-3 bg-black/80 text-white/80 font-medium font-mono text-sm border border-green-400/15 rounded-3xl">Log In</button>
+                            <button class="w-full p-3 bg-black/80 text-white/80 font-medium font-mono text-sm border border-green-400/10 rounded-3xl">Log In</button>
 
                             <div class="flex justify-between">
-                                <div class="p-1 w-full flex justify-center items-center bg-orange-400/60 border border-green-400/10 rounded-3xl  gap-2">
+                                <a href="{{ route('google.login') }}" class="p-1 w-full flex justify-center items-center bg-orange-400/60 border border-green-400/10 rounded-3xl gap-2 hover:bg-orange-400/80 transition-all">
                                     <span class="p-1 relative flex items-center pr-3 text-black/90 after:absolute after:right-0 after:h-3 after:w-1 after:rounded-lg after:bg-black/90">
                                         <i class="fa-brands fa-google"></i>
                                     </span>
                                     <span class="text-sm text-black/90 font-medium font-mono mr-2">Login with google</span>
-                                </div>
+                                </a>
                             </div>
                             <div class="flex flex-col gap-2 items-center w-full justify-center font-medium text-sm">
                                 <span class="text-orange-400/70">

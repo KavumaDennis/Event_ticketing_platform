@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="w-full">
-        <div class="grid grid-cols-12 w-full h-screen overflow-y-auto bg-[url(/public/bg-img.png)] bg-blend-darken bg-black/75 border border-purple-400/10">
+        <div class="grid grid-cols-12 w-full h-screen overflow-y-auto bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-purple-400/10">
 
             {{-- Left Section - Form --}}
             <div class="col-span-6 w-full p-1 h-full flex flex-col justify-between">
@@ -17,7 +17,7 @@
                         @csrf
 
                         {{-- Header --}}
-                        <div class="flex gap-2 items-center justify-center text-xs w-fit p-1 bg-orange-400/60 rounded-2xl">
+                        <div class="flex gap-2 items-center justify-center text-xs p-1 font-mono font-extrabold bg-orange-400/70 rounded-2xl">
                             <p class="font-medium text-black/80 ml-1">Want to see the latest trends?</p>
                             <a href="{{ route('trends') }}" class="bg-black rounded-xl p-1 px-2 text-orange-400/80 font-medium font-mono">View Trends</a>
                         </div>
@@ -29,12 +29,51 @@
                         </div>
                         @endif
 
+                        {{-- Image Upload --}}
 
+                        <div class="w-full">
+                            <p class="text-white/60 font-medium ml-1 text-sm mb-2">Upload business icon</p>
+
+                            <label for="image" class="cursor-pointer flex items-center gap-5">
+                                <div class="p-8 border-dotted border-2 rounded-xl border-orange-400/70 w-fit text-white/60 flex flex-col items-center justify-center" :class="{ 'border-green-400/70': imagePreview }">
+                                    <template x-if="!imagePreview">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-up">
+                                            <path d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21" />
+                                            <path d="m14 19.5 3-3 3 3" />
+                                            <path d="M17 22v-5.5" />
+                                            <circle cx="9" cy="9" r="2" />
+                                        </svg>
+                                    </template>
+
+                                    <template x-if="imagePreview">
+                                        <img :src="imagePreview" alt="Preview" class="rounded-xl w-20 h-20 object-cover border border-orange-400/50">
+                                    </template>
+                                </div>
+                                <div class="border border-white/60 p-1 px-2 rounded-lg text-white/70 flex items-center gap-1">
+                                    <p class="text-sm">Upload image</p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload">
+                                        <path d="M12 13v8" />
+                                        <path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.24" />
+                                        <path d="m8 17 4-4 4 4" />
+                                    </svg>
+                                </div>
+                            </label>
+
+                            <input type="file" id="image" name="image" class="hidden" accept="image/*" @change="const reader = new FileReader(); reader.onload = e => imagePreview = e.target.result; reader.readAsDataURL($event.target.files[0])">
+
+                            @error('image')
+                            <p class="text-red-400 text-xs ml-1 mt-1">{{ $message }}</p>
+                            @enderror
+
+                            <p class="text-xs mt-2 text-orange-400/60 font-mono font-light">
+                                Pick a photo up to 2MB (optional). Your profile photo will be public.
+                            </p>
+                        </div>
 
                         {{-- Title Field --}}
                         <div class="flex flex-col gap-2 w-full">
                             <label for="title" class="text-white/60 font-medium ml-1 text-sm">Trend Title</label>
-                            <input id="title" type="text" name="title" value="{{ old('title') }}" placeholder="Enter your trend title" class="p-3 rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/50 backdrop-blur-4xl text-white placeholder-white/40">
+                            <input id="title" type="text" name="title" value="{{ old('title') }}" placeholder="Enter your trend title" class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                             @error('title')
                             <p class="text-red-400 text-xs ml-1">{{ $message }}</p>
                             @enderror
@@ -43,31 +82,23 @@
                         {{-- TAG EVENT FIELD --}}
                         <div class="flex flex-col gap-2 w-full relative">
                             <label for="event_tag" class="text-white/60 font-medium ml-1 text-sm">Tag an Event (optional)</label>
-                            <input type="text" id="event_tag" placeholder="Type to search events..." class="p-3 rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/50 backdrop-blur-4xl text-white placeholder-white/40" autocomplete="off">
+                            <input type="text" id="event_tag" placeholder="Type to search events..." class="p-3 w-full rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" autocomplete="off">
                             <input type="hidden" name="event_id" id="event_id">
 
-                            <ul id="event_results" class="absolute z-50 top-full left-0  bg-gray-900 p-2  border border-green-200/10 rounded-2xl max-h-60 overflow-auto hidden w-fit"></ul>
+                            <ul id="event_results" class="absolute z-50 top-full left-0 bg-emerald-950 p-2 border border-green-200/10 rounded-2xl max-h-60 overflow-auto hidden w-fit"></ul>
                         </div>
-
 
 
                         {{-- Body Field --}}
                         <div class="flex flex-col gap-2 w-full">
                             <label for="body" class="text-white/60 font-medium ml-1 text-sm">Trend Body</label>
-                            <textarea id="body" name="body" rows="6" placeholder="Write your trend..." class="p-3 rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/50 backdrop-blur-4xl text-white placeholder-white/40 resize-none">{{ old('body') }}</textarea>
+                            <textarea id="body" name="body" rows="6" placeholder="Write your trend..." class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20  backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 resize-none">{{ old('body') }}</textarea>
                             @error('body')
                             <p class="text-red-400 text-xs ml-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Image Upload --}}
-                        <div class="flex flex-col gap-2 w-full">
-                            <label for="image" class="text-white/60 font-medium ml-1 text-sm">Upload Image (optional)</label>
-                            <input id="image" type="file" name="image" class="p-2 w-full rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/50 text-white/60">
-                            @error('image')
-                            <p class="text-red-400 text-xs ml-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+
 
                         {{-- Submit Button --}}
                         <button class="w-full p-3 bg-black/80 border border-green-400/10 rounded-3xl text-white/70 text-sm font-medium">
@@ -118,7 +149,7 @@
                             eventResults.innerHTML = `<li class="px-3 py-2 text-white/50">No events found</li>`;
                         } else {
                             eventResults.innerHTML = events.map(ev => `
-                            <li class="p-1 bg-green-400/10 border border-green-400/20 mb-1 text-xs font-mono font-medium rounded-2xl w-fit cursor-pointer hover:bg-orange-400/70 hover:text-black/90" data-id="${ev.id}">
+                            <li class="p-1 hover:bg-green-400/10 hover:text-white/60 border border-green-400/20 mb-1 text-xs font-mono font-medium rounded-2xl w-fit cursor-pointer bg-orange-400/70 text-black/90" data-id="${ev.id}">
                                 # ${ev.title}
                             </li>
                         `).join('');

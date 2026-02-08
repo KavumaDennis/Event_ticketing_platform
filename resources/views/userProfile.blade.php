@@ -1,9 +1,5 @@
 <x-layout>
     <div class="p-5">
-
-
-
-
         <!-- Profile Header -->
         <div x-data="{ showFollowers: false, showFollowing: false }">
             <div class="grid grid-cols-4 gap-10">
@@ -149,12 +145,19 @@
 
 
             <!-- Followers Modal -->
-            <div x-show="showFollowers" x-cloak class="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                <div class="bg-gray-700 rounded-3xl p-5 w-96">
-                    <h2 class="text-xl text-white/70 font-semibold mb-3">Followers</h2>
-                    <ul class="space-y-2 max-h-96 overflow-y-auto ">
+            <div x-show="showFollowers" x-cloak class="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+                <div class="w-100 max-h-[400px] overflow-y-auto bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply relative border border-green-400/30 backdrop-blur-[1px] p-5">
+                    <div class="flex w-full justify-between items-center mb-5">
+                        <h2 class="text-xs p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90">Followers</h2>
+                        <button @click="showFollowers = false" class="w-fit p-1 bg-orange-400/70 text-black/90 font-medium font-mono text-sm border border-green-400/10 rounded-3xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                                <path d="M18 6 6 18" />
+                                <path d="m6 6 12 12" /></svg>
+                        </button>
+                    </div>
+                    <ul class="space-y-3">
                         @foreach($followers as $f)
-                        <li class="flex items-center justify-between gap-3 bg-green-400/10 border border-green-400/20 p-2 rounded-2xl">
+                        <li class="flex items-center justify-between gap-3 bg-green-400/10 p-2 rounded-2xl">
                             <div class="flex items-center gap-3">
                                 <img src="{{ $f->follower->profile_photo_url ?? asset('img2.jpg') }}" class="w-10 h-10 rounded-full" alt="{{ $f->follower->first_name }}">
                                 <a href="{{ route('user.profile', $f->follower->id) }}" class="text-white/70 hover:underline">{{ $f->follower->first_name }} {{ $f->follower->last_name }}</a>
@@ -164,27 +167,34 @@
                                 @csrf
                                 @if($f->follower->followers()->where('follower_id', auth()->id())->exists())
                                 @method('DELETE')
-                                <button class="px-3 py-1 rounded-2xl bg-red-500/80 border border-red-400/60 text-white/90 text-xs">Unfollow</button>
+                                <button class="px-3 py-1 rounded-xl bg-red-600/70 text-white/70 text-xs font-mono uppercase font-bold">Unfollow</button>
                                 @else
-                                <button class="px-3 py-1 rounded-2xl bg-green-500/80 border border-green-400/50 text-white/90 text-xs">Follow</button>
+                                <button class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-2 text-orange-400/50 font-mono w-fit uppercase font-bold">Follow</button>
                                 @endif
                             </form>
                             @endif
                         </li>
                         @endforeach
                     </ul>
-                    <button @click="showFollowers = false" class="mt-3 w-full bg-red-500 rounded-xl py-2 text-white/90 font-medium">Close</button>
+
                 </div>
             </div>
 
             <!-- Following Modal -->
-            <div x-show="showFollowing" x-cloak class="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                <div class="bg-gray-700 rounded-3xl p-5 w-96">
-                    <h2 class="text-xl text-white/70 font-semibold mb-3">Following</h2>
-                    <ul class="space-y-2 max-h-96 overflow-y-auto">
+            <div x-show="showFollowing" x-cloak class="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+                <div class="w-100 max-h-[400px] overflow-y-auto bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply relative border border-green-400/30 backdrop-blur-[1px] p-5">
+                    <div class="flex w-full justify-between items-center mb-5">
+                        <h2 class="text-xs p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90">Following</h2>
+                        <button @click="showFollowing = false" class="w-fit p-1 bg-orange-400/70 text-black/90 font-medium font-mono text-sm border border-green-400/10 rounded-3xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                                <path d="M18 6 6 18" />
+                                <path d="m6 6 12 12" /></svg>
+                        </button>
+                    </div>
+                    <ul class="space-y-3">
                         @foreach($following as $f)
                         @if($f->following) {{-- only display if followed user exists --}}
-                        <li class="flex items-center justify-between gap-3 bg-green-400/10 border border-green-400/20 p-2 rounded-2xl">
+                        <li class="flex items-center justify-between gap-3 bg-green-400/10  p-2 rounded-2xl">
                             <div class="flex items-center gap-3">
                                 <img src="{{ $f->following->profile_photo_url ?? asset('img2.jpg') }}" class="w-10 h-10 rounded-full" alt="{{ $f->following->first_name }}">
                                 <a href="{{ route('user.profile', $f->following->id) }}" class="text-white/70 hover:underline">{{ $f->following->first_name }} {{ $f->following->last_name }}</a>
@@ -195,9 +205,9 @@
                                 @csrf
                                 @if($f->following->followers()->where('follower_id', auth()->id())->exists())
                                 @method('DELETE')
-                                <button class="px-3 py-1 rounded-2xl bg-red-500/80 border border-red-400/60 text-white/90 text-xs">Unfollow</button>
+                                <button class="px-3 py-1 rounded-xl bg-red-600/70 text-white/70 text-xs font-mono uppercase font-bold">Unfollow</button>
                                 @else
-                                <button class="px-3 py-1 rounded-2xl bg-green-500/80 border border-green-400/50 text-white/90 text-xs">Follow</button>
+                                <button class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-2 text-orange-400/50 font-mono w-fit uppercase font-bold">Follow</button>
                                 @endif
                             </form>
                             @endif
@@ -206,13 +216,12 @@
                         @endforeach
 
                     </ul>
-                    <button @click="showFollowing = false" class="mt-3 w-full bg-red-500 rounded-xl py-2 text-white/90 font-medium">Close</button>
                 </div>
             </div>
         </div>
 
         <!-- Trends Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mt-10">
             @foreach($trends as $trend)
             <div class="col-span-1 h-full flex flex-col gap-2">
                 <div class="overflow-hidden w-full h-[150px]">
@@ -242,20 +251,20 @@
                     </a>
                 </div>
 
-                <div class="p-4 h-[150px] bg-green-400/10 rounded-3xl">
+                {{-- <div class="p-4 h-[150px] bg-green-400/10 rounded-3xl">
                     <h2 class="text-md font-semibold text-orange-400/70 mb-2">{{ $trend->title }}</h2>
-                    <p class="text-sm font-light font-mono text-white/70 line-clamp-3">
-                        {{ Str::limit($trend->body, 200) }}
-                    </p>
-                </div>
-            </div>
-            @endforeach
+                <p class="text-sm font-light font-mono text-white/70 line-clamp-3">
+                    {{ Str::limit($trend->body, 200) }}
+                </p>
+            </div> --}}
         </div>
+        @endforeach
+    </div>
 
-        <!-- Pagination -->
-        <div class="mt-8">
-            {{ $trends->links() }}
-        </div>
+    <!-- Pagination -->
+    <div class="mt-8">
+        {{ $trends->links() }}
+    </div>
 
     </div>
 

@@ -39,13 +39,19 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($validated)) {
+        $remember = $request->has('remember');
+
+        if (Auth::attempt($validated, $remember)) {
             $request->session()->regenerate();
 
             // Store formatted username in session
             $user = Auth::user();
             $username = strtoupper(substr($user->first_name, 0, 1)) . '_' . $user->last_name;
             session(['username' => $username]);
+
+            if ($user->is_admin) {
+                return redirect()->route('admin.dashboard');
+            }
 
             return redirect()->route('home');
         }

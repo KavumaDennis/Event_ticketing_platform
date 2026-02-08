@@ -30,23 +30,7 @@
                         <div class="mt-5 flex justify-between items-center w-full">
                             <div class="flex items-center gap-2">
                                 {{-- EDIT BUTTON --}}
-                                <button onclick="openEditModal({ 
-    id: {{ $ev->id }},
-    event_name: '{{ addslashes($ev->event_name) }}',
-    category: '{{ addslashes($ev->category) }}',
-    location: '{{ addslashes($ev->location) }}',
-    venue: '{{ addslashes($ev->venue) }}',
-    event_date: '{{ $ev->event_date }}',
-    start_time: '{{ $ev->start_time }}',
-    end_time: '{{ $ev->end_time }}',
-    description: '{{ addslashes($ev->description) }}',
-    regular_price: '{{ $ev->regular_price }}',
-    regular_quantity: '{{ $ev->regular_quantity }}',
-    vip_price: '{{ $ev->vip_price }}',
-    vip_quantity: '{{ $ev->vip_quantity }}',
-    vvip_price: '{{ $ev->vvip_price }}',
-    vvip_quantity: '{{ $ev->vvip_quantity }}'
-})" class="px-2 py-1 text-xs bg-yellow-500 text-black rounded-2xl font-mono hover:bg-yellow-600" title="Edit Event">
+                                <button onclick="openEditModal({{ json_encode($ev) }})" class="px-2 py-1 text-xs bg-yellow-500 text-black rounded-2xl font-mono hover:bg-yellow-600" title="Edit Event">
                                     Edit
                                 </button>
 
@@ -76,15 +60,14 @@
 
     {{-- Right sidebar --}}
     <aside class="col-span-4 relative">
-        <div class="absolute top-0 right-0 w-full flex flex-col gap-5">
+        <div class="absolute top-0 right-0 w-full h-full flex flex-col justify-between gap-5">
             {{-- Saved Events --}}
-
-            <div class="p-4 border-green-400/20 bg-green-400/10  rounded-3xl ">
-                <h4 class="font-semibold text-orange-400/70 text-sm mb-3">Saved events</h4>
-                <div class="h-[340px] overflow-hidden overflow-y-scroll flex flex-col gap-3 rounded-2xl">
+            <div class="p-3 pr-1 border border-green-400/5 bg-green-400/10  rounded-2xl ">
+                <h4 class="font-semibold text-orange-400/70 text-sm mb-2">Saved events</h4>
+                <div class="h-[300px] overflow-hidden overflow-y-scroll flex flex-col gap-3 rounded-2xl pr-2">
                     @foreach($saved as $s)
                     @php $ev = $s->event; @endphp
-                    <div class="flex border border-green-400/20 bg-green-400/10 rounded-2xl p-2 relative">
+                    <div class="flex bg-green-400/10 rounded-2xl p-2 relative">
                         <div class="pb-5">
                             <div class="font-medium text-white/80 text-sm">{{ $ev->event_name }}</div>
                             <div class="text-white/60 text-xs font-mono">{{ $ev->organizer?->business_name ?? 'Unknown' }}</div>
@@ -110,7 +93,7 @@
 
             {{-- Organizer Profile --}}
             @if($organizer)
-            <div class="p-4 bg-green-400/10 rounded-3xl mt-3">
+            <div class="p-3 bg-green-400/10 border border-green-400/5 rounded-2xl mt-3">
                 <h3 class="text-orange-400/70 text-sm font-semibold">Your Organizer Profile</h3>
                 <div class="flex items-center gap-3 mt-2">
                     <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('default.jpg') }}" class="w-12 h-12 rounded-full object-cover">
@@ -130,99 +113,99 @@
 </div>
 
 {{-- EDIT EVENT MODAL --}}
-<div id="editModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-green-400 w-full max-w-md max-h-[90vh] p-5 rounded-xl shadow-xl overflow-y-auto relative">
+<div id="editModal" class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="w-[600px] max-h-[600px] overflow-y-auto bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-green-400/30 backdrop-blur-[1px] w-full max-w-lg p-4 shadow-xl relative">
         <button onclick="closeEditModal()" class="absolute top-3 right-3 text-gray-600 text-lg font-bold">✖</button>
         <h2 class="text-xl font-bold mb-4 text-white">Edit Event</h2>
 
-        <form id="editForm" method="POST" enctype="multipart/form-data">
+        <form id="editForm" method="POST" enctype="multipart/form-data" class="grid grid-cols-2 gap-4">
             @csrf
             @method('PUT')
 
             {{-- Event Name --}}
             <div class="mb-2">
-                <label class="block font-semibold text-white/80 text-sm">Event Name</label>
-                <input type="text" id="edit_name" name="event_name" class="w-full border p-2 rounded text-sm" required>
+                <label class="text-white/60 font-medium ml-1 text-sm">Event Name</label>
+                <input type="text" id="edit_name" name="event_name" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" required>
             </div>
 
             {{-- Category --}}
             <div class="mb-2">
                 <label class="block font-semibold text-white/80 text-sm">Category</label>
-                <input type="text" id="edit_category" name="category" class="w-full border p-2 rounded text-sm">
+                <input type="text" id="edit_category" name="category" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
             </div>
 
             {{-- Location --}}
-            <div class="mb-2">
+            <div class="mb-2 flex flex-col gap-1.5">
                 <label class="block font-semibold text-white/80 text-sm">Location</label>
-                <input type="text" id="edit_location" name="location" class="w-full border p-2 rounded text-sm">
+                <input type="text" id="edit_location" name="location" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
             </div>
 
             {{-- Venue --}}
-            <div class="mb-2">
+            <div class="mb-2 flex flex-col gap-1.5">
                 <label class="block font-semibold text-white/80 text-sm">Venue</label>
-                <input type="text" id="edit_venue" name="venue" class="w-full border p-2 rounded text-sm">
+                <input type="text" id="edit_venue" name="venue" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
             </div>
 
             {{-- Event Date --}}
-            <div class="mb-2">
+            <div class="mb-2 col-span-2 flex flex-col gap-1.5">
                 <label class="block font-semibold text-white/80 text-sm">Event Date</label>
-                <input type="date" id="edit_event_date" name="event_date" class="w-full border p-2 rounded text-sm">
+                <input type="date" id="edit_event_date" name="event_date" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
             </div>
 
             {{-- Start & End Time --}}
-            <div class="mb-2 flex gap-2">
+            <div class="mb-2 flex gap-2 col-span-2">
                 <div class="flex-1">
                     <label class="block font-semibold text-white/80 text-sm">Start Time</label>
-                    <input type="time" id="edit_start_time" name="start_time" class="w-full border p-2 rounded text-sm">
+                    <input type="time" id="edit_start_time" name="start_time" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
                 <div class="flex-1">
                     <label class="block font-semibold text-white/80 text-sm">End Time</label>
-                    <input type="time" id="edit_end_time" name="end_time" class="w-full border p-2 rounded text-sm">
+                    <input type="time" id="edit_end_time" name="end_time" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
             </div>
 
             {{-- Description --}}
-            <div class="mb-2">
+            <div class="mb-2 col-span-2 flex flex-col gap-1.5">
                 <label class="block font-semibold text-white/80 text-sm">Description</label>
-                <textarea id="edit_description" name="description" class="w-full border p-2 rounded text-sm" rows="3"></textarea>
+                <textarea id="edit_description" name="description" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" rows="3"></textarea>
             </div>
 
             {{-- Event Image --}}
-            <div class="mb-2">
+            <div class="mb-2 col-span-2 flex flex-col gap-1.5">
                 <label class="block font-semibold text-white/80 text-sm">Replace Image</label>
-                <input type="file" name="event_image" class="w-full border p-2 rounded text-sm">
+                <input type="file" name="event_image" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
             </div>
 
             {{-- Prices & Quantities --}}
-            <div class="mb-2 grid grid-cols-2 gap-2">
+            <div class="mb-2 grid grid-cols-2 gap-4 col-span-2">
                 <div>
                     <label class="block font-semibold text-white/80 text-sm">Regular Price</label>
-                    <input type="number" id="edit_regular_price" name="regular_price" class="w-full border p-2 rounded text-sm">
+                    <input type="number" id="edit_regular_price" name="regular_price" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
                 <div>
                     <label class="block font-semibold text-white/80 text-sm">Regular Quantity</label>
-                    <input type="number" id="edit_regular_quantity" name="regular_quantity" class="w-full border p-2 rounded text-sm">
+                    <input type="number" id="edit_regular_quantity" name="regular_quantity" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
                 <div>
                     <label class="block font-semibold text-white/80 text-sm">VIP Price</label>
-                    <input type="number" id="edit_vip_price" name="vip_price" class="w-full border p-2 rounded text-sm">
+                    <input type="number" id="edit_vip_price" name="vip_price" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
                 <div>
                     <label class="block font-semibold text-white/80 text-sm">VIP Quantity</label>
-                    <input type="number" id="edit_vip_quantity" name="vip_quantity" class="w-full border p-2 rounded text-sm">
+                    <input type="number" id="edit_vip_quantity" name="vip_quantity" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
                 <div>
                     <label class="block font-semibold text-white/80 text-sm">VVIP Price</label>
-                    <input type="number" id="edit_vvip_price" name="vvip_price" class="w-full border p-2 rounded text-sm">
+                    <input type="number" id="edit_vvip_price" name="vvip_price" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
                 <div>
                     <label class="block font-semibold text-white/80 text-sm">VVIP Quantity</label>
-                    <input type="number" id="edit_vvip_quantity" name="vvip_quantity" class="w-full border p-2 rounded text-sm">
+                    <input type="number" id="edit_vvip_quantity" name="vvip_quantity" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
                 </div>
             </div>
 
             {{-- Submit Button --}}
-            <button class="w-full mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            <button class="w-full mt-4 px-4 py-2 bg-black/90 text-orange-400 font-mono font-bold rounded-3xl border border-green-400/20 hover:bg-black transition">
                 Update Event
             </button>
         </form>
@@ -235,20 +218,20 @@
 @push('scripts')
 <script>
     window.openEditModal = function(event) {
-        document.getElementById("edit_name").value = event.event_name ? ? "";
-        document.getElementById("edit_category").value = event.category ? ? "";
-        document.getElementById("edit_location").value = event.location ? ? "";
-        document.getElementById("edit_venue").value = event.venue ? ? "";
-        document.getElementById("edit_event_date").value = event.event_date ? ? "";
-        document.getElementById("edit_start_time").value = event.start_time ? ? "";
-        document.getElementById("edit_end_time").value = event.end_time ? ? "";
-        document.getElementById("edit_description").value = event.description ? ? "";
-        document.getElementById("edit_regular_price").value = event.regular_price ? ? "";
-        document.getElementById("edit_regular_quantity").value = event.regular_quantity ? ? "";
-        document.getElementById("edit_vip_price").value = event.vip_price ? ? "";
-        document.getElementById("edit_vip_quantity").value = event.vip_quantity ? ? "";
-        document.getElementById("edit_vvip_price").value = event.vvip_price ? ? "";
-        document.getElementById("edit_vvip_quantity").value = event.vvip_quantity ? ? "";
+        document.getElementById("edit_name").value = event.event_name || "";
+        document.getElementById("edit_category").value = event.category || "";
+        document.getElementById("edit_location").value = event.location || "";
+        document.getElementById("edit_venue").value = event.venue || "";
+        document.getElementById("edit_event_date").value = event.event_date || "";
+        document.getElementById("edit_start_time").value = event.start_time || "";
+        document.getElementById("edit_end_time").value = event.end_time || "";
+        document.getElementById("edit_description").value = event.description || "";
+        document.getElementById("edit_regular_price").value = event.regular_price || "";
+        document.getElementById("edit_regular_quantity").value = event.regular_quantity || "";
+        document.getElementById("edit_vip_price").value = event.vip_price || "";
+        document.getElementById("edit_vip_quantity").value = event.vip_quantity || "";
+        document.getElementById("edit_vvip_price").value = event.vvip_price || "";
+        document.getElementById("edit_vvip_quantity").value = event.vvip_quantity || "";
 
         // Set the form action dynamically
         document.getElementById("editForm").action = "/events/" + event.id;

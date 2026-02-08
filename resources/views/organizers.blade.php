@@ -2,17 +2,15 @@
 
     <div class="p-5 flex flex-col gap-10">
         <div class="grid grid-cols-2 gap-10">
-
             <!-- LEFT SECTION -->
-            <div class="flex flex-col gap-5">
-
+            <div class="flex flex-col gap-5 col-span-2 lg:col-span-1">
                 <!-- Heading -->
-                <h1 class="text-5xl w-[80%] text-orange-400/60">
+                <h1 class="text-3xl lg:text-5xl md:w-full lg:w-[80%] text-orange-400/60">
                     Build and share interactive stories on Our Platform
                 </h1>
 
                 <!-- Sub text -->
-                <p class="font-light w-[80%] text-white/60 ml-3 font-mono">
+                <p class="font-light md:w-full lg:w-[80%] text-white/60 lg:ml-3 font-mono">
                     Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti aspernatur reprehenderit soluta eos error culpa dolorum doloremque necessitatibus velit impedit!
                 </p>
 
@@ -29,10 +27,10 @@
                 </a>
 
                 <!-- 2 small cards -->
-                <div class="grid grid-cols-2 gap-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                     <!-- LEFT SMALL CARD -->
-                    <div class="flex flex-col justify-between p-2 rounded-3xl bg-green-400/10">
+                    <div class="flex flex-col gap-3 justify-between p-2 rounded-3xl bg-green-400/10">
                         <div class="p-1 px-2 rounded-2xl border border-green-400/20 bg-green-400/10 font-medium text-orange-400/80 text-xs w-fit">lorem</div>
                         <div class="font-light font-mono text-sm text-white/60">
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis, unde! Saepe ipsa magnam eligendi modi.
@@ -73,10 +71,10 @@
             </div>
 
             <!-- RIGHT SECTION -->
-            <div class="w-full h-full flex flex-col gap-5 justify-between">
+            <div class="w-full h-full flex flex-col gap-5 justify-between col-span-2 lg:col-span-1">
                 <!-- Carousel Container -->
-                <div class="w-full flex-1 relative overflow-hidden rounded-3xl opacity-70" x-data="imageCarousel({{ count($carouselImages) }})">
-                    <div class="relative w-full h-full">
+                <div class="w-full  flex-1 relative overflow-hidden rounded-3xl opacity-70" x-data="imageCarousel({{ count($carouselImages) }})">
+                    <div class="relative w-full h-52 lg:h-full">
                         @foreach($carouselImages as $index => $image)
                         <div x-show="currentSlide === {{ $index }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
                             <img src="{{ asset($image) }}" onerror="this.onerror=null; this.src='{{ asset('img1.jpg') }}';" class="w-full h-full object-cover z-50" alt="Carousel image {{ $index + 1 }}">
@@ -101,7 +99,6 @@
                         @endforeach
                     </div>
                     @endif
-
                 </div>
 
                 <!-- Bottom Text + Tiny Tags -->
@@ -110,12 +107,16 @@
                         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi, tempore.
                     </h1>
 
-                    <div class="flex gap-5 items-center justify-between">
-                        <p class="text-white/80 w-fit text-sm">The biggest trends</p>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                        <p class="text-xs p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90">Trending categories</p>
 
-                        <ul class="flex justify-between items-center gap-5 p-1 border border-green-400/20 bg-green-400/10 rounded-3xl">
-                            @for($i = 0; $i < 6; $i++) <li class="p-1 px-3 rounded-3xl text-xs bg-black/70 font-mono text-orange-400/60">Thing</li>
-                                @endfor
+                        <ul class="flex items-center gap-1 w-fit p-1 border border-green-400/20 bg-green-400/10 rounded-3xl flex-wrap">
+                            @foreach($topCategories as $cat)
+                            <a href="{{ route('categories.show', $cat->category) }}" class="p-1 px-2 rounded-3xl text-xs bg-black/70 font-mono text-orange-400/60 flex items-center gap-1">
+                                <span>{{ $cat->category }}</span>
+                                <span class="text-green-400/60 font-bold flex items-center pl-1.5 relative after:content-[''] after:bg-zinc-400 after:absolute after:w-[3px] after:h-2.5 after:rounded-lg after:left-0">{{ $cat->event_count }}</span>
+                            </a>
+                            @endforeach
                         </ul>
                     </div>
 
@@ -132,7 +133,7 @@
             <h1 class="text-3xl text-white">Top organizers</h1>
         </div>
 
-        <div class="grid grid-cols-4 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             @foreach($organizers as $organizer)
             <div class="h-fit col-span-1 w-full bg-green-400/10 p-3 rounded-3xl">
                 <div class="flex justify-between mb-5">
@@ -145,10 +146,10 @@
                         </p>
                     </div>
                     <div class="text-sm text-white/70 bg-black/60 flex items-center border border-green-400/15 rounded-md h-fit px-1">
-                        <span class='pr-2 text-sm font-medium flex items-center relative after:content-[""] after:bg-orange-400/80 after:absolute after:w-[3px] after:h-[12px] after:rounded-lg after:right-0'>
+                        <span class='pr-2.5 text-sm font-medium flex items-center relative after:content-[""] after:bg-orange-400/80 after:absolute after:w-[3px] after:h-3 after:rounded-lg after:right-0'>
                             Events
                         </span>
-                        <span class='pl-2'>{{ $organizer->events_count }}</span>
+                        <span class='pl-1'>{{ $organizer->events_count }}</span>
                     </div>
                 </div>
                 <div class="flex justify-between items-center pt-5 border-t border-white/30">
@@ -193,10 +194,10 @@
     <div class="p-5">
         <div class="flex flex-col gap-3">
             <h1 class="text-3xl text-white/60">Unleash Your Creativity</h1>
-            <p class="font-mono font-light text-white/60 text-sm w-[50%]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur minima doloribus quidem reiciendis, quos alias tenetur corporis commodi harum enim.</p>
+            <p class="font-mono font-light text-white/60 text-sm w-full lg:w-[50%]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur minima doloribus quidem reiciendis, quos alias tenetur corporis commodi harum enim.</p>
         </div>
 
-        <div class="grid grid-cols-3 gap-5 mt-5">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">
             <div class="p-5 col-span-1 flex flex-col gap-3 rounded-3xl bg-green-400/10">
                 <span>
                     <p class='size-10 flex items-center justify-center rounded-[50%] text-black/90 bg-orange-400/70 border border-green-400/10 text-md'>
@@ -219,17 +220,13 @@
             <div class="p-5 col-span-1 flex flex-col gap-3 rounded-3xl bg-green-400/10">
                 <span>
                     <p class='size-10 flex items-center justify-center rounded-[50%] text-black/90 bg-orange-400/70 border border-green-400/10 text-md'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-up-icon lucide-banknote-arrow-up">
-                            <path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5" />
-                            <path d="M18 12h.01" />
-                            <path d="M19 22v-6" />
-                            <path d="m22 19-3-3-3 3" />
-                            <path d="M6 12h.01" />
-                            <circle cx="12" cy="12" r="2" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-down-icon lucide-chevrons-down">
+                            <path d="m7 6 5 5 5-5" />
+                            <path d="m7 13 5 5 5-5" /></svg>
                     </p>
                 </span>
                 <div class="text-xl text-orange-400/70">
-                    Instant Credit
+                    Low-cost fees
                 </div>
                 <div class="text-white/50 font-mono text-sm font-medium ">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit consequuntur dicta quod dolorum consectetur ducimus quibusdam dignissimos voluptatum autem libero?
@@ -238,17 +235,16 @@
             <div class="p-5 col-span-1 flex flex-col gap-3 rounded-3xl bg-green-400/10">
                 <span>
                     <p class='size-10 flex items-center justify-center rounded-[50%] text-black/90 bg-orange-400/70 border border-green-400/10 text-md'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-up-icon lucide-banknote-arrow-up">
-                            <path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5" />
-                            <path d="M18 12h.01" />
-                            <path d="M19 22v-6" />
-                            <path d="m22 19-3-3-3 3" />
-                            <path d="M6 12h.01" />
-                            <circle cx="12" cy="12" r="2" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hand-coins-icon lucide-hand-coins">
+                            <path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" />
+                            <path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
+                            <path d="m2 16 6 6" />
+                            <circle cx="16" cy="9" r="2.9" />
+                            <circle cx="6" cy="5" r="3" /></svg>
                     </p>
                 </span>
                 <div class="text-xl text-orange-400/70">
-                    Instant Credit
+                    Scheduled payouts
                 </div>
                 <div class="text-white/50 font-mono text-sm font-medium ">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit consequuntur dicta quod dolorum consectetur ducimus quibusdam dignissimos voluptatum autem libero?

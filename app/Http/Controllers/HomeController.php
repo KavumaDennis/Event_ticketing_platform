@@ -42,6 +42,10 @@ class HomeController extends Controller
             ];
         });
 
+        if ($request->ajax()) {
+            return view('partials.events-grid', compact('events'))->render();
+        }
+
         return view('home', [
             'events' => $events,
             'categories' => $categories,

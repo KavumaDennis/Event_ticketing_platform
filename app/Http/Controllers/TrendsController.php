@@ -189,7 +189,7 @@ class TrendsController extends Controller
             ->take(5)
             ->get();
 
-        $randomTrends = Trend::inRandomOrder()->take(4)->get();
+        $randomTrends = Trend::inRandomOrder()->take(5)->get();
 
         // Check if current user liked THIS trend
         $trend->is_liked = Auth::check()

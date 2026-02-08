@@ -67,9 +67,9 @@
 </div>
 
 {{-- EDIT MODAL --}}
-<div id="editModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+<div id="editModal" class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
 
-    <div class="bg-green-400/30 w-full max-w-lg p-4 rounded-3xl shadow-xl relative">
+    <div class="bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-green-400/30 backdrop-blur-[1px] w-full max-w-lg p-4 shadow-xl relative">
 
         <button onclick="closeEditModal()" class="absolute top-3 right-3 text-gray-600">✖</button>
 
@@ -79,22 +79,22 @@
             @csrf
             @method('PUT')
 
-            <div class="mb-3">
-                <label class="block font-semibold text-white/70">Title</label>
-                <input type="text" id="edit_title" name="title" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-orange-400" required>
+            <div class="flex flex-col gap-1.5 mb-3">
+                <label class="text-white/60 font-medium ml-1 text-sm">Title</label>
+                <input type="text" id="edit_title" name="title" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" required>
             </div>
 
-            <div class="mb-3">
-                <label class="block font-semibold text-white/70">Body</label>
-                <textarea id="edit_body" name="body" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-orange-400"></textarea>
+            <div class="flex flex-col gap-1.5 mb-3">
+                <label class="text-white/60 font-medium ml-1 text-sm">Body</label>
+                <textarea id="edit_body" name="body" class="w-full p-3 rounded-xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70"></textarea>
             </div>
 
-            <div class="mb-3">
-                <label class="block font-semibold text-white/70">Replace Image</label>
-                <input type="file" name="image" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-orange-400">
+            <div class="flex flex-col gap-1.5 mb-3">
+                <label class="text-white/60 font-medium ml-1 text-sm">Replace Image</label>
+                <input type="file" name="image" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
             </div>
 
-            <button class="px-4 py-2 bg-orange-400/70 rounded-3xl">
+            <button class="px-4 py-2 bg-orange-400/70 rounded-3xl mt-3 text-sm font-mono">
                 Update Trend
             </button>
         </form>

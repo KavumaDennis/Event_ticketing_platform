@@ -33,11 +33,10 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
             <x-layout>
 
                 <section class="p-5">
-                    <div class="grid grid-cols-6 gap-10">
-
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-5 lg:gap-10">
                         <!-- Left Column: Event Details -->
-                        <div class="col-span-2 flex flex-col justify-between gap-5">
-                            <h1 class="text-2xl underline text-orange-400/60 mt-2">
+                        <div class="md:col-span-6 lg:col-span-2 col-span-1 flex flex-col justify-between gap-5">
+                            <h1 class="text-2xl ml-1 text-orange-400/60 mt-2">
                                 {{ $event->event_name }}
                             </h1>
                             <div class="grid grid-cols-3 rounded-2xl w-full bg-green-400/10 border border-green-400/10 gap-3 p-3">
@@ -55,12 +54,12 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                 </div>
                             </div>
 
-                            <div class="font-light text-sm text-white/60 text-wrap font-mono">
+                            <div class="font-light text-sm text-white/60 text-wrap font-mono ml-1">
                                 <p>{{ $event->description }}</p>
                             </div>
 
                             <div class="flex justify-between items-center">
-                                <div class="flex gap-5">
+                                <div class="flex gap-3">
                                     <a href="{{ route('event.show', $event->id) }}" class='flex gap-1 items-center'>
                                         <div class="flex items-center p-0.5 w-fit bg-orange-400/60 gap-1 rounded-3xl">
                                             <span class='size-8 flex items-center justify-center rounded-[50%] bg-black/95 text-orange-400/80'>
@@ -74,9 +73,9 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                             <span class='text-xs pr-2 font-medium font-mono'>Get Tickets</span>
                                         </div>
                                     </a>
-                                    <div class="size-9 flex items-center justify-center rounded-[50%] text-black/90 border border-green-400/20 bg-green-400/10" data-event="{{ $event->id }}">
+                                    <div class="size-9 flex items-center justify-center rounded-[14px] border border-green-400/20 bg-green-400/10 save-btn" data-event="{{ $event->id }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark-icon lucide-bookmark
-        {{ Auth::check() && $event->isSavedBy(Auth::user()) ? 'text-red-500' : 'text-black/80' }}">
+        {{ Auth::check() && $event->isSavedBy(Auth::user()) ? 'text-red-500' : 'text-orange-400/80' }}">
                                             <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
                                         </svg>
                                     </div>
@@ -104,7 +103,7 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                     <div class="flex items-center gap-3">
                                         <!-- Organizer Image -->
                                         <div class="w-fit h-fit rounded-[50%] bg-orange-400/70 border border-green-400/10 p-0.5">
-                                            <img src="{{ $event->organizer->organizer_image ? asset('storage/'.$event->organizer->organizer_image) : asset('default-profile.png') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class='w-12 h-12 rounded-[50%] object-cover' alt="{{ $event->organizer->business_name }}" />
+                                            <img src="{{ $event->organizer->organizer_image ? asset('storage/'.$event->organizer->organizer_image) : asset('user-default.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class='w-12 h-12 rounded-[50%] object-cover' alt="{{ $event->organizer->business_name }}" />
                                         </div>
                                         <div class="flex flex-col text-white text-sm">
                                             <h1 class='text-orange-400/70 font-medium'>{{ $event->organizer->business_name }}</h1>
@@ -112,7 +111,15 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
 
                                         </div>
                                     </div>
-                                    <LuShare2 class='text-orange-400/60 text-xl cursor-pointer' />
+                                    <div class='text-orange-400/60 cursor-pointer mr-4'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2-icon lucide-share-2">
+                                            <circle cx="18" cy="5" r="3" />
+                                            <circle cx="6" cy="12" r="3" />
+                                            <circle cx="18" cy="19" r="3" />
+                                            <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+                                            <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg>
+                                    </div>
+
                                 </div>
 
                                 <div class="grid grid-cols-3 justify-between items-center mt-5">
@@ -148,9 +155,9 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                         </div>
 
                         <!-- Right Column: Event Images -->
-                        <div class="col-span-4 flex flex-col justify-between gap-3 rounded-4xl">
-                            <div class=" h-[406px] bg-[url({{ $event->event_image ? asset('storage/'.$event->event_image) : asset('img5.jpg') }})] relative bg-center bg-contain">
-                                <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('img3.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class="absolute mix-blend-lighten z-0 top-0 left-0 object-cover w-full h-full rounded-4xl opacity-60" alt="{{ $event->event_name }}" />
+                        <div class="md:col-span-6 lg:col-span-4 col-span-1 flex flex-col justify-between gap-3 rounded-4xl">
+                            <div class="flex-1 relative bg-center bg-contain">
+                                <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('img3.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class="absolute mix-blend-lighten z-0 top-0 left-0 object-cover hidden lg:block w-full h-full rounded-4xl opacity-60" alt="{{ $event->event_name }}" />
                             </div>
                             <div class="">
                                 <p class="text-xs mx-2 p-1 font-mono font-medium bg-orange-400/70 rounded-2xl w-fit text-black/90">Trends tagging the event</p>
@@ -181,10 +188,10 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
 
 
                 <div class="p-5 ">
-                    <div class="flex justify-between items-center mb-6">
-                        <h1 class='text-3xl font-medium text-white/80'>Events</h1>
+                    <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 mb-6">
+                        <h1 class='text-3xl text-white/80'>Events</h1>
                         <div class="flex gap-5 items-center">
-                            <form method="GET" action="{{ route('events') }}" class="relative">
+                            <form id="search-form" method="GET" action="{{ route('events') }}" class="relative">
                                 <div class="h-full relative flex items-center ">
                                     <input type="search" name="search" value="{{ request('search') }}" class="p-2  bg-orange-400/70 border border-green-400/15 w-80 rounded-3xl pr-10 outline-0 text-black/80 font-medium text-sm placeholder:text-black/80" placeholder="Search events..." />
                                     <button type="submit" class="absolute right-1 size-8 flex items-center justify-center bg-black/95 text-orange-400/80 p-2 rounded-[50%] border border-green-400/15 hover:bg-black transition">
@@ -212,12 +219,12 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
 
                                         <div class="flex flex-wrap gap-2">
                                             <!-- "All" button -->
-                                            <a href="{{ route('events') }}" class="px-4 py-2 {{ !request('category') ? 'bg-orange-400/70 text-black/90' : 'bg-black/60 text-white/70 hover:bg-orange-400/50' }} border border-green-400/15 rounded-3xl text-sm font-medium transition">
+                                            <a href="{{ route('home') }}" class="category-filter px-2 py-1 {{ !request('category') ? 'bg-orange-400/70 text-black/90' : 'bg-black/60 text-white/70 hover:bg-orange-400/50' }} border border-green-400/15 rounded-3xl text-sm font-medium transition" data-category="">
                                                 All
                                             </a>
 
                                             @foreach($categories as $category)
-                                            <a href="{{ route('events', ['category' => $category, 'search' => request('search')]) }}" class="px-4 py-2 {{ request('category') === $category ? 'bg-orange-400/70 text-black/90' : 'bg-black/60 text-white/70 hover:bg-orange-400/50' }} border border-green-400/15 rounded-3xl text-sm font-medium transition">
+                                            <a href="{{ route('home', ['category' => $category, 'search' => request('search')]) }}" class="category-filter px-3 py-1 {{ request('category') === $category ? 'bg-orange-400/70 text-black/90' : 'bg-black/60 text-white/70 hover:bg-orange-400/50' }} border border-green-400/15 rounded-3xl text-sm font-medium transition" data-category="{{ $category }}">
                                                 {{ ucfirst($category) }}
                                             </a>
                                             @endforeach
@@ -230,82 +237,8 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                     </div>
 
 
-                    <div class="grid grid-cols-5 gap-4">
-                        @forelse($events as $event)
-                        <div class="w-full h-fit p-1  rounded-3xl bg-green-400/10">
-                            <div class="w-full h-[200px] relative p-2">
-                                <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('img3.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class="absolute mix-blend-lighten z-0 top-0 left-0 object-cover w-full h-full rounded-[20px] opacity-80" alt="{{ $event->event_name }}" />
-
-                                <div class="flex flex-col gap-2 z-10">
-                                    <h1 class='text-orange-400/80 z-10 uppercase font-medium'>{{ $event->event_name }}</h1>
-                                    <div class="w-fit z-10 bg-blend-normal bg-gray-700/90 p-2">
-                                        <p class="flex items-center gap-1 text-sm  text-black/70 font-medium">
-                                            <span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-icon lucide-map-pin">
-                                                    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
-                                                    <circle cx="12" cy="10" r="3" /></svg>
-                                            </span>
-                                            <span class="font-medium">{{ $event->location }}</span></p>
-                                        <p class="flex items-center gap-1 text-sm  text-black/70 font-medium">
-                                            <span class='flex  font-medium'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer">
-                                                    <line x1="10" x2="14" y1="2" y2="2" />
-                                                    <line x1="12" x2="15" y1="14" y2="11" />
-                                                    <circle cx="12" cy="14" r="8" /></svg>
-                                            </span>
-                                            <span> {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }} - {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}</span></p>
-                                        <p class="flex items-center gap-1 text-sm  text-black/70 font-medium">
-                                            <span class='flex font-medium'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-icon lucide-banknote">
-                                                    <rect width="20" height="12" x="2" y="6" rx="2" />
-                                                    <circle cx="12" cy="12" r="2" />
-                                                    <path d="M6 12h.01M18 12h.01" /></svg>
-                                            </span>
-                                            <span>
-                                                Shs {{ $event->regular_price ?? 0 }}
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <div class="absolute bottom-1 right-1 flex items-center gap-1 bg-orange-400/80 rounded-3xl w-fit h-9 p-0.5">
-
-                                        <!-- LIKE BUTTON -->
-
-                                        <div class="flex items-center h-full gap-[3px]">
-                                            <button class="like-btn cursor-pointer h-full w-8 flex items-center justify-center bg-black/90 border border-black/10 rounded-[50%] font-medium" data-event="{{ $event->id }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart 
-         {{ Auth::check() && $event->isLikedBy(Auth::user()) ? 'text-red-500' : 'text-orange-400/80' }}">
-                                                    <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
-                                                </svg>
-                                            </button>
-
-                                            <!-- Like count -->
-                                            <span id="likes-count-{{ $event->id }}" class="text-black text-sm font-medium after:ml-0.5 relative after:w-1 after:bg-black/90 after:rounded-xl after:h-3 flex items-center">
-                                                {{ $event->likes->count() }}
-                                            </span></div>
-
-                                        <div class="p-2 bg-black/90 flex items-center justify-center border border-black/10 rounded-[50%] h-full w-8 text-orange-400 cursor-pointer save-btn" data-event="{{ $event->id }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark-icon lucide-bookmark
-        {{ Auth::check() && $event->isSavedBy(Auth::user()) ? 'text-red-500' : 'text-orange-400/80' }}">
-                                                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-                                            </svg>
-                                        </div>
-
-
-
-                                        <a href="{{ route('event.show', $event->id) }}" class="h-full flex items-center justify-center px-3 z-30 cursor-pointer text-xs font-mono bg-black/90 border border-black/10 rounded-3xl font-medium text-orange-400/80">
-                                            More
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @empty
-                        <p class="text-white col-span-5">No events found.</p>
-                        @endforelse
-                    </div>
-
-                    <!-- Pagination links -->
-                    <div class="mt-6">
-                        {{ $events->links('vendor.pagination.tailwind') }}
+                    <div id="events-container">
+                        @include('partials.events-grid', ['events' => $events])
                     </div>
 
                 </div>
@@ -315,7 +248,7 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
 
                 <div class="p-5">
                     <h1 class='text-white/80 text-3xl mb-5'>Explore Events by Date</h1>
-                    <div class="grid grid-cols-4 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
                         {{-- Tomorrow --}}
                         <div class="p-3 col-span-1 w-full h-fit rounded-3xl border-green-400/20 bg-green-400/10">
@@ -323,7 +256,7 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                 <div class="flex justify-between items-center">
                                     <h1 class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-1 text-orange-400/50 font-mono">Tomorrow</h1>
                                     <div class="flex items-center">
-                                        <span class='px-3 relative text-white/80 font-medium text-sm flex items-center'>
+                                        <span class='px-3 relative text-white/80 font-medium text-sm lg:text-xs flex items-center'>
                                             {{ $tomorrow->format('M d') }}
                                         </span>
                                     </div>
@@ -354,7 +287,7 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                 <div class="flex justify-between items-center">
                                     <h1 class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-1 text-orange-400/50 font-mono">Upcoming Week</h1>
                                     <div class="flex items-center">
-                                        <span class='px-3 relative text-white/80 font-medium text-sm flex items-center'>
+                                        <span class='px-3 relative text-white/80 font-medium text-sm lg:text-xs flex items-center'>
                                             {{ $weekStart->format('M d') }} - {{ $weekEnd->format('M d') }}
                                         </span>
                                     </div>
@@ -385,7 +318,7 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                 <div class="flex justify-between items-center">
                                     <h1 class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-1 text-orange-400/50 font-mono">This Weekend</h1>
                                     <div class="flex items-center">
-                                        <span class='px-3 relative text-white/80 font-medium text-sm flex items-center'>
+                                        <span class='px-3 relative text-white/80 font-medium text-sm lg:text-xs flex items-center'>
                                             {{ $weekendStart->format('M d') }} - {{ $weekendEnd->format('M d') }}
                                         </span>
                                     </div>
@@ -416,7 +349,7 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
                                 <div class="flex justify-between items-center">
                                     <h1 class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-1 text-orange-400/50 font-mono">Next Month</h1>
                                     <div class="flex items-center">
-                                        <span class='px-3 relative text-white/80 font-medium text-sm flex items-center'>
+                                        <span class='px-3 relative text-white/80 font-medium text-sm lg:text-xs flex items-center'>
                                             {{ $monthStart->format('M d') }} - {{ $monthEnd->format('M d') }}
                                         </span>
                                     </div>
@@ -449,36 +382,107 @@ $weekCount = \App\Models\Event::whereDate('event_date', '>=', $weekStart->toDate
             </x-layout>
 
 
+            @push('scripts')
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
-                console.log("SCRIPT LOADED");
+                $(document).ready(function() {
+                    const container = $('#events-container');
+                    const searchInput = $('input[name="search"]');
+                    const searchForm = $('#search-form');
 
-                const raw = "2026-08-15";
-                const parts = raw.split("-");
-                const year = parseInt(parts[0]);
-                const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
-                const day = parseInt(parts[2]);
+                    function updateEvents(url) {
+                        $.ajax({
+                            url: url
+                            , type: 'GET'
+                            , success: function(data) {
+                                container.html(data);
+                                // Update active class on category buttons
+                                const urlObj = new URL(url);
+                                const category = urlObj.searchParams.get('category') || '';
 
-                const eventDate = new Date(year, month, day, 0, 0, 0).getTime();
+                                $('.category-filter').each(function() {
+                                    const isMatch = $(this).data('category') == category;
+                                    $(this).toggleClass('bg-orange-400/70 text-black/90', isMatch);
+                                    $(this).toggleClass('bg-black/60 text-white/70 hover:bg-orange-400/50', !isMatch);
+                                });
 
-                function tick() {
-                    const el = document.getElementById("countdown");
-                    if (!el) return; // safety check
-
-                    const now = Date.now();
-                    const diff = eventDate - now;
-
-                    if (diff <= 0) {
-                        el.innerHTML = "Event started";
-                        return;
+                                window.history.pushState({}, '', url);
+                            }
+                        });
                     }
 
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    searchForm.on('submit', function(e) {
+                        e.preventDefault();
+                        const url = new URL(this.action);
+                        url.searchParams.set('search', searchInput.val());
+                        // Preserve category if present
+                        const params = new URLSearchParams(window.location.search);
+                        if (params.has('category')) {
+                            url.searchParams.set('category', params.get('category'));
+                        }
+                        updateEvents(url.toString());
+                    });
 
+                    $('.category-filter').on('click', function(e) {
+                        e.preventDefault();
+                        updateEvents($(this).attr('href'));
+                    });
 
-                    el.innerHTML = `${days} days`;
-                }
+                    $(document).on('click', '#pagination-links a', function(e) {
+                        e.preventDefault();
+                        updateEvents($(this).attr('href'));
+                    });
 
-                tick();
-                setInterval(tick, 1000);
+                    // Countdown Timer for Top Event
+                    function startCountdown() {
+                        const countdownElement = document.getElementById('countdown');
+                        if (!countdownElement) return;
+
+                        const eventDate = "{{ $event->event_date ?? '' }}";
+                        const startTime = "{{ $event->start_time ?? '00:00:00' }}";
+
+                        if (!eventDate) {
+                            countdownElement.innerHTML = "TBD";
+                            return;
+                        }
+
+                        // Use ISO format for better parsing: YYYY-MM-DDTHH:mm:ss
+                        const targetDateStr = `${eventDate}T${startTime}`;
+                        const targetDate = new Date(targetDateStr).getTime();
+
+                        if (isNaN(targetDate)) {
+                            console.error("Invalid date format:", targetDateStr);
+                            countdownElement.innerHTML = "Invalid Date";
+                            return;
+                        }
+
+                        const timer = setInterval(function() {
+                            const now = new Date().getTime();
+                            const distance = targetDate - now;
+
+                            if (distance < 0) {
+                                clearInterval(timer);
+                                countdownElement.innerHTML = "Event Started";
+                                return;
+                            }
+
+                            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                            let countdownText = "";
+                            if (days > 0) countdownText += days + "d ";
+                            countdownText += hours.toString().padStart(2, '0') + "h " + 
+                                             minutes.toString().padStart(2, '0') + "m " + 
+                                             seconds.toString().padStart(2, '0') + "s";
+
+                            countdownElement.innerHTML = countdownText;
+                        }, 1000);
+                    }
+
+                    startCountdown();
+                });
 
             </script>
+            @endpush

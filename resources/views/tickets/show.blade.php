@@ -39,6 +39,10 @@
                         <div>
                             <div class="text-xs text-zinc-500 uppercase tracking-wider mb-1">Attendee</div>
                             <div class="text-white font-medium">{{ $ticket->purchase->user->first_name }}</div>
+                            @php $transfer = $ticket->latestAcceptedTransfer; @endphp
+                            @if($transfer)
+                                <div class="text-[10px] text-orange-400/70 mt-1 italic">Sent by {{ $transfer->sender->first_name }}</div>
+                            @endif
                         </div>
                         <div>
                             <div class="text-xs text-zinc-500 uppercase tracking-wider mb-1">Type</div>

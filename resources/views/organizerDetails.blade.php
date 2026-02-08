@@ -2,8 +2,8 @@
 
 
     <section class="p-5">
-        <div class="grid grid-cols-4 gap-10">
-            <div class="col-span-1 h-fit grid grid-cols-3 p-3 rounded-3xl border-green-400/20 bg-green-400/10">
+        <div class="lg:grid grid-cols-4 md:flex flex-col md:gap-5 lg:gap-10">
+            <div class="col-span-1 w-fit gap-5 lg:w-full lg:gap-0 h-fit grid grid-cols-3 p-3 rounded-3xl border-green-400/20 bg-green-400/10">
                 <div class="col-span-2 flex flex-col gap-3 items-center justify-center">
                     <div class="border border-green-400/15  w-fit rounded-[50%] p-1 bg-orange-400/60">
                         <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('default.jpg') }}" alt="{{ $organizer->business_name }}" class='size-18 rounded-[50%]' alt="" />
@@ -82,7 +82,7 @@
 
                 <div class="flex items-end gap-5 h-full">
                     <div>
-                        <button id="follow-btn" data-organizer="{{ $organizer->id }}" class="p-0.5 rounded-3xl bg-orange-400/70 border border-green-400/15 flex items-center gap-1 text-sm font-semibold">
+                        <button id="follow-btn" data-organizer="{{ $organizer->id }}" class="p-0.5 rounded-3xl bg-orange-400/70 border border-green-400/15 flex items-center gap-1 text-xs font-medium">
 
                             <span id="follow-icon" class="size-8 flex items-center justify-center rounded-full text-orange-400/70 bg-black/95 border border-green-400/15">
                                 @if(auth()->user() && auth()->user()->followedOrganizers->contains($organizer->id))
@@ -92,7 +92,7 @@
                                 @endif
                             </span>
 
-                            <span id="follow-text" class="pr-1 text-sm">
+                            <span id="follow-text" class="pr-1 text-xs font-mono">
                                 @if(auth()->user() && auth()->user()->followedOrganizers->contains($organizer->id))
                                 Unfollow
                                 @else
@@ -131,14 +131,13 @@
         <!-- Events Section -->
         <h2 class="text-3xl mb-5 text-white/60">Events by {{ $organizer->business_name }}</h2>
 
-        <div class="grid grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             @forelse($organizer->events as $event)
-            <div class="w-full h-fit p-1  rounded-3xl bg-green-400/10">
-                <div class="w-full h-[200px] relative p-2">
+            <div class="w-full h-fit ">
+                <div class="w-full h-[170px] relative p-2 rounded-3xl bg-green-400/10">
                     <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('img3.jpg') }}" onerror="this.onerror=null; this.src='{{ asset('img3.jpg') }}';" class="absolute mix-blend-lighten z-0 top-0 left-0 object-cover w-full h-full rounded-[20px] opacity-80" alt="{{ $event->event_name }}" />
 
-                    <div class="flex flex-col gap-2 z-10">
-                        <h1 class='text-orange-400/80 z-10 uppercase font-medium'>{{ $event->event_name }}</h1>
+                    <div class="flex flex-col gap-2 z-10 absolute top-8">
                         <div class="w-fit z-10 bg-blend-normal bg-gray-700/90 p-2">
                             <p class="flex items-center gap-1 text-sm  text-black/70 font-medium">
                                 <span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-icon lucide-map-pin">
@@ -166,38 +165,40 @@
                                 </span>
                             </p>
                         </div>
-                        <div class="absolute bottom-1 right-1 flex items-center gap-1 bg-orange-400/80 rounded-3xl w-fit h-9 p-0.5">
+                    </div>
 
-                            <!-- LIKE BUTTON -->
+                    <div class="absolute bottom-1 right-1 flex items-center gap-1 bg-orange-400/80 rounded-3xl w-fit h-9 p-0.5">
 
-                            <div class="flex items-center h-full gap-[3px]">
-                                <button class="like-btn cursor-pointer h-full w-8 flex items-center justify-center bg-black/90 border border-black/10 rounded-[50%] font-medium" data-event="{{ $event->id }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart 
+                        <!-- LIKE BUTTON -->
+
+                        <div class="flex items-center h-full gap-[3px]">
+                            <button class="like-btn cursor-pointer h-full w-8 flex items-center justify-center bg-black/90 border border-black/10 rounded-[50%] font-medium" data-event="{{ $event->id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart 
          {{ Auth::check() && $event->isLikedBy(Auth::user()) ? 'text-red-500' : 'text-orange-400/80' }}">
-                                        <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
-                                    </svg>
-                                </button>
-
-                                <!-- Like count -->
-                                <span id="likes-count-{{ $event->id }}" class="text-black text-sm font-medium after:ml-0.5 relative after:w-1 after:bg-black/90 after:rounded-xl after:h-3 flex items-center">
-                                    {{ $event->likes->count() }}
-                                </span></div>
-
-                            <div class="p-2 bg-black/90 flex items-center justify-center border border-black/10 rounded-[50%] h-full w-8 text-orange-400 cursor-pointer save-btn" data-event="{{ $event->id }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark-icon lucide-bookmark
-        {{ Auth::check() && $event->isSavedBy(Auth::user()) ? 'text-red-500' : 'text-orange-400/80' }}">
-                                    <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+                                    <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
                                 </svg>
-                            </div>
+                            </button>
 
+                            <!-- Like count -->
+                            <span id="likes-count-{{ $event->id }}" class="text-black text-sm font-medium after:ml-0.5 relative after:w-1 after:bg-black/90 after:rounded-xl after:h-3 flex items-center">
+                                {{ $event->likes->count() }}
+                            </span></div>
 
-
-                            <a href="{{ route('event.show', $event->id) }}" class="h-full flex items-center justify-center px-3 z-30 cursor-pointer text-xs font-mono bg-black/90 border border-black/10 rounded-3xl font-medium text-orange-400/80">
-                                More
-                            </a>
+                        <div class="p-2 bg-black/90 flex items-center justify-center border border-black/10 rounded-[50%] h-full w-8 text-orange-400 cursor-pointer save-btn" data-event="{{ $event->id }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark-icon lucide-bookmark
+        {{ Auth::check() && $event->isSavedBy(Auth::user()) ? 'text-red-500' : 'text-orange-400/80' }}">
+                                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+                            </svg>
                         </div>
+
+
+
+                        <a href="{{ route('event.show', $event->id) }}" class="h-full flex items-center justify-center px-3 z-30 cursor-pointer text-xs font-mono bg-black/90 border border-black/10 rounded-3xl font-medium text-orange-400/80">
+                            More
+                        </a>
                     </div>
                 </div>
+                <h1 class='text-white/70 z-10 text-sm font-medium m-1 ml-2'>{{ $event->event_name }}</h1>
             </div>
             @empty
             <p class="col-span-3 text-center text-white/60 py-10">No events hosted yet.</p>

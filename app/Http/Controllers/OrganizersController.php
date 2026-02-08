@@ -14,60 +14,68 @@ use Illuminate\Support\Facades\DB;
 class OrganizersController extends Controller
 {
   //
-public function index()
-{
+  public function index()
+  {
     $organizers = Organizer::withCount('events')
-        ->orderByDesc('events_count')
-        ->take(4)
-        ->get();
+      ->orderByDesc('events_count')
+      ->take(4)
+      ->get();
 
     // Get dynamic counts
     $totalUsers = User::count();
     $totalEvents = Event::count();
     $totalOrganizers = Organizer::count();
 
+    // Top Categories (derived from events)
+    $topCategories = Event::select('category', \DB::raw('count(*) as event_count'))
+      ->groupBy('category')
+      ->orderByDesc('event_count')
+      ->take(6)
+      ->get();
+
     // Generate array of random image numbers for carousel (5 images)
     $carouselImages = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg'];
 
     return view('organizers', [
-        'organizers' => $organizers,
-        'totalUsers' => $totalUsers,
-        'totalEvents' => $totalEvents,
-        'totalOrganizers' => $totalOrganizers,
-        'carouselImages' => $carouselImages,
+      'organizers' => $organizers,
+      'totalUsers' => $totalUsers,
+      'totalEvents' => $totalEvents,
+      'totalOrganizers' => $totalOrganizers,
+      'carouselImages' => $carouselImages,
+      'topCategories' => $topCategories,
     ]);
-}
+  }
 
 
   public function organizer_create()
   {
     // Get top organizers with event counts (similar to organizers page)
     $organizers = Organizer::withCount('events')
-        ->orderByDesc('events_count')
-        ->take(4)
-        ->get();
+      ->orderByDesc('events_count')
+      ->take(4)
+      ->get();
 
     // Get latest trends with likes count
     $trends = Trend::with('user')
-        ->withCount('likes')
-        ->latest()
-        ->take(4)
-        ->get();
+      ->withCount('likes')
+      ->latest()
+      ->take(4)
+      ->get();
 
     // Check if user has liked each trend
     if (Auth::check()) {
-        $userLikedTrendIds = TrendLike::where('user_id', Auth::id())
-            ->pluck('trend_id')
-            ->toArray();
-        
-        foreach ($trends as $trend) {
-            $trend->is_liked = in_array($trend->id, $userLikedTrendIds);
-        }
+      $userLikedTrendIds = TrendLike::where('user_id', Auth::id())
+        ->pluck('trend_id')
+        ->toArray();
+
+      foreach ($trends as $trend) {
+        $trend->is_liked = in_array($trend->id, $userLikedTrendIds);
+      }
     }
 
     return view('organizer_create', [
-        'organizers' => $organizers,
-        'trends' => $trends,
+      'organizers' => $organizers,
+      'trends' => $trends,
     ]);
   }
 
@@ -76,9 +84,10 @@ public function index()
     return view('organizer_signup');
   }
 
-  public function show($id){
+  public function show($id)
+  {
     $organizer = Organizer::with(['events', 'followers'])->findOrFail($id);
-    return view('organizerDetails', ['organizer'=> $organizer]);
+    return view('organizerDetails', ['organizer' => $organizer]);
   }
 
   public function store(Request $request)

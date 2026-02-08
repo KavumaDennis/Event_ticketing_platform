@@ -20,7 +20,9 @@ use App\Http\Controllers\{
     PaymentController,
     TicketController,
     UserController,
-    DashboardController
+    DashboardController,
+    ForgotPasswordController,
+    SocialAuthController
 };
 
 // ADMIN DASHBOARD
@@ -43,6 +45,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/faqs', [AdminController::class, 'storeFaq'])->name('admin.faqs.store');
     Route::put('/faqs/{faq}', [AdminController::class, 'updateFaq'])->name('admin.faqs.update');
     Route::delete('/faqs/{faq}', [AdminController::class, 'deleteFaq'])->name('admin.faqs.delete');
+
+    Route::get('/reviews', [AdminController::class, 'reviews'])->name('admin.reviews');
+    Route::delete('/reviews/{review}', [AdminController::class, 'deleteReview'])->name('admin.reviews.delete');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -57,7 +62,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard/security', [DashboardController::class, 'security'])->name('user.dashboard.security');
     Route::put('/user/dashboard/security', [DashboardController::class, 'updatePassword'])->name('user.dashboard.updatePassword');
     Route::get('/user/dashboard/support', [DashboardController::class, 'support'])->name('user.dashboard.support');
-    Route::get('/user/dashboard/reviews', [DashboardController::class, 'myReviews'])->name('user.dashboard.reviews');
     Route::get('/user/dashboard/notifications', [DashboardController::class, 'notifications'])->name('user.dashboard.notifications');
     Route::get('/user/dashboard/saved', [DashboardController::class, 'savedEvents'])->name('user.dashboard.saved');
 
@@ -86,7 +90,7 @@ Route::middleware(['auth'])->group(function () {
 
 // 🏠 Public pages
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/reviews', [HomeController::class, 'store'])->middleware('auth')->name('reviews.store');
+Route::post('/site-reviews', [HomeController::class, 'store'])->middleware('auth')->name('site.reviews.store');
 
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
@@ -116,6 +120,7 @@ Route::get('/trends/{trend}', [TrendsController::class, 'show'])->name('trends.s
 
 // 🎫 Events
 Route::get('/events', [EventsController::class, 'index'])->name('events');
+Route::get('/categories/{category}', [EventsController::class, 'categoryPage'])->name('categories.show');
 Route::get('/events/by-date', [EventsController::class, 'eventsByDate'])->name('byDate');
 Route::get('/by-date', [EventsController::class, 'byDate'])->name('events.byDate');
 
@@ -140,9 +145,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/organizer/signup', [OrganizersController::class, 'organizer_signup'])->name('organizer.signup');
 });
 
-Route::post('/organizer/{organizer}/follow', [OrganizerFollowController::class, 'toggleFollow'])
-    ->middleware('auth')
-    ->name('organizer.follow');
+    // Event Reviews
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    Route::post('/organizer/{organizer}/follow', [OrganizerFollowController::class, 'toggleFollow'])
+        ->middleware('auth')
+        ->name('organizer.follow');
 
 Route::get('/organizer/{id}', [OrganizersController::class, 'show'])->name('organizer.details');
 
@@ -157,6 +166,16 @@ Route::middleware('guest')->controller(AuthController::class)->group(function ()
     Route::post('/login', 'login')->name('login');
     Route::get('/signup', 'showSignup')->name('show.signup');
     Route::post('/signup', 'signup')->name('signup');
+
+    // Google Login
+    Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+
+    // Password Reset
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 // Logout

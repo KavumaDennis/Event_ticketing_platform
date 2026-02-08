@@ -3,8 +3,8 @@
 @section('title','Overview')
 
 @section('content')
-<div class="grid grid-cols-12 gap-6">
-    <div class="col-span-8">
+<div class="flex flex-col lg:grid lg:grid-cols-12 gap-6">
+    <div class="col-span-12 lg:col-span-8">
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-white uppercase tracking-tighter">Dashboard</h1>
@@ -16,8 +16,8 @@
             </div>
         </div>
 
-        <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Account Stats</h2>
-        <div class="grid grid-cols-3 gap-5 mb-10">
+        <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">Account Stats</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
             <div class="bg-green-400/10 p-3 rounded-2xl">
                 <div class="flex justify-between items-center mb-4">
                     <div class="size-9 rounded-[50%] bg-orange-400/10 flex items-center justify-center text-orange-400">
@@ -58,13 +58,57 @@
             </div>
         </div>
 
+        <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">Top Categories</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
+            @foreach($topCategories as $cat)
+            @php
+                $colors = ['bg-orange-500/10 text-orange-400', 'bg-blue-500/10 text-blue-400', 'bg-green-500/10 text-green-400', 'bg-purple-500/10 text-purple-400', 'bg-red-500/10 text-red-400', 'bg-pink-500/10 text-pink-400'];
+                $color = $colors[$loop->index % count($colors)];
+            @endphp
+            <a href="{{ route('categories.show', $cat->category) }}" class="{{ $color }} p-2.5 rounded-2xl flex flex-col items-center justify-center gap-2 hover:scale-105 transition-transform border border-white/5">
+                <div class="size-10 rounded-full bg-white/10 flex items-center justify-center">
+                    <span class="font-bold text-lg capitalize">{{ substr($cat->category, 0, 1) }}</span>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-tighter text-center line-clamp-1">{{ $cat->category }}</span>
+                <span class="text-[10px] opacity-70 font-mono">{{ $cat->event_count }} events</span>
+            </a>
+            @endforeach
+        </div>
+
+        <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">My Recent Tickets</h2>
+        <div class="grid grid-cols-2 gap-5 mb-5">
+            @forelse($recentTickets as $ticket)
+            <div class="bg-green-400/10 border border-green-400/5 p-2.5 rounded-2xl relative overflow-hidden group">
+                <div class="flex items-center gap-4">
+                    <div class="size-10 rounded-xl bg-orange-400/20 flex items-center justify-center text-orange-400">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium text-white/80 line-clamp-1">{{ $ticket->event->event_name }}</h4>
+                        <p class="text-xs text-zinc-500 font-mono">#{{ $ticket->ticket_code }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-between items-center">
+                    <span class="text-[10px] uppercase font-bold text-orange-400/60 self-end">{{ $ticket->ticket_type }}</span>
+                    <a href="{{ route('dashboard.ticket.view', $ticket) }}" class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-1 text-orange-400/50 font-mono w-fit">View Qr <i class="fas fa-chevron-right text-xs"></i></a>
+                </div>
+            </div>
+            @empty
+            <div class="col-span-2 p-10 bg-zinc-900/40 border border-dashed border-zinc-800 rounded-3xl text-center">
+                <p class="text-zinc-600 text-sm">No tickets found yet.</p>
+                <a href="{{ route('events') }}" class="text-orange-500 text-xs mt-2 inline-block hover:underline">Browse Events</a>
+            </div>
+            @endforelse
+        </div>
+
+
         {{-- Recommendations --}}
-        <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Recommended for you</h2>
-        <div class="grid grid-cols-2 gap-4">
+        {{-- <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Recommended for you</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @foreach($recommendations as $event)
-            <div class="bg-green-400/10 border border-green-400/10 rounded-3xl overflow-hidden group hover:border-orange-400/20 transition-all">
-                <div class="flex p-3 gap-4">
-                    <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('default.jpg') }}" class="size-20 rounded-2xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+            <div class="bg-green-400/10 border border-green-400/10 rounded-2xl overflow-hidden group hover:border-orange-400/20 transition-all">
+                <div class="flex p-2.5 gap-4 h-fit">
+                    <img src="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('default.jpg') }}" class="size-15 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
                     <div class="flex-1">
                         <h4 class="font-medium text-sm text-white/80 line-clamp-1">{{ $event->event_name }}</h4>
                         <p class="text-xs text-zinc-500 font-mono mt-1"><i class="far fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($event->event_date)->format('M d') }}</p>
@@ -73,48 +117,62 @@
                 </div>
             </div>
             @endforeach
-        </div>
+        </div> --}}
     </div>
 
     {{-- Right sidebar --}}
-    <aside class="col-span-4">
-        <div class="p-4 border-green-400/20 bg-green-400/10 rounded-3xl mb-4">
-            <h4 class="font-semibold text-orange-400/70 text-sm mb-3">Organizers you follow</h4>
-            <div class=" h-[300px] overflow-hidden overflow-y-scroll rounded-2xl">
-                @if($followedOrganizers)
-                <div class="flex flex-col gap-3 justify-center">
-                    @foreach($followedOrganizers as $org)
-                    <div class="flex items-center gap-5 p-2 border border-green-400/20 bg-green-400/10 rounded-2xl">
-                        <div class="border border-green-400/15  w-fit rounded-[50%]">
-                            <img src="{{ $org->organizer_image ? asset('storage/'.$org->organizer_image) : asset('default.jpg') }}" alt="{{ $org->business_name }}" class='size-13 rounded-[50%]' alt="" />
-                        </div>
-                        <div class="flex items-center justify-between w-4/5">
-                            <div>
-                                <p class="font-medium text-sm text-white/80">{{ $org->business_name }}</p>
-                                <div class="text-xs text-white/60 font-mono">{{ $org->followers_count ?? $org->followers->count() }} followers</div>
-                            </div>
-                            <a href="{{ route('organizer.details', $org->id) }}" class="text-xs text-black/90 font-medium font-mono bg-orange-400/70 rounded-3xl px-2 py-1">Details</a>
-                        </div>
-                    </div>
-                    @endforeach
-
+    <aside class="col-span-12 lg:col-span-4">
+        <div class="p-3 border border-green-400/5 bg-green-400/10 rounded-3xl mb-4" x-data="{ currentStep: 0, total: {{ count($followedOrganizers) }} }">
+            <div class="flex justify-between items-center mb-2 ml-1">
+                <h4 class="font-semibold text-orange-400/70 text-sm">Organizers you follow</h4>
+                @if(count($followedOrganizers) > 1)
+                <div class="flex gap-2">
+                    <button @click="currentStep = (currentStep - 1 + total) % total" class="size-6 flex items-center justify-center rounded-full bg-black/40 text-orange-400/70 hover:bg-black/60 transition">
+                        <i class="fas fa-chevron-left text-[10px]"></i>
+                    </button>
+                    <button @click="currentStep = (currentStep + 1) % total" class="size-6 flex items-center justify-center rounded-full bg-black/40 text-orange-400/70 hover:bg-black/60 transition">
+                        <i class="fas fa-chevron-right text-[10px]"></i>
+                    </button>
                 </div>
+                @endif
+            </div>
 
+            <div class="h-[200px] flex items-center justify-center overflow-hidden rounded-2xl relative">
+                @if(count($followedOrganizers) > 0)
+                @foreach($followedOrganizers as $index => $org)
+                <div x-show="currentStep === {{ $index }}" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="w-full absolute inset-0 flex items-center justify-center  p-2 border border-green-400/5 bg-green-400/10 rounded-2xl ">
+                    <div class="flex flex-col items-center justify-between gap-2 w-full h-full text-center">
+                        <div class="p-1 bg-orange-400/20 border border-orange-400/30 rounded-full shadow-lg shadow-orange-400/5">
+                            <img src="{{ $org->organizer_image ? asset('storage/'.$org->organizer_image) : asset('default.jpg') }}" alt="{{ $org->business_name }}" class="size-15 rounded-full object-cover" />
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <p class="font-semibold text-white/90">{{ $org->business_name }}</p>
+                            <div class="text-xs text-orange-400/60 font-mono bg-orange-400/5 px-3 py-0.5 rounded-full border border-orange-400/10">
+                                {{ $org->followers_count ?? $org->followers->count() }} followers
+                            </div>
+                        </div>
+                        <a href="{{ route('organizer.details', $org->id) }}" class="w-full text-sm text-black/90 font-semibold font-mono bg-orange-400/70 hover:bg-orange-400 transition-colors rounded-3xl py-2 shadow-lg shadow-orange-400/10">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                @endforeach
                 @else
-                <p class="pt-3 border border-t-white/70 text-sm text-white/70">
-                    Not following any organizers
-                </p>
+                <div class="flex flex-col items-center justify-center text-center p-5 opacity-40">
+                    <i class="fas fa-user-friends text-4xl mb-3 text-zinc-600"></i>
+                    <p class="text-sm text-zinc-500">Not following any organizers yet</p>
+                </div>
                 @endif
             </div>
         </div>
 
 
-        <div class="p-4 border-green-400/20 bg-green-400/10  rounded-3xl ">
-            <h4 class="font-semibold text-orange-400/70 text-sm mb-3">Saved events</h4>
-            <div class="h-[300px] overflow-hidden overflow-y-scroll flex flex-col gap-3 rounded-2xl">
+        <div class="p-3 pr-1 border border-green-400/5 bg-green-400/10  rounded-2xl ">
+            <h4 class="font-semibold text-orange-400/70 text-sm mb-2">Saved events</h4>
+            <div class="h-[300px] overflow-hidden overflow-y-scroll flex flex-col gap-3 rounded-2xl pr-2">
                 @foreach($saved as $s)
                 @php $ev = $s->event; @endphp
-                <div class="flex border border-green-400/20 bg-green-400/10 rounded-2xl p-2 relative">
+                <div class="flex bg-green-400/10 rounded-2xl p-2 relative">
                     <div class="pb-5">
                         <div class="font-medium text-white/80 text-sm">{{ $ev->event_name }}</div>
                         <div class="text-white/60 text-xs font-mono">{{ $ev->organizer?->business_name ?? 'Unknown' }}</div>
