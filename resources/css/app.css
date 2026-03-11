@@ -1,0 +1,177 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.1);
+}
+
+/* Summernote Dark Theme (Black, Orange, Green) */
+.note-editor.note-airframe,
+.note-editor.note-frame {
+    border: 1px solid rgba(251, 146, 60, 0.2) !important;
+    /* Orange-400 with opacity */
+    background-color: rgba(0, 0, 0, 0.9) !important;
+    border-radius: 1.5rem !important;
+    overflow: hidden !important;
+}
+
+.note-editor .note-toolbar {
+    background-color: rgba(34, 197, 94, 0.05) !important;
+    /* Subtle Green tint */
+    border-bottom: 1px solid rgba(251, 146, 60, 0.1) !important;
+    padding: 10px !important;
+}
+
+.note-editor .note-btn {
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    padding: 5px 10px !important;
+    transition: all 0.2s ease !important;
+}
+
+.note-editor .note-btn:hover,
+.note-editor .note-btn.active {
+    background-color: rgba(251, 146, 60, 0.2) !important;
+    /* Orange hover */
+    color: #fb923c !important;
+    /* Orange-400 */
+    border-color: rgba(251, 146, 60, 0.3) !important;
+}
+
+.note-editor .note-btn i,
+.note-editor .note-btn svg {
+    color: inherit !important;
+}
+
+.note-editor .note-editable {
+    background-color: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: 20px !important;
+    font-family: inherit !important;
+}
+
+.note-editor .note-placeholder {
+    color: rgba(251, 146, 60, 0.4) !important;
+    padding: 20px !important;
+}
+
+/* Dropdowns & Popovers */
+.note-dropdown-menu,
+.note-modal-content {
+    background-color: #0a0a0a !important;
+    border: 1px solid rgba(251, 146, 60, 0.2) !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+.note-dropdown-item {
+    color: rgba(255, 255, 255, 0.8) !important;
+    padding: 8px 15px !important;
+}
+
+.note-dropdown-item:hover {
+    background-color: rgba(34, 197, 94, 0.1) !important;
+    /* Green hover */
+    color: #fb923c !important;
+}
+
+/* Modals */
+.note-modal {
+    z-index: 9999 !important;
+}
+
+.note-modal-backdrop {
+    z-index: 9998 !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+.note-modal-header {
+    border-bottom: 1px solid rgba(251, 146, 60, 0.1) !important;
+    padding: 15px 20px !important;
+}
+
+.note-modal-title {
+    color: #fb923c !important;
+    font-weight: 700 !important;
+}
+
+.note-modal-footer {
+    border-top: 1px solid rgba(251, 146, 60, 0.1) !important;
+    padding: 15px 20px !important;
+    height: auto !important;
+}
+
+.note-modal .close {
+    color: #fff !important;
+    opacity: 0.6 !important;
+}
+
+.note-form-label {
+    color: rgba(255, 255, 255, 0.7) !important;
+    margin-bottom: 8px !important;
+}
+
+.note-input {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(251, 146, 60, 0.2) !important;
+    color: #fff !important;
+    border-radius: 0.5rem !important;
+    padding: 8px 12px !important;
+}
+
+.note-modal .btn-primary {
+    background-color: #fb923c !important;
+    color: #000 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    border-radius: 0.5rem !important;
+    padding: 8px 20px !important;
+}
+
+.note-modal .btn-primary:hover {
+    background-color: #f97316 !important;
+}
+
+.note-editor .note-statusbar {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    border-top: 1px solid rgba(251, 146, 60, 0.1) !important;
+}
+
+.note-editor .note-resizebar {
+    border-top: 1px solid rgba(251, 146, 60, 0.1) !important;
+}
