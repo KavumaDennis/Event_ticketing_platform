@@ -6,9 +6,9 @@
             <p class="text-zinc-400">Thank you for your purchase. You can find your tickets for <strong>{{ $event->event_name }}</strong> below.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full">
+        <div class="grid grid-cols-1 gap-8 max-w-lg w-full">
             @foreach($tickets as $ticket)
-                <div class="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl transition hover:border-green-500/50">
+                <div class="bg-green-400/20 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl transition hover:border-green-500/50">
                     {{-- Ticket Header --}}
                     <div class="p-6 border-b border-zinc-800 flex justify-between items-start">
                         <div>
@@ -33,10 +33,10 @@
                         <p class="text-zinc-500 text-[10px] uppercase font-bold tracking-widest mb-6">Scan at Entrance</p>
                         
                         <div class="w-full flex gap-3">
-                            <a href="{{ route('ticket.show', $ticket->ticket_code) }}" class="flex-1 py-3 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold rounded-xl text-center transition">
+                            <a href="{{ route('ticket.show', $ticket->ticket_code) }}" class="flex-1 py-2 bg-zinc-800 border border-white/50 hover:bg-zinc-700 text-white text-[10px] uppercase font-bold rounded-lg text-center transition">
                                 View Online
                             </a>
-                            <a href="{{ route('ticket.download', $ticket->ticket_code) }}" class="flex-1 py-3 bg-green-500 hover:bg-green-400 text-black text-xs font-bold rounded-xl text-center transition">
+                            <a href="{{ route('ticket.download', $ticket->ticket_code) }}" class="flex-1 py-2 bg-orange-400 hover:bg-green-400/50 text-black text-[10px] uppercase font-bold rounded-lg text-center transition">
                                 Download PDF
                             </a>
                         </div>

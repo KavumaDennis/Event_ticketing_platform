@@ -16,6 +16,8 @@
             </div>
             @endif
 
+            @include('partials.experiences-following', ['experienceUsers' => $experienceUsers, 'seenExperienceIds' => $seenExperienceIds])
+
             {{-- FEED TABS --}}
             <div class="flex items-center gap-4 mb-8 sticky top-0 z-10 bg-orange-400/80 backdrop-blur-xl p-0.5 rounded-3xl">
                 <button @click="activeTab = 'discovery'" 
@@ -111,7 +113,7 @@
                                         <img src="{{ $creator->profile_pic ? asset('storage/'.$creator->profile_pic) : asset('default.png') }}" onerror="this.onerror=null; this.src='{{ asset('default.png') }}';" class='w-full h-full rounded-full object-cover' alt="{{ $creator->first_name }}" />
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <a href="{{ route('user.profile', $creator->id) }}" class='text-orange-400/70 font-medium text-sm hover:text-orange-400 transition truncate'>
+                                        <a href="{{ route('user.profile', $creator->id) }}" class='text-orange-400/90 font-medium text-sm hover:text-orange-400 transition truncate'>
                                             {{ $creator->first_name }} {{ $creator->last_name }}
                                         </a>
                                         <p class='text-white/50 font-mono text-xs'>{{ $creator->trends_count }} trends</p>
@@ -420,7 +422,8 @@
                 const list = document.getElementById(`comments-list-${trendId}`);
                 const commentDiv = document.createElement('div');
                 commentDiv.className = 'flex gap-2 text-xs opacity-0 translate-x-2 transition-all duration-300';
-                commentDiv.innerHTML = `<span class="font-bold text-white shrink-0 capitalize">${data.user_name}:</span> <span class="text-zinc-400">${data.comment}</span>`;
+                const renderedComment = data.comment_html ?? data.comment;
+                commentDiv.innerHTML = `<span class="font-bold text-white shrink-0 capitalize">${data.user_name}:</span> <span class="text-zinc-400">${renderedComment}</span>`;
                 list.prepend(commentDiv);
                 setTimeout(() => commentDiv.classList.remove('opacity-0', 'translate-x-2'), 10);
                 input.value = '';

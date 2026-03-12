@@ -5,8 +5,9 @@
 @section('content')
 <div class="max-w-7xl mx-auto p-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Balance Card -->
-        <div class="lg:col-span-1">
+        <!-- Left Column -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Balance Card -->
             <div class="bg-orange-400 p-8 rounded-[2rem] text-black shadow-xl">
                 <h2 class="text-xs font-mono uppercase tracking-widest opacity-60 mb-2">Available Balance</h2>
                 <p class="text-4xl font-black tracking-tighter mb-8">UGX {{ number_format($balance) }}</p>
@@ -35,6 +36,24 @@
                     @endif
                 </form>
             </div>
+
+            <!-- Payout Schedule -->
+            <div class="bg-green-400/10 border border-green-400/10 rounded-[2rem] p-6">
+                <h3 class="text-white font-bold text-lg mb-3">Payout Schedule</h3>
+                <div class="text-white/60 text-sm space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span>Frequency</span>
+                        <span class="text-white/80 uppercase text-xs font-mono">{{ $payoutFrequency }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Next Payout</span>
+                        <span class="text-white/80 text-xs font-mono">{{ $nextPayoutDate->format('M d, Y') }}</span>
+                    </div>
+                    <div class="text-[10px] text-white/40 mt-2">
+                        Adjust frequency in Organizer Settings.
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- History Table -->
@@ -59,7 +78,7 @@
                                 <td class="py-4 text-white/60 uppercase">{{ $request->payment_method }}</td>
                                 <td class="py-4">
                                     <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase 
-                                        {{ $request->status === 'completed' ? 'bg-green-500/20 text-green-400' : '' }}
+                                        {{ in_array($request->status, ['completed', 'approved']) ? 'bg-green-500/20 text-green-400' : '' }}
                                         {{ $request->status === 'pending' ? 'bg-orange-400/20 text-orange-400' : '' }}
                                         {{ $request->status === 'rejected' ? 'bg-red-500/20 text-red-400' : '' }}">
                                         {{ $request->status }}

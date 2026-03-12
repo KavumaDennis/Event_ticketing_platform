@@ -3,13 +3,13 @@
 @section('title', 'Manage Reviews')
 
 @section('content')
-<div class="bg-green-400/10 border border-zinc-800 rounded-2xl overflow-hidden mt-2">
-    <div class="p-6 border-b border-zinc-800 flex justify-between items-center">
+<div class="bg-green-400/10 border border-zinc-800 overflow-hidden mt-2">
+    <div class="p-3 border-b border-zinc-800 flex justify-between items-center">
         <div>
             <h2 class="text-xl font-bold text-white uppercase tracking-tighter">User Reviews</h2>
             <p class="text-zinc-500 text-xs font-mono mt-1">Monitor and manage user feedback for events</p>
         </div>
-        <div class="bg-orange-400/10 px-4 py-2 rounded-xl border border-orange-400/20 text-orange-400 text-xs font-bold uppercase tracking-widest">
+        <div class="bg-orange-400/10 px-4 py-1.5 rounded-lg border border-orange-400/20 text-orange-400 text-[10px] font-bold uppercase tracking-widest">
             Total {{ $reviews->total() }}
         </div>
     </div>
@@ -26,7 +26,7 @@
                     <th class="px-6 py-4 tracking-widest text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-zinc-800/50">
+            <tbody class="divide-y-3 divide-zinc-800/50">
                 @forelse($reviews as $review)
                 <tr class="hover:bg-zinc-800/30 transition-colors group">
                     <td class="px-6 py-4">

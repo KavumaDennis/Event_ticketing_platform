@@ -5,6 +5,10 @@
             <h1 class="text-2xl text-white/70 mb-6">Complete Your Ticket Purchase</h1>
 
             <!-- Event Summary -->
+            @php
+                $convertedBaseTotal = round($baseTotal * $fxRate, 2);
+                $convertedServiceFee = round($serviceFee * $fxRate, 2);
+            @endphp
             <div class="space-y-3 text-white">
                 <div class="flex items-center">
                     <span class="pr-3 relative after:content-[''] flex items-center text-sm font-medium text-orange-400/70 after:bg-orange-400/80 after:absolute after:w-[3px] after:h-[12px] after:rounded-lg after:right-0">Event</span>
@@ -24,16 +28,25 @@
                 </div>
                 <div class="flex items-center">
                     <span class="pr-3 relative after:content-[''] flex items-center text-sm font-medium text-orange-400/70 after:bg-orange-400/80 after:absolute after:w-[3px] after:h-[12px] after:rounded-lg after:right-0">Subtotal</span>
-                    <span class="pl-3 text-white/60 font-mono font-light">UGX {{ number_format($baseTotal) }}</span>
+                    <span id="subtotal-base" class="pl-3 text-white/60 font-mono font-light">{{ $baseCurrency }} {{ number_format($baseTotal, 2) }}</span>
+                    <span id="subtotal-converted" class="pl-3 text-white/40 font-mono text-xs {{ $currency === $baseCurrency ? 'hidden' : '' }}">
+                        {{ $currency }} {{ number_format($convertedBaseTotal, 2) }}
+                    </span>
                 </div>
                 <div class="flex items-center">
                     <span class="pr-3 relative after:content-[''] flex items-center text-sm font-medium text-orange-400/70 after:bg-orange-400/80 after:absolute after:w-[3px] after:h-[12px] after:rounded-lg after:right-0">Service Fee</span>
-                    <span class="pl-3 text-white/60 font-mono font-light">UGX {{ number_format($serviceFee) }}</span>
+                    <span id="fee-base" class="pl-3 text-white/60 font-mono font-light">{{ $baseCurrency }} {{ number_format($serviceFee, 2) }}</span>
+                    <span id="fee-converted" class="pl-3 text-white/40 font-mono text-xs {{ $currency === $baseCurrency ? 'hidden' : '' }}">
+                        {{ $currency }} {{ number_format($convertedServiceFee, 2) }}
+                    </span>
                 </div>
                 <p class="bg-green-400/10 border border-green-400/10 flex items-center w-fit p-0.5 px-2 rounded-2xl">
                     <span class="pr-3 relative after:content-[''] flex items-center text-sm font-medium text-orange-400/70 after:bg-orange-400/80 after:absolute after:w-[3px] after:h-[12px] after:rounded-lg after:right-0">Total:</span>
-                    <span class="pl-3 text-white/60 font-mono font-light">UGX {{ number_format($total) }}</span>
+                    <span id="total-amount" class="pl-3 text-white/60 font-mono font-light">{{ $currency }} {{ number_format($total, 2) }}</span>
                 </p>
+                <div id="fx-row" class="text-[10px] text-white/40 font-mono {{ $currency === $baseCurrency ? 'hidden' : '' }}">
+                    Rate: 1 {{ $baseCurrency }} = <span id="fx-rate">{{ number_format($fxRate, 4) }}</span> {{ $currency }} ({{ $fxProvider }})
+                </div>
             </div>
 
             <!-- Payment Form -->
@@ -43,6 +56,8 @@
                 <input type="hidden" id="ticket_type" value="{{ $ticketType }}">
                 <input type="hidden" id="quantity" value="{{ $quantity }}">
                 <input type="hidden" id="total" value="{{ $total }}">
+                <input type="hidden" id="base_total" value="{{ $totalBase }}">
+                <input type="hidden" id="currency" value="{{ $currency }}">
 
                 <label class="block text-gray-300 font-semibold mb-1">Full Name</label>
                 <input type="text" id="name" value="{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}" placeholder="Full Name" class="w-full p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30 placeholder-white/40 backdrop-blur-4xl mb-4">
@@ -57,6 +72,13 @@
                 <select id="payment_method" class="p-3 w-full text-orange-400/70 font-mono rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30">
                     <option value="momo" selected>Mobile Money (MTN / Airtel)</option>
                     <option value="flutterwave">Flutterwave (Card, MoMo, Bank)</option>
+                </select>
+
+                <label class="block text-gray-300 font-semibold mb-1 mt-4">Paying Currency</label>
+                <select id="currency_select" class="p-3 w-full text-orange-400/70 font-mono rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/30">
+                    @foreach($supportedCurrencies as $cur)
+                        <option value="{{ $cur }}" {{ $cur === $currency ? 'selected' : '' }}>{{ $cur }}</option>
+                    @endforeach
                 </select>
 
                 <button type="button" id="payNowBtn" class="mt-6 w-full py-3 bg-orange-400/80 font-mono hover:bg-orange-600 transition rounded-3xl font-medium text-black/90 shadow-lg">
@@ -86,6 +108,7 @@ document.getElementById('payNowBtn').addEventListener('click', async () => {
     const ticketType = document.getElementById('ticket_type').value;
     const quantity = document.getElementById('quantity').value;
     const total = document.getElementById('total').value;
+    const currency = document.getElementById('currency').value;
 
     if (paymentMethod === 'momo' && !phone) { alert('Please enter your phone number.'); return; }
     if (paymentMethod === 'flutterwave' && (!email || !name)) { alert('Please enter your name and email.'); return; }
@@ -95,7 +118,8 @@ document.getElementById('payNowBtn').addEventListener('click', async () => {
         event_id: eventId, 
         ticket_type: ticketType, 
         quantity, 
-        total, 
+        total,
+        currency,
         phone,
         email,
         name
@@ -185,4 +209,60 @@ function showSlide(i) {
 }
 showSlide(index);
 setInterval(() => { index = (index + 1) % slides.length; showSlide(index); }, 4000);
+
+const baseCurrency = "{{ $baseCurrency }}";
+const currencySelect = document.getElementById('currency_select');
+const paymentMethodSelect = document.getElementById('payment_method');
+const totalBaseInput = document.getElementById('base_total');
+const totalInput = document.getElementById('total');
+const currencyInput = document.getElementById('currency');
+
+async function refreshFx() {
+    const selected = currencySelect.value;
+    const baseTotal = parseFloat(totalBaseInput.value);
+
+    if (selected === baseCurrency) {
+        document.getElementById('fx-row').classList.add('hidden');
+        document.getElementById('subtotal-converted').classList.add('hidden');
+        document.getElementById('fee-converted').classList.add('hidden');
+        document.getElementById('total-amount').textContent = `${baseCurrency} ${baseTotal.toFixed(2)}`;
+        totalInput.value = baseTotal.toFixed(2);
+        currencyInput.value = baseCurrency;
+        return;
+    }
+
+    const res = await fetch(`/payment/fx-quote?amount=${baseTotal}&from=${baseCurrency}&to=${selected}`);
+    const data = await res.json();
+
+    document.getElementById('fx-row').classList.remove('hidden');
+    document.getElementById('fx-rate').textContent = Number(data.rate).toFixed(4);
+    document.getElementById('subtotal-converted').classList.remove('hidden');
+    document.getElementById('fee-converted').classList.remove('hidden');
+
+    const subtotalBase = {{ $baseTotal }};
+    const feeBase = {{ $serviceFee }};
+    const subtotalConverted = (subtotalBase * data.rate).toFixed(2);
+    const feeConverted = (feeBase * data.rate).toFixed(2);
+
+    document.getElementById('subtotal-converted').textContent = `${selected} ${subtotalConverted}`;
+    document.getElementById('fee-converted').textContent = `${selected} ${feeConverted}`;
+    document.getElementById('total-amount').textContent = `${selected} ${Number(data.converted).toFixed(2)}`;
+
+    totalInput.value = Number(data.converted).toFixed(2);
+    currencyInput.value = selected;
+}
+
+currencySelect.addEventListener('change', async () => {
+    if (paymentMethodSelect.value === 'momo' && currencySelect.value !== baseCurrency) {
+        currencySelect.value = baseCurrency;
+    }
+    await refreshFx();
+});
+
+paymentMethodSelect.addEventListener('change', async () => {
+    if (paymentMethodSelect.value === 'momo' && currencySelect.value !== baseCurrency) {
+        currencySelect.value = baseCurrency;
+        await refreshFx();
+    }
+});
 </script>

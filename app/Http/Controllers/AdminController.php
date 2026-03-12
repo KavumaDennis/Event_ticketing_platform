@@ -12,9 +12,11 @@ use App\Models\PayoutRequest;
 use App\Models\Referral;
 use App\Models\PromoCode;
 use App\Models\Waitlist;
+use App\Models\PaymentFlag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -35,7 +37,11 @@ class AdminController extends Controller
         // I'll assume access to TicketPurchase model with a 'total_price' or similar. 
         // Let's assume for now TicketPurchase has 'total_price'. If not, I'll fix it. 
         // Actually, usually it's better to verify schema first but for speed I'll try sum('total_price').
-        $totalRevenue = TicketPurchase::sum('total'); 
+        if (Schema::hasColumn('ticket_purchases', 'total_base')) {
+            $totalRevenue = TicketPurchase::selectRaw('sum(coalesce(total_base, total)) as total')->value('total');
+        } else {
+            $totalRevenue = TicketPurchase::sum('total');
+        }
 
         // 3. Recent Activity (Depth)
         $recentUsers = User::latest()->take(5)->get();
@@ -54,6 +60,9 @@ class AdminController extends Controller
             ->get();
 
         $pendingPayoutsCount = PayoutRequest::where('status', 'pending')->count();
+        $openPaymentFlagsCount = Schema::hasTable('payment_flags')
+            ? PaymentFlag::where('status', 'open')->count()
+            : 0;
 
         return view('admin.dashboard', compact(
             'totalUsers', 
@@ -65,6 +74,7 @@ class AdminController extends Controller
             'topOrganizers',
             'upcomingEvents',
             'pendingPayoutsCount'
+            , 'openPaymentFlagsCount'
         ));
     }
 
@@ -125,7 +135,11 @@ class AdminController extends Controller
     public function finance()
     {
         $purchases = TicketPurchase::with(['user', 'event.organizer'])->latest()->paginate(5);
-        $totalRevenue = TicketPurchase::sum('total');
+        if (Schema::hasColumn('ticket_purchases', 'total_base')) {
+            $totalRevenue = TicketPurchase::selectRaw('sum(coalesce(total_base, total)) as total')->value('total');
+        } else {
+            $totalRevenue = TicketPurchase::sum('total');
+        }
         
         return view('admin.finance', compact('purchases', 'totalRevenue'));
     }
@@ -282,6 +296,35 @@ class AdminController extends Controller
     {
         $promo->delete();
         return back()->with('success', 'Promo code removed.');
+    }
+
+    // 6. Payment Flags / Chargebacks Queue
+    public function paymentFlags()
+    {
+        $flags = Schema::hasTable('payment_flags')
+            ? PaymentFlag::with(['purchase.user', 'purchase.event.organizer'])
+                ->latest()
+                ->paginate(20)
+            : collect();
+
+        return view('admin.payment-flags', compact('flags'));
+    }
+
+    public function updatePaymentFlag(Request $request, PaymentFlag $flag)
+    {
+        $request->validate([
+            'status' => 'required|in:reviewed,cleared',
+            'admin_notes' => 'nullable|string|max:2000',
+        ]);
+
+        $flag->update([
+            'status' => $request->status,
+            'admin_notes' => $request->admin_notes,
+            'resolved_by' => auth()->id(),
+            'resolved_at' => now(),
+        ]);
+
+        return back()->with('success', 'Payment flag updated.');
     }
 
     // 5. Deep Analytics Overlook

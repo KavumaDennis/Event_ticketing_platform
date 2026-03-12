@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\TicketPurchase;
+use App\Models\PaymentFlag;
+use Illuminate\Support\Facades\Schema;
 
 class TicketPurchaseObserver
 {
@@ -11,7 +13,40 @@ class TicketPurchaseObserver
      */
     public function created(TicketPurchase $ticketPurchase): void
     {
-        //
+        $thresholds = config('monetization.fraud', []);
+        $maxQty = $thresholds['max_quantity'] ?? 10;
+        $maxTotalBase = $thresholds['max_total_base'] ?? 1000000;
+        $maxPerDay = $thresholds['max_purchases_per_day'] ?? 3;
+
+        $totalBase = $ticketPurchase->total_base
+            ?? (($ticketPurchase->base_total ?? 0) + ($ticketPurchase->service_fee ?? 0));
+
+        $reasons = [];
+        if ($ticketPurchase->quantity >= $maxQty) {
+            $reasons[] = "High quantity: {$ticketPurchase->quantity}";
+        }
+        if ($totalBase >= $maxTotalBase) {
+            $reasons[] = "High total base amount: {$totalBase}";
+        }
+
+        if ($ticketPurchase->user_id) {
+            $todayCount = TicketPurchase::where('user_id', $ticketPurchase->user_id)
+                ->whereDate('created_at', now()->toDateString())
+                ->count();
+            if ($todayCount > $maxPerDay) {
+                $reasons[] = "High daily purchases: {$todayCount}";
+            }
+        }
+
+        if (!empty($reasons) && Schema::hasTable('payment_flags')) {
+            PaymentFlag::create([
+                'ticket_purchase_id' => $ticketPurchase->id,
+                'type' => 'fraud',
+                'status' => 'open',
+                'source' => 'system',
+                'reason' => implode(' | ', $reasons),
+            ]);
+        }
     }
 
     /**

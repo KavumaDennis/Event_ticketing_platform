@@ -61,6 +61,11 @@ class Event extends Model
         return $this->hasMany(Like::class); // ✅ Removed the stray comma
     }
 
+    public function comments()
+    {
+        return $this->hasMany(EventComment::class)->latest();
+    }
+
     /**
      * Check if the event is liked by a specific user
      */

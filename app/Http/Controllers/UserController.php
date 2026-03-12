@@ -52,6 +52,12 @@ class UserController extends Controller
         ));
     }
 
+    public function showByUsername(string $username)
+    {
+        $user = User::where('username', $username)->firstOrFail();
+        return $this->show($user);
+    }
+
 
 
 

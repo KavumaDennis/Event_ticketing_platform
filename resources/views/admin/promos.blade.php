@@ -3,7 +3,7 @@
 @section('title', 'Platform Promo Codes')
 
 @section('content')
-<div class="bg-green-400/10 rounded-2xl overflow-hidden border border-white/5">
+<div class="bg-green-400/10 overflow-hidden border border-zinc-800">
     <div class="p-4 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
         <h3 class="font-bold text-white uppercase text-xs tracking-widest">Active & Historic Promo Codes</h3>
         <div class="text-[10px] text-zinc-500 uppercase tracking-tighter">Total Codes: {{ $promos->total() }}</div>
@@ -21,7 +21,7 @@
                     <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-zinc-800">
+            <tbody class="divide-y-3 divide-zinc-800">
                 @forelse($promos as $promo)
                 <tr class="hover:bg-zinc-800/50 transition-colors">
                     <td class="px-6 py-4">

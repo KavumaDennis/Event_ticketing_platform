@@ -9,11 +9,16 @@ use App\Models\EventView;
 use App\Models\Event;
 use App\Models\Waitlist;
 use App\Models\Referral;
+use App\Models\Organizer;
 
 class OrganizerAnalyticsController extends Controller
 {
     public function index()
     {
+        if (!auth()->check()) {
+            return redirect()->route('show.login');
+        }
+
         $organizer = auth()->user()->organizer;
 
         if (!$organizer) {

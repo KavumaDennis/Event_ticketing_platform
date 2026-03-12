@@ -8,6 +8,7 @@ use App\Models\Trend;
 use App\Models\TrendComment;
 use App\Models\TrendLike;
 use App\Models\User;
+use App\Support\ContentFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -310,6 +311,7 @@ class TrendsController extends Controller
         return response()->json([
             'id' => $comment->id,
             'comment' => $comment->comment,
+            'comment_html' => ContentFormatter::linkify($comment->comment),
             'user_name' => $user->first_name . ' ' . $user->last_name,
             'user_photo' => $user->profile_pic
                 ? asset('storage/' . $user->profile_pic)

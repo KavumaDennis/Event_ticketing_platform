@@ -117,6 +117,8 @@
             @endforeach
         </div>
 
+        @include('partials.experiences-following', ['experienceUsers' => $experienceUsers, 'seenExperienceIds' => $seenExperienceIds])
+
         <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">My Recent Tickets</h2>
         <div class="grid grid-cols-2 gap-5 mb-5">
             @forelse($recentTickets as $ticket)

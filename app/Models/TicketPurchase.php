@@ -12,7 +12,14 @@ class TicketPurchase extends Model
         'ticket_type',
         'quantity',
         'total',
+        'base_total',
+        'service_fee',
+        'total_base',
         'currency',
+        'base_currency',
+        'fx_rate',
+        'fx_source',
+        'fx_at',
         'phone',
         'payment_method', // momo, flutterwave
         'flw_ref',
@@ -27,6 +34,7 @@ class TicketPurchase extends Model
 
     protected $casts = [
         'paid_at' => 'datetime',
+        'fx_at' => 'datetime',
     ];
 
     /* ===================== RELATIONSHIPS ===================== */
@@ -47,6 +55,11 @@ class TicketPurchase extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function flags()
+    {
+        return $this->hasMany(PaymentFlag::class);
     }
 
     /* ===================== HELPERS ===================== */

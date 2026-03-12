@@ -3,7 +3,7 @@
 @section('title', 'Manage Organizers')
 
 @section('content')
-<div class="bg-green-400/10 rounded-2xl overflow-hidden">
+<div class="bg-green-400/10 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-orange-400 text-black/90 font-mono text-xs uppercase font-medium">

@@ -3,20 +3,9 @@
 @section('title', 'Manage Organizer')
 
 @section('content')
-<div class="max-w-7xl mx-auto" x-data="{ 
+<div class="max-w-7xl mx-auto ml-2" x-data="{ 
     activeTab: 'general',
-    payoutMethod: '{{ $organizer->payout_bank_name || $organizer->payout_account_number ? 'bank' : 'momo' }}',
-    authorizedEmails: {{ json_encode(array_filter(explode(',', $organizer->authorized_emails ?? ''))) }},
-    newEmail: '',
-    addEmail() {
-        if (this.newEmail && !this.authorizedEmails.includes(this.newEmail)) {
-            this.authorizedEmails.push(this.newEmail);
-            this.newEmail = '';
-        }
-    },
-    removeEmail(index) {
-        this.authorizedEmails.splice(index, 1);
-    }
+    payoutMethod: '{{ $organizer->payout_bank_name || $organizer->payout_account_number ? 'bank' : 'momo' }}'
 }">
 
     {{-- Header --}}
@@ -104,7 +93,7 @@
                         </h3>
                         <p class="text-white/40 text-xs mb-4 leading-relaxed">Tell your attendees more about your company or brand. This will be displayed on your organizer profile.</p>
                         <textarea name="description" rows="4" 
-                                  class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors"
+                                  class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400"
                                   placeholder="Describe your business...">{{ old('description', $organizer->description) }}</textarea>
                     </div>
 
@@ -122,7 +111,7 @@
                                 </label>
                                 <input type="url" name="facebook_url" value="{{ old('facebook_url', $organizer->facebook_url) }}" 
                                        placeholder="https://facebook.com/yourpage"
-                                       class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1 flex items-center gap-2">
@@ -130,7 +119,7 @@
                                 </label>
                                 <input type="url" name="instagram_url" value="{{ old('instagram_url', $organizer->instagram_url) }}" 
                                        placeholder="https://instagram.com/yourprofile"
-                                       class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1 flex items-center gap-2">
@@ -138,7 +127,7 @@
                                 </label>
                                 <input type="url" name="twitter_url" value="{{ old('twitter_url', $organizer->twitter_url) }}" 
                                        placeholder="https://twitter.com/yourhandle"
-                                       class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1 flex items-center gap-2">
@@ -146,7 +135,7 @@
                                 </label>
                                 <input type="url" name="linkedin_url" value="{{ old('linkedin_url', $organizer->linkedin_url) }}" 
                                        placeholder="https://linkedin.com/company/yourbrand"
-                                       class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                         </div>
                     </div>
@@ -176,13 +165,13 @@
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Email</label>
                                 <input type="email" name="contact_email" value="{{ old('contact_email', $organizer->contact_email ?? Auth::user()->email) }}" 
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Contact number</label>
                                 <input type="text" name="contact_number" value="{{ old('contact_number', $organizer->contact_number) }}" 
                                        placeholder="{{ $organizer->contact_number ? '' : 'You have not added any contact number yet.' }}"
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                         </div>
                     </div>
@@ -198,16 +187,16 @@
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Default Price (UGX)</label>
                                 <input type="number" name="default_ticket_price" value="{{ old('default_ticket_price', $organizer->default_ticket_price) }}" 
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Default Quantity</label>
                                 <input type="number" name="default_ticket_quantity" value="{{ old('default_ticket_quantity', $organizer->default_ticket_quantity) }}" 
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Default Type</label>
-                                <select name="default_ticket_type" class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                <select name="default_ticket_type" class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                                     <option value="Regular" {{ $organizer->default_ticket_type == 'Regular' ? 'selected' : '' }} class="bg-zinc-900">Regular</option>
                                     <option value="VIP" {{ $organizer->default_ticket_type == 'VIP' ? 'selected' : '' }} class="bg-zinc-900">VIP</option>
                                     <option value="VVIP" {{ $organizer->default_ticket_type == 'VVIP' ? 'selected' : '' }} class="bg-zinc-900">VVIP</option>
@@ -225,7 +214,7 @@
                         </h3>
                         <p class="text-white/40 text-xs mb-4 leading-relaxed">Add any specific instructions (e.g. parking info, dress code, entry requirements) that should appear on every ticket issued.</p>
                         <textarea name="ticket_instructions" rows="3" 
-                                  class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors"
+                                  class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400"
                                   placeholder="e.g. Please arrive 30 minutes early...">{{ old('ticket_instructions', $organizer->ticket_instructions) }}</textarea>
                     </div>
 
@@ -300,12 +289,12 @@
                     <div class="flex flex-wrap gap-3">
                         <button type="button" @click="payoutMethod = 'momo'"
                                 :class="payoutMethod === 'momo' ? 'bg-orange-400 text-black' : 'bg-white/10 text-white/70 hover:bg-white/20'"
-                                class="px-4 py-2 rounded-2xl text-xs font-bold uppercase transition">
+                                class="px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition">
                             Mobile Money
                         </button>
                         <button type="button" @click="payoutMethod = 'bank'"
                                 :class="payoutMethod === 'bank' ? 'bg-orange-400 text-black' : 'bg-white/10 text-white/70 hover:bg-white/20'"
-                                class="px-4 py-2 rounded-2xl text-xs font-bold uppercase transition">
+                                class="px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition">
                             Bank Account
                         </button>
                     </div>
@@ -320,7 +309,7 @@
                                 <label class="text-white/60 text-sm font-medium ml-1">MTN/Airtel Number</label>
                                 <input type="text" name="payout_mobile_money_number" value="{{ old('payout_mobile_money_number', $organizer->payout_mobile_money_number) }}" 
                                        placeholder="e.g. 0770000000"
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                         </div>
                     </div>
@@ -337,17 +326,17 @@
                                 <label class="text-white/60 text-sm font-medium ml-1">Bank Name</label>
                                 <input type="text" name="payout_bank_name" value="{{ old('payout_bank_name', $organizer->payout_bank_name) }}" 
                                        placeholder="e.g. Stanbic Bank"
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Account Number</label>
                                 <input type="text" name="payout_account_number" value="{{ old('payout_account_number', $organizer->payout_account_number) }}" 
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Account Holder Name</label>
                                 <input type="text" name="payout_account_name" value="{{ old('payout_account_name', $organizer->payout_account_name) }}" 
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                         </div>
                     </div>
@@ -362,7 +351,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Payout Frequency</label>
-                                <select name="payout_frequency" class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                <select name="payout_frequency" class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                                     <option value="daily" {{ $organizer->payout_frequency == 'daily' ? 'selected' : '' }} class="bg-zinc-900">Daily</option>
                                     <option value="weekly" {{ $organizer->payout_frequency == 'weekly' ? 'selected' : '' }} class="bg-zinc-900">Weekly</option>
                                     <option value="monthly" {{ ($organizer->payout_frequency ?? 'monthly') == 'monthly' ? 'selected' : '' }} class="bg-zinc-900">Monthly (Default)</option>
@@ -372,7 +361,7 @@
                                 <label class="text-white/60 text-sm font-medium ml-1">Tax ID / Tin Number (Optional)</label>
                                 <input type="text" name="tax_id" value="{{ old('tax_id', $organizer->tax_id) }}" 
                                        placeholder="For tax compliance"
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                             </div>
                         </div>
                     </div>
@@ -387,49 +376,65 @@
 
             {{-- PAGE ACCESS --}}
             <div x-show="activeTab === 'access'" x-transition.opacity style="display: none;">
-                <h2 class="text-lg font-bold text-white mb-4">Manage Page Access</h2>
-                <p class="text-white/40 text-sm mb-6">List of emails allowed to access this organizer page. Authorized users can manage events and view sales data.</p>
-                
-                <div class="space-y-6">
-                    {{-- Add New Email --}}
-                    <div class="flex flex-col md:flex-row gap-2">
-                        <input type="email" x-model="newEmail" @keydown.enter.prevent="addEmail()" placeholder="Enter user email address" 
-                               class="flex-1 p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
-                        <button type="button" @click="addEmail()" class="px-6 py-3 bg-white/10 text-white text-sm font-bold rounded-2xl hover:bg-white/20 transition">
-                            Add User
-                        </button>
-                    </div>
+                <h2 class="text-lg font-bold text-white mb-4">Team & Roles</h2>
+                <p class="text-white/40 text-sm mb-6">Add team members and assign roles per organizer.</p>
 
-                    {{-- List of Emails --}}
+                <div class="space-y-6">
+                    {{-- Add Team Member --}}
+                    <form action="{{ route('organizer.team.add') }}" method="POST" class="flex flex-col md:flex-row gap-2">
+                        @csrf
+                        <input type="email" name="email" placeholder="Enter user email address"
+                               class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
+                        <select name="role" class="p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                            <option value="editor" class="bg-zinc-900">Editor</option>
+                            <option value="finance" class="bg-zinc-900">Finance</option>
+                            <option value="support" class="bg-zinc-900">Support</option>
+                            <option value="owner" class="bg-zinc-900">Owner</option>
+                        </select>
+                        <button type="submit" class="px-6 py-3 bg-white/10 text-white text-sm font-bold rounded-2xl hover:bg-white/20 transition">
+                            Add Member
+                        </button>
+                    </form>
+
+                    {{-- Members List --}}
                     <div class="space-y-2">
-                        <template x-for="(email, index) in authorizedEmails" :key="index">
+                        @forelse($organizer->members as $member)
                             <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-2xl">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-orange-400/10 flex items-center justify-center text-orange-400 text-xs">
                                         <i class="fas fa-user"></i>
                                     </div>
-                                    <span class="text-white text-sm" x-text="email"></span>
+                                    <div class="flex flex-col">
+                                        <span class="text-white text-sm">{{ $member->user?->email ?? 'Unknown user' }}</span>
+                                        <span class="text-white/40 text-[10px]">Role: {{ ucfirst($member->role) }}</span>
+                                    </div>
                                 </div>
-                                <button type="button" @click="removeEmail(index)" class="text-red-400 hover:text-red-500 text-sm font-medium transition-colors p-2">
-                                    <i class="fas fa-trash-alt mr-1"></i> Remove
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <form action="{{ route('organizer.team.update', $member) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <select name="role" onchange="this.form.submit()" class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
+                                            <option value="owner" {{ $member->role === 'owner' ? 'selected' : '' }} class="bg-zinc-900">Owner</option>
+                                            <option value="editor" {{ $member->role === 'editor' ? 'selected' : '' }} class="bg-zinc-900">Editor</option>
+                                            <option value="finance" {{ $member->role === 'finance' ? 'selected' : '' }} class="bg-zinc-900">Finance</option>
+                                            <option value="support" {{ $member->role === 'support' ? 'selected' : '' }} class="bg-zinc-900">Support</option>
+                                        </select>
+                                    </form>
+                                    <form action="{{ route('organizer.team.remove', $member) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-400 hover:text-red-500 text-xs font-medium transition-colors p-2">
+                                            Remove
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </template>
-                        <template x-if="authorizedEmails.length === 0">
+                        @empty
                             <p class="text-white/30 text-xs italic p-12 text-center border border-dashed border-white/10 rounded-2xl">
-                                No additional users authorized yet. Add emails above to grant access.
+                                No team members yet.
                             </p>
-                        </template>
+                        @endforelse
                     </div>
-
-                    {{-- Hidden input for submission --}}
-                    <input type="hidden" name="authorized_emails" :value="authorizedEmails.join(',')">
-                </div>
-
-                <div class="mt-8 pt-6 border-t border-white/5">
-                    <button type="submit" class="px-6 py-2 bg-orange-400 text-black font-bold rounded-xl hover:bg-orange-500 transition shadow-lg shadow-orange-400/20">
-                        Update Access List
-                    </button>
                 </div>
             </div>
 
@@ -448,14 +453,14 @@
                                 <label class="text-white/60 text-sm font-medium ml-1">Google Analytics ID</label>
                                 <input type="text" name="google_analytics_id" value="{{ old('google_analytics_id', $organizer->google_analytics_id) }}" 
                                        placeholder="e.g. G-XXXXXXXXXX"
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                                 <p class="text-white/30 text-[10px] ml-1">Track page views and user behavior.</p>
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-white/60 text-sm font-medium ml-1">Facebook Pixel ID</label>
                                 <input type="text" name="facebook_pixel_id" value="{{ old('facebook_pixel_id', $organizer->facebook_pixel_id) }}" 
                                        placeholder="e.g. 123456789012345"
-                                       class="w-full p-3 rounded-2xl bg-white/5 border border-white/10 text-white focus:border-orange-400 outline-none transition-colors">
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                                 <p class="text-white/30 text-[10px] ml-1">Optimize your ad spend and track conversions.</p>
                             </div>
                         </div>
@@ -580,10 +585,10 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {{-- FREE PLAN --}}
-                <div class="p-8 rounded-3xl border border-white/10 {{ ($organizer->tier ?? 'free') === 'free' ? 'bg-orange-400/5 ring-1 ring-orange-400/30' : 'bg-white/5 opacity-60' }} flex flex-col">
+                <div class="p-8 rounded-3xl {{ ($organizer->tier ?? 'free') === 'free' ? 'bg-orange-400/5 ring-1 ring-orange-400/10' : 'bg-white/5 opacity-60' }} flex flex-col">
                     <h3 class="text-xl font-bold text-white mb-2">Free Plan</h3>
                     <p class="text-white/40 text-xs mb-6">Perfect for starters and small events.</p>
-                    <div class="text-3xl font-bold text-white mb-8">UGX 0 <span class="text-xs text-white/40 font-normal">/month</span></div>
+                    <div class="text-3xl font-bold text-white mb-8 font-mono">UGX 0 <span class="text-xs text-white/40 font-normal">/month</span></div>
                     
                     <ul class="space-y-4 mb-auto">
                         <li class="flex items-center gap-3 text-sm text-white/60"><i class="fas fa-check text-green-400"></i> Standard Event Listing</li>
@@ -593,7 +598,7 @@
                     </ul>
                     
                     @if(($organizer->tier ?? 'free') === 'free')
-                        <button disabled class="w-full mt-8 py-3 bg-white/5 text-white/40 font-bold rounded-2xl cursor-not-allowed text-sm">
+                        <button disabled class="w-full mt-8 py-3 bg-white/5 text-white/40 text-[10px] uppercase font-bold rounded-lg cursor-not-allowed text-sm">
                             Current Plan
                         </button>
                     @endif
@@ -601,10 +606,10 @@
 
                 {{-- PRO PLAN --}}
                 <div class="p-8 rounded-3xl border border-orange-400/30 {{ ($organizer->tier ?? 'free') === 'pro' ? 'bg-orange-400/10 ring-2 ring-orange-400' : 'bg-orange-400/5' }} relative flex flex-col">
-                    <div class="absolute -top-3 right-8 bg-orange-400 text-black text-[10px] font-bold px-4 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+                    <div class="absolute -top-3 right-8 bg-orange-400 text-black text-[10px] font-bold px-4 py-1 rounded-lg uppercase tracking-wider">Most Popular</div>
                     <h3 class="text-xl font-bold text-white mb-2">Pro Plan</h3>
                     <p class="text-white/40 text-xs mb-6">For growing organizers who want more.</p>
-                    <div class="text-3xl font-bold text-white mb-8">UGX 50,000 <span class="text-xs text-white/40 font-normal">/month</span></div>
+                    <div class="text-3xl font-bold text-white mb-8 font-mono">UGX 50,000 <span class="text-xs text-white/40 font-normal">/month</span></div>
                     
                     <ul class="space-y-4 mb-auto">
                         <li class="flex items-center gap-3 text-sm text-white/80"><i class="fas fa-check text-green-400"></i> Priority Listing Display</li>
@@ -614,11 +619,11 @@
                     </ul>
                     
                     @if(($organizer->tier ?? 'free') === 'free')
-                        <a href="{{ route('organizer.signup') }}" class="w-full mt-8 py-3 bg-orange-400 text-black font-bold rounded-2xl hover:bg-orange-500 transition text-sm text-center">
+                        <a href="{{ route('organizer.signup') }}" class="w-full mt-8 py-3 bg-orange-400 text-black uppercase text-[10px] font-bold rounded-lg hover:bg-orange-500 transition text-sm text-center">
                             Upgrade Now
                         </a>
                     @elseif(($organizer->tier ?? 'free') === 'pro')
-                        <button disabled class="w-full mt-8 py-3 bg-white/5 text-white/40 font-bold rounded-2xl cursor-not-allowed text-sm">
+                        <button disabled class="w-full mt-8 py-3 bg-white/5 text-white/40 text-[10px] uppercase font-bold rounded-lg cursor-not-allowed text-sm">
                             Current Plan
                         </button>
                     @endif
@@ -638,11 +643,11 @@
                     </ul>
                     
                     @if(($organizer->tier ?? 'free') !== 'elite')
-                        <a href="{{ route('organizer.signup') }}" class="w-full mt-8 py-3 bg-white text-black font-bold rounded-2xl hover:bg-white/90 transition text-sm text-center">
+                        <a href="{{ route('organizer.signup') }}" class="w-full mt-8 py-3 bg-white text-black text-[10px] uppercase font-bold rounded-lg hover:bg-white/90 transition text-sm text-center">
                             Go Elite
                         </a>
                     @else
-                        <button disabled class="w-full mt-8 py-3 bg-white/5 text-white/40 font-bold rounded-2xl cursor-not-allowed text-sm">
+                        <button disabled class="w-full mt-8 py-3 bg-white/5 text-white/40 text-[10px] uppercase font-bold rounded-lg cursor-not-allowed text-sm">
                             Current Plan
                         </button>
                     @endif

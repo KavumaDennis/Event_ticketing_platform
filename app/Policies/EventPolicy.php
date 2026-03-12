@@ -12,7 +12,15 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return $event->organizer && $event->organizer->user_id === $user->id;
+        if (!$event->organizer) {
+            return false;
+        }
+
+        if ($event->organizer->user_id === $user->id) {
+            return true;
+        }
+
+        return $event->organizer->hasRole($user, ['owner', 'editor']);
     }
 
     /**
@@ -20,6 +28,14 @@ class EventPolicy
      */
     public function delete(User $user, Event $event): bool
     {
-        return $event->organizer && $event->organizer->user_id === $user->id;
+        if (!$event->organizer) {
+            return false;
+        }
+
+        if ($event->organizer->user_id === $user->id) {
+            return true;
+        }
+
+        return $event->organizer->hasRole($user, ['owner', 'editor']);
     }
 }

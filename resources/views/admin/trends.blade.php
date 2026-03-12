@@ -3,7 +3,7 @@
 @section('title', 'Manage Trends')
 
 @section('content')
-<div class="bg-green-400/10 rounded-xl overflow-hidden">
+<div class="bg-green-400/10 border border-zinc-800 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-orange-400 text-black/90 font-mono text-xs uppercase font-medium">
@@ -11,13 +11,13 @@
                     <th class="px-6 py-4">Trend</th>
                     <th class="px-6 py-4">Creator</th>
                     <th class="px-6 py-4">Linked Event</th>
-                    <th class="px-6 py-4">Editor's Pick</th>
+                    <th class="py-4">Editor's Pick</th>
                     <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-zinc-800">
+            <tbody class="divide-y-3 divide-zinc-800">
                 @foreach($trends as $trend)
-                <tr class="hover:bg-zinc-800/50 transition-colors">
+                <tr class="hover:bg-zinc-800/50 transition-colors ">
                     <td class="px-6 py-4 flex items-center gap-3">
                         @if($trend->is_video)
                         <video src="{{ $trend->first_media_url }}" class="w-12 h-12 rounded-lg object-cover bg-zinc-800" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
@@ -25,20 +25,20 @@
                         <img src="{{ $trend->first_media_url }}" class="w-12 h-12 rounded-lg object-cover bg-zinc-800">
                         @endif
                         <div>
-                            <div class="font-medium text-white">{{ $trend->title }}</div>
-                            <div class="text-xs text-zinc-500">{{ Str::limit($trend->body, 50) }}</div>
+                            <div class="font-medium text-white/80">{{ $trend->title }}</div>
+                            <div class="text-xs text-zinc-500 mt-1">{{ Str::limit($trend->body, 50) }}</div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-zinc-400">
+                    <td class="px-6 py-4 text-zinc-400 font-bold text-sm">
                         {{ $trend->user->first_name }} {{ $trend->user->last_name }}
                     </td>
-                    <td class="px-6 py-4 text-zinc-400">
+                    <td class="px-6 py-4 text-zinc-400 font-bold text-sm">
                         {{ $trend->event->event_name ?? 'None' }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="py-4">
                         <form action="{{ route('admin.trends.toggle-editors-pick', $trend->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="px-3 py-1 rounded-full text-xs font-bold transition-colors {{ $trend->is_editors_pick ? 'bg-orange-400/90 text-black' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700' }}">
+                            <button type="submit" class="px-3 py-1.5 uppercase rounded-lg text-[10px] font-bold transition-colors {{ $trend->is_editors_pick ? 'bg-orange-400 text-black' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700' }}">
                                 {{ $trend->is_editors_pick ? "Editor's Pick" : 'Mark as Pick' }}
                             </button>
                         </form>

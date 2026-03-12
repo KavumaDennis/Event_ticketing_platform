@@ -1,4 +1,5 @@
 <x-layout>
+    @php use App\Support\ContentFormatter; @endphp
 
     <section class="grid grid-cols-14 gap-5 p-5">
         <section class="col-span-10 grid grid-cols-2 gap-5 w-full h-fit">
@@ -121,7 +122,7 @@
 
                             {{-- Body --}}
                             <p class="text-white/70 text-sm mt-1 break-words">
-                                {{ $comment->comment }}
+                                {!! ContentFormatter::linkify($comment->comment) !!}
                             </p>
 
                             {{-- Actions --}}
@@ -289,7 +290,7 @@
                                 <span class="text-white/50 text-xs">just now</span>
                             </div>
                             <p class="text-white/70 text-sm mt-1">
-                                ${escapeHtml(res.comment)}
+                                ${res.comment_html ?? escapeHtml(res.comment)}
                             </p>
                             <div class="flex gap-3 mt-1 items-center text-xs text-white/50">
                                 <button class="like-comment-btn flex items-center gap-1"

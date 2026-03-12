@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PayoutRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class PayoutController extends Controller
 {
@@ -16,8 +17,24 @@ class PayoutController extends Controller
 
         $balance = $organizer->getAvailableBalance();
         $payoutRequests = $organizer->payoutRequests()->latest()->get();
+        $payoutFrequency = $organizer->payout_frequency ?? 'monthly';
 
-        return view('dashboard.payouts.index', compact('organizer', 'balance', 'payoutRequests'));
+        $now = Carbon::now();
+        if ($payoutFrequency === 'daily') {
+            $nextPayoutDate = $now->copy()->addDay()->startOfDay();
+        } elseif ($payoutFrequency === 'weekly') {
+            $nextPayoutDate = $now->copy()->addWeek()->startOfDay();
+        } else {
+            $nextPayoutDate = $now->copy()->addMonthNoOverflow()->startOfMonth();
+        }
+
+        return view('dashboard.payouts.index', compact(
+            'organizer',
+            'balance',
+            'payoutRequests',
+            'payoutFrequency',
+            'nextPayoutDate'
+        ));
     }
 
     public function store(Request $request)

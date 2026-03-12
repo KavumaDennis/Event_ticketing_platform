@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- TOP STATS CARDS --}}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
     <div class="bg-green-400/10 p-3 flex flex-col justify-between rounded-2xl">
         <div class="flex items-center justify-between mb-4">
             <span class="p-2 bg-orange-500/10 text-orange-400 rounded-full">
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="bg-green-400/10 p-3 flex flex-col justify-between rounded-2xl">
+    <a href="{{ route('admin.users') }}" class="bg-green-400/10 hover:border hover:border-orange-400/30 transition p-3 flex flex-col justify-between rounded-2xl">
         <div class="flex items-center justify-between mb-4">
             <span class="p-2 bg-orange-500/10 text-orange-400 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users">
@@ -40,16 +40,16 @@
             <h3 class="text-white/70 text-sm font-medium">Active Users</h3>
         </div>
         <div class="flex items-center justify-between">
-            <div class="text-xl font-bold text-white mb-1">
+            <div class="text-xl font-bold text-white">
                 {{ number_format($totalUsers) }}
             </div>
             <div class="text-xs text-orange-400/70 font-medium font-mono">
                 Registered accounts
             </div>
         </div>
-    </div>
+    </a>
 
-    <div class="bg-green-400/10 p-3 flex flex-col justify-between rounded-2xl">
+    <a href="{{ route('admin.organizers') }}" class="bg-green-400/10 hover:border hover:border-orange-400/30 transition p-3 flex flex-col justify-between rounded-2xl">
         <div class="flex items-center justify-between mb-4">
             <span class="p-2 bg-orange-500/10 text-orange-400 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase">
@@ -59,14 +59,14 @@
             <h3 class="text-white/70 text-sm font-medium">Organizers</h3>
         </div>
         <div class="flex items-center justify-between">
-            <div class="text-xl font-bold text-white mb-1">
+            <div class="text-xl font-bold text-white">
                 {{ number_format($totalOrganizers) }}
             </div>
             <div class="text-xs text-orange-400/70 font-medium font-mono">
                 Business profiles
             </div>
         </div>
-    </div>
+    </a>
 
     <div class="bg-green-400/10 p-3 flex flex-col justify-between rounded-2xl">
         <div class="flex items-center justify-between mb-4">
@@ -80,13 +80,15 @@
             <h3 class="text-white/70 text-sm font-medium">Events Hosted</h3>
         </div>
         <div class="flex items-center justify-between">
-            <div class="text-xl font-bold text-white mb-1">
+            <div class="text-xl font-bold text-white">
                 {{ number_format($totalEvents) }}
             </div>
             <div class="text-xs text-orange-400/70 font-medium font-mono">
                 Total events created
             </div>
         </div>
+    </div>
+
     <div class="bg-green-400/10 p-3 flex flex-col justify-between rounded-2xl relative">
         @if($pendingPayoutsCount > 0)
         <div class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-bounce">
@@ -103,12 +105,14 @@
             <h3 class="text-white/70 text-sm font-medium">Pending Payouts</h3>
         </div>
         <div class="flex items-center justify-between">
-            <div class="text-xl font-bold text-white mb-1">
+            <div class="font-bold text-white/80 font-mono">
                 {{ $pendingPayoutsCount }} Requests
             </div>
             <a href="{{ route('admin.payouts') }}" class="text-xs text-orange-400 hover:underline">Manage</a>
         </div>
     </div>
+
+    
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -151,20 +155,20 @@
     </div>
 
     {{-- TOP ORGANIZERS --}}
-    <div class="p-4 border-green-400/20 bg-green-400/10 rounded-3xl">
-        <h3 class="font-semibold text-orange-400/70 text-sm mb-3">Top Organizers</h3>
+    <div class="">
+        <h3 class="text-xs p-1 font-mono font-medium bg-orange-400 rounded-2xl w-fit text-black/90 mb-3">Top Organizers</h3>
         <div class="space-y-4">
             @forelse($topOrganizers as $org)
-            <div class="flex items-center gap-5 p-2 border border-green-400/20 bg-green-400/10 rounded-2xl">
-                <div class="border border-green-400/15  w-fit rounded-[50%]">
-                    <img src="{{ $org->organizer_image ? asset('storage/'.$org->organizer_image) : asset('default.png') }}" alt="{{ $org->business_name }}" class='size-13 rounded-[50%]' alt="" />
+            <div class="flex items-center justify-between gap-3 h-fit p-3 bg-green-400/10 border border-green-400/5 rounded-2xl hover:border-orange-400/30 transition">
+                <div class="w-10 h-10 rounded-full bg-orange-400 border border-green-400/10 p-0.5 flex-shrink-0">
+                    <img src="{{ $org->organizer_image ? asset('storage/'.$org->organizer_image) : asset('default.png') }}" alt="{{ $org->business_name }}" class='w-full h-full rounded-full object-cover' alt="" />
                 </div>
                 <div class="flex items-center justify-between w-4/5">
                     <div>
-                        <p class="font-medium text-sm text-white/80">{{ $org->business_name }}</p>
+                        <p class="font-medium text-sm text-orange-400/90">{{ $org->business_name }}</p>
                         <div class="text-xs text-white/60">{{ $org->followers_count ?? $org->followers->count() }} followers</div>
                     </div>
-                    <a href="{{ route('organizer.details', $org->id) }}" class="text-xs text-black/90 font-medium font-mono bg-orange-400 rounded-3xl px-2 py-1">Details</a>
+                    <a href="{{ route('organizer.details', $org->id) }}" class="px-3 py-1.5 bg-white/5 border border-white/20 text-orange-400 text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase flex-shrink-0">Details</a>
                 </div>
             </div>
             @empty

@@ -3,10 +3,10 @@
 @section('title', 'Manage FAQs')
 
 @section('content')
-<div class="bg-green-400/5 border border-green-400/10 rounded-2xl p-6">
+<div class="bg-green-400/5 border border-zinc-800 p-6">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-lg font-bold text-orange-400/80">Frequently Asked Questions</h2>
-        <button onclick="document.getElementById('addFaqModal').classList.remove('hidden')" class="px-4 py-2 bg-orange-400 text-black text-xs font-bold rounded-xl hover:bg-orange-300 transition-colors">
+        <button onclick="document.getElementById('addFaqModal').classList.remove('hidden')" class="px-4 py-1.5 bg-orange-400 text-black text-[10px] font-bold rounded-lg uppercase hover:bg-orange-300 transition-colors">
             Add New FAQ
         </button>
     </div>
@@ -20,20 +20,20 @@
                     <th class="px-4 py-3 font-medium text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-zinc-800/50">
+            <tbody class="divide-y-3 divide-zinc-800/50">
                 @foreach($faqs as $faq)
                 <tr class="text-sm text-zinc-300 hover:bg-white/5 transition-colors">
                     <td class="px-4 py-4 font-medium">{{ Str::limit($faq->question, 50) }}</td>
                     <td class="px-4 py-4 text-zinc-500">{{ Str::limit($faq->answer, 80) }}</td>
                     <td class="px-4 py-4 text-right">
                         <div class="flex justify-end gap-2">
-                            <button onclick="editFaq({{ json_encode($faq) }})" class="p-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-all">
+                            <button onclick="editFaq({{ json_encode($faq) }})" class="p-2 px-3 border border-white/10 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-all">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <form action="{{ route('admin.faqs.delete', $faq) }}" method="POST" onsubmit="return confirm('Delete this FAQ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button class="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-all">
+                                <button class="p-2 px-3 border border-white/10 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-all">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>

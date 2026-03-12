@@ -30,7 +30,10 @@ use App\Http\Controllers\{
     BoostController,
     PayoutController,
     WaitlistController,
-    ExperienceController
+    ExperienceController,
+    OrganizerTeamController,
+    TagController,
+    DiscoveryController
 };
 
 // ADMIN DASHBOARD
@@ -73,12 +76,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::get('/promos', [AdminController::class, 'promos'])->name('admin.promos');
     Route::delete('/promos/{promo}', [AdminController::class, 'deletePromo'])->name('admin.promos.delete');
+
+    Route::get('/payment-flags', [AdminController::class, 'paymentFlags'])->name('admin.payment-flags');
+    Route::post('/payment-flags/{flag}', [AdminController::class, 'updatePaymentFlag'])->name('admin.payment-flags.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/user/dashboard', [DashboardController::class, 'overview'])->name('user.dashboard.overview'); // A - sidebar
     Route::get('/dashboard/organizer/settings', [DashboardController::class, 'organizerSettings'])->name('organizer.settings');
     Route::post('/dashboard/organizer/settings', [DashboardController::class, 'updateOrganizerSettings'])->name('organizer.settings.update');
+    Route::post('/dashboard/organizer/team', [OrganizerTeamController::class, 'add'])->name('organizer.team.add');
+    Route::put('/dashboard/organizer/team/{member}', [OrganizerTeamController::class, 'updateRole'])->name('organizer.team.update');
+    Route::delete('/dashboard/organizer/team/{member}', [OrganizerTeamController::class, 'remove'])->name('organizer.team.remove');
     Route::get('/dashboard/organizer/profile', [DashboardController::class, 'organizerProfile'])->name('user.dashboard.organizer-profile');
     Route::get('/user/dashboard/following', [DashboardController::class, 'following'])->name('user.dashboard.following');
     Route::get('/user/dashboard/followers', [DashboardController::class, 'followers'])->name('user.dashboard.followers');
@@ -165,6 +174,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/events/saved', [SavedEventController::class, 'index'])->name('events.saved');
     Route::post('/events/{id}/like', [LikeController::class, 'toggle'])->name('events.like');
     Route::post('/events/{id}/save', [SavedEventController::class, 'toggle'])->name('events.save');
+    Route::post('/events/{event}/comment', [EventsController::class, 'comment'])->name('events.comment');
+    Route::post('/events/comment/{comment}/like', [EventsController::class, 'likeComment'])->name('events.comment.like');
+    Route::delete('/events/comment/{comment}', [EventsController::class, 'deleteComment'])->name('events.comment.delete');
 
     // Organizer Tools
     Route::get('/dashboard/events/{event}/retargeting', [DashboardController::class, 'retargeting'])->name('organizer.retargeting');
@@ -182,7 +194,9 @@ Route::get('/events/{id}', [EventsController::class, 'singleEvent'])->name('even
 // 👥 Organizers
 Route::get('/organizers', [OrganizersController::class, 'index'])->name('organizers');
     // Organizer Analytics & Promotions
-    Route::get('/organizer/analytics', [OrganizerAnalyticsController::class, 'index'])->name('organizer.analytics');
+    Route::get('/organizer/analytics', [OrganizerAnalyticsController::class, 'index'])
+        ->middleware('auth')
+        ->name('organizer.analytics');
     Route::post('/organizer/promo/store', [OrganizerAnalyticsController::class, 'storePromo'])->name('organizer.promo.store');
     Route::post('/organizer/promo/{promoCode}/toggle', [OrganizerAnalyticsController::class, 'togglePromo'])->name('organizer.promo.toggle');
 
@@ -214,14 +228,20 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/organizer/{id}', [OrganizersController::class, 'show'])->name('organizer.details');
 
+Route::get('/discover', [DiscoveryController::class, 'index'])->name('discover');
+
 //User
 Route::get('/user/{user}', [UserController::class, 'show'])->name('user.profile');
+Route::get('/u/{username}', [UserController::class, 'showByUsername'])->name('user.profile.username');
 Route::post('/user/{user}/follow', [UserController::class, 'follow'])->name('user.follow');
 Route::delete('/user/{user}/unfollow', [UserController::class, 'unfollow'])->name('user.unfollow');
+
+Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Payment Related
     Route::get('/payment/{event}', [PaymentController::class, 'paymentPage'])->name('payment.page');
+    Route::get('/payment/fx-quote', [PaymentController::class, 'fxQuote'])->name('payment.fx-quote');
     Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
 
     // MTN Mobile Money (MoMo) Integration
@@ -289,6 +309,3 @@ Route::get('/ticket/{code}', [TicketController::class, 'show'])->name('ticket.sh
 Route::get('/ticket/{code}/download', [TicketController::class, 'download'])->name('ticket.download');
 Route::post('/ticket/{ticket}/transfer', [TicketController::class, 'transfer'])->name('ticket.transfer');
 Route::post('/ticket/transfer/{transfer}/cancel', [TicketController::class, 'cancelTransfer'])->name('ticket.transfer.cancel');
-
-
-

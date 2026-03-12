@@ -216,9 +216,9 @@
                                 @csrf
                                 @if($f->follower->followers()->where('follower_id', auth()->id())->exists())
                                 @method('DELETE')
-                                <button class="px-3 py-1 rounded-xl bg-red-600/70 text-white/70 text-xs font-mono uppercase font-bold">Unfollow</button>
+                                <button class="bg-red-600/70 px-3 py-1.5  border border-white/20 text-orange-400 text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase shrink-0">Unfollow</button>
                                 @else
-                                <button class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-2 text-orange-400/50 font-mono w-fit uppercase font-bold">Follow</button>
+                                <button class="px-3 py-1.5 bg-white/5 border border-white/20 text-orange-400 text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase shrink-0">Follow</button>
                                 @endif
                             </form>
                             @endif
@@ -254,9 +254,9 @@
                                 @csrf
                                 @if($f->following->followers()->where('follower_id', auth()->id())->exists())
                                 @method('DELETE')
-                                <button class="px-3 py-1 rounded-xl bg-red-600/70 text-white/70 text-xs font-mono uppercase font-bold">Unfollow</button>
+                                <button class="bg-red-600/70 px-3 py-1.5  border border-white/20 text-orange-400 text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase shrink-0">Unfollow</button>
                                 @else
-                                <button class="bg-green-400/10 border border-green-400/20 text-xs rounded-2xl p-0.5 px-2 text-orange-400/50 font-mono w-fit uppercase font-bold">Follow</button>
+                                <button class="px-3 py-1.5 bg-white/5 border border-white/20 text-orange-400 text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase shrink-0">Follow</button>
                                 @endif
                             </form>
                             @endif

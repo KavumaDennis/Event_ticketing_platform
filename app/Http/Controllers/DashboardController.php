@@ -7,6 +7,8 @@ use App\Models\Ticket;
 use App\Models\Trend;
 use App\Models\Organizer;
 use App\Models\Faq;
+use App\Models\User;
+use App\Models\ExperienceView;
 use App\Models\Experience;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -74,6 +76,9 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
 
+        ['experienceUsers' => $experienceUsers, 'seenExperienceIds' => $seenExperienceIds] =
+            $this->getFollowedExperiencesPayload($user);
+
         return view('dashboard.overview', compact(
             'user',
             'trends',
@@ -83,7 +88,9 @@ class DashboardController extends Controller
             'recommendations',
             'recentTickets',
             'topCategories',
-            'randomTrends'
+            'randomTrends',
+            'experienceUsers',
+            'seenExperienceIds'
         ));
     }
 
@@ -142,13 +149,18 @@ class DashboardController extends Controller
         // For internal sharing: Users this user matches with/follows
         $friends = $user->following()->with('following')->get()->pluck('following');
 
+        ['experienceUsers' => $experienceUsers, 'seenExperienceIds' => $seenExperienceIds] =
+            $this->getFollowedExperiencesPayload($user);
+
         return view('dashboard.trends', compact(
             'user',
             'trends',
             'myTrends',
             'myTrends',
             'friends',
-            'topCreators'
+            'topCreators',
+            'experienceUsers',
+            'seenExperienceIds'
         ));
     }
 
@@ -267,6 +279,9 @@ class DashboardController extends Controller
             ]);
         }
 
+        ['experienceUsers' => $experienceUsers, 'seenExperienceIds' => $seenExperienceIds] =
+            $this->getFollowedExperiencesPayload($user);
+
         return view('dashboard.events', compact(
             'events',
             'user',
@@ -274,8 +289,47 @@ class DashboardController extends Controller
             'organizer',
             'organizedEvents',
             'randomOrganizers',
-            'topTrends'
+            'topTrends',
+            'experienceUsers',
+            'seenExperienceIds'
         ));
+    }
+
+    private function getFollowedExperiencesPayload(User $user): array
+    {
+        $followedUsers = $user->following()->with('following')->get()->pluck('following')->filter();
+        $followedUserIds = $followedUsers->pluck('id')->toArray();
+
+        if (empty($followedUserIds)) {
+            return [
+                'experienceUsers' => collect(),
+                'seenExperienceIds' => [],
+            ];
+        }
+
+        $experienceUsers = User::whereIn('id', $followedUserIds)
+            ->whereHas('experiences', function ($q) {
+                $q->active();
+            })
+            ->with(['experiences' => function ($q) {
+                $q->active()->latest();
+            }])
+            ->take(12)
+            ->get();
+
+        $activeExperienceIds = $experienceUsers->flatMap(function ($u) {
+            return $u->experiences->pluck('id');
+        })->unique()->values();
+
+        $seenExperienceIds = ExperienceView::where('user_id', $user->id)
+            ->whereIn('experience_id', $activeExperienceIds)
+            ->pluck('experience_id')
+            ->toArray();
+
+        return [
+            'experienceUsers' => $experienceUsers,
+            'seenExperienceIds' => $seenExperienceIds,
+        ];
     }
 
 
@@ -615,10 +669,17 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $organizer = $user->organizer;
+        if (!$organizer) {
+            $organizer = Organizer::whereHas('members', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->first();
+        }
 
         if (!$organizer) {
             return redirect()->route('organizer.create')->with('error', 'You need an organizer profile to view settings.');
         }
+
+        $organizer->load('members.user', 'promoCodes');
 
         return view('dashboard.organizer-settings', compact('organizer', 'user'));
     }
@@ -627,9 +688,18 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $organizer = $user->organizer;
+        if (!$organizer) {
+            $organizer = Organizer::whereHas('members', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->first();
+        }
 
         if (!$organizer) {
             return response()->json(['success' => false, 'message' => 'Organizer not found.'], 404);
+        }
+
+        if (!$organizer->hasRole($user, ['owner', 'editor', 'finance'])) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
         }
 
         $validated = $request->validate([

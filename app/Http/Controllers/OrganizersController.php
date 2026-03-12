@@ -115,13 +115,18 @@ class OrganizersController extends Controller
       $path = $request->file('organizer_image')->store('organizers', 'public');
     }
 
-    Organizer::create([
+    $organizer = Organizer::create([
       'user_id' => Auth::id(),
       'business_name' => $validated['business_name'],
       'business_email' => $validated['business_email'],
       'business_website' => $validated['business_website'] ?? null,
       'organizer_image' => $path,
     ]);
+
+    $organizer->members()->firstOrCreate(
+      ['user_id' => Auth::id()],
+      ['role' => 'owner']
+    );
 
     return redirect()->route('home')->with('success', 'Contragulations your now an organizers.');
   }

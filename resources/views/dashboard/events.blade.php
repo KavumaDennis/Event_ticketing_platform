@@ -18,6 +18,8 @@
                 </div>
                 @endif
 
+                @include('partials.experiences-following', ['experienceUsers' => $experienceUsers, 'seenExperienceIds' => $seenExperienceIds])
+
                 {{-- FEED TABS --}}
                 <div class="flex items-center gap-4 mb-8 sticky top-0 z-10 bg-orange-400/80 backdrop-blur-xl p-0.5 rounded-3xl">
                     <button @click="activeTab = 'discovery'" :class="activeTab === 'discovery' ? 'bg-black/90 text-orange-400 font-bold' : 'text-black'" class="flex-1 py-3 rounded-3xl text-xs uppercase font-mono tracking-widest transition-all duration-300">
@@ -129,7 +131,7 @@
                                         <img src="{{ $organizer->organizer_image ? asset('storage/'.$organizer->organizer_image) : asset('default.png') }}" onerror="this.onerror=null; this.src='{{ asset('default.png') }}';" class='w-full h-full rounded-full object-cover' alt="{{ $organizer->business_name }}" />
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <a href="{{ route('organizer.details', $organizer->id) }}" class='text-orange-400/70 font-medium text-sm hover:text-orange-400 transition truncate'>{{ $organizer->business_name }}</a>
+                                        <a href="{{ route('organizer.details', $organizer->id) }}" class='text-orange-400/90 font-medium text-sm hover:text-orange-400 transition truncate'>{{ $organizer->business_name }}</a>
                                         <p class='text-white/50 font-mono text-xs'>{{ $organizer->events_count ?? $organizer->events()->count() }} events</p>
                                     </div>
                                 </div>

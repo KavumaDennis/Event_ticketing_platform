@@ -3,7 +3,7 @@
 @section('title', 'Manage Events')
 
 @section('content')
-<div class="bg-green-400/10 rounded-xl overflow-hidden">
+<div class="bg-green-400/10 border border-zinc-800 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-orange-400 text-black/90 font-mono text-xs uppercase font-medium">
@@ -15,7 +15,7 @@
                     <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-zinc-800">
+            <tbody class="divide-y-3 divide-zinc-800">
                 @foreach($events as $event)
                 <tr class="hover:bg-zinc-800/50 transition-colors">
                     <td class="px-6 py-4 flex items-center gap-3">
@@ -25,12 +25,12 @@
                             <div class="text-xs text-zinc-500">{{ $event->category }}</div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-zinc-400">{{ $event->organizer->business_name ?? 'Unknown' }}</td>
-                    <td class="px-6 py-4 text-zinc-400">
+                    <td class="px-6 py-4 text-orange-400/80 text-sm font-bold">{{ $event->organizer->business_name ?? 'Unknown' }}</td>
+                    <td class="py-4 text-zinc-400 text-sm font-bold">
                         {{ \Carbon\Carbon::parse($event->event_date)->format('M d, Y') }}<br>
                         <span class="text-xs text-zinc-500">{{ $event->start_time }}</span>
                     </td>
-                    <td class="px-6 py-4 text-zinc-400">{{ $event->venue }}</td>
+                    <td class="px-6 py-4 text-zinc-400 text-sm font-bold">{{ $event->venue }}</td>
                     <td class="px-6 py-4 text-right">
                         <form action="{{ route('admin.events.delete', $event->id) }}" method="POST" onsubmit="return confirm('Delete this event?')" class="inline">
                             @csrf

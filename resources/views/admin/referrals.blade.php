@@ -5,7 +5,7 @@
 @section('content')
 <div class="space-y-6">
     {{-- Referral Stats --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-green-400/10 p-6 rounded-2xl border border-white/5">
             <div class="text-zinc-500 text-sm mb-1 uppercase tracking-wider">Total Referrals</div>
             <div class="text-2xl font-bold text-orange-400">{{ $referrals->total() }}</div>

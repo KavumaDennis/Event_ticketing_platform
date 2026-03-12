@@ -1,3 +1,4 @@
+@php use App\Support\ContentFormatter; @endphp
 @foreach($trends as $trend)
 <div class="trend-card mb-8 bg-green-400/10 border border-green-400/5 transition-all hover:border-orange-400/20 shadow-xl" data-id="{{ $trend->id }}">
     {{-- Card Header: User Info --}}
@@ -158,7 +159,7 @@
                     @foreach($trend->comments->take(5) as $comment)
                     <div class="flex gap-2 text-xs">
                         <span class="font-bold text-white shrink-0 capitalize">{{ $comment->user->first_name }}:</span>
-                        <span class="text-zinc-400">{{ $comment->comment }}</span>
+                        <span class="text-zinc-400">{!! ContentFormatter::linkify($comment->comment) !!}</span>
                     </div>
                     @endforeach
                 </div>

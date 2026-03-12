@@ -6,9 +6,11 @@ use App\Models\Event;
 use App\Models\TicketPurchase;
 use App\Models\Ticket;
 use App\Services\FlutterwaveService;
+use App\Services\FxService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
@@ -22,13 +24,14 @@ class FlutterwaveController extends Controller
         $this->flutterwave = $flutterwave;
     }
 
-    public function initialize(Request $request)
+    public function initialize(Request $request, FxService $fx)
     {
         $request->validate([
             'event_id' => 'required|integer',
             'ticket_type' => 'required|string',
             'quantity' => 'required|integer|min:1',
             'total' => 'required|numeric|min:1',
+            'currency' => 'nullable|string|max:5',
             'email' => 'required|email',
             'phone' => 'nullable|string',
             'name' => 'required|string',
@@ -49,25 +52,54 @@ class FlutterwaveController extends Controller
             ? ($calcBaseTotal * $feeConfig['amount'] / 100) 
             : $feeConfig['amount'];
 
-        $purchase = TicketPurchase::create([
+        $baseCurrency = config('app.currency', 'UGX');
+        $supportedCurrencies = config('monetization.supported_currencies', [$baseCurrency]);
+        $chargeCurrency = strtoupper($request->input('currency', $baseCurrency));
+        if (!in_array($chargeCurrency, $supportedCurrencies, true)) {
+            $chargeCurrency = $baseCurrency;
+        }
+
+        $totalBase = $calcBaseTotal + $serviceFee;
+        $fxQuote = $fx->quote((float) $totalBase, $baseCurrency, $chargeCurrency);
+        $chargeTotal = $fxQuote['converted'];
+
+        $purchaseData = [
             'user_id'        => auth()->id(),
             'event_id'       => $event->id,
             'ticket_type'    => $request->ticket_type,
             'quantity'       => $request->quantity,
             'base_total'     => $calcBaseTotal,
             'service_fee'    => $serviceFee,
-            'total'          => $request->total,
-            'currency'       => 'UGX',
+            'total'          => $chargeTotal,
+            'currency'       => $chargeCurrency,
             'phone'          => $request->phone,
             'payment_method' => 'flutterwave',
             'external_id'    => $txRef, // tx_ref
             'status'         => 'pending',
-        ]);
+        ];
+
+        if (Schema::hasColumn('ticket_purchases', 'total_base')) {
+            $purchaseData['total_base'] = $totalBase;
+        }
+        if (Schema::hasColumn('ticket_purchases', 'base_currency')) {
+            $purchaseData['base_currency'] = $baseCurrency;
+        }
+        if (Schema::hasColumn('ticket_purchases', 'fx_rate')) {
+            $purchaseData['fx_rate'] = $fxQuote['rate'];
+        }
+        if (Schema::hasColumn('ticket_purchases', 'fx_source')) {
+            $purchaseData['fx_source'] = $fxQuote['provider'];
+        }
+        if (Schema::hasColumn('ticket_purchases', 'fx_at')) {
+            $purchaseData['fx_at'] = $fxQuote['timestamp'];
+        }
+
+        $purchase = TicketPurchase::create($purchaseData);
 
         $paymentData = [
             'tx_ref'       => $txRef,
-            'amount'       => $request->total,
-            'currency'     => 'UGX',
+            'amount'       => $chargeTotal,
+            'currency'     => $chargeCurrency,
             'redirect_url' => route('flutterwave.callback'),
             'email'        => $request->email,
             'phone'        => $request->phone,

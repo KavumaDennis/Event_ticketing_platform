@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Document</title>
+    @stack('meta')
     @vite('resources/css/app.css')
     <script src="//unpkg.com/alpinejs" defer></script>
 
@@ -88,6 +89,7 @@
                     {{-- <a href="{{ route('events') }}" class="p-1 text-sm font-medium {{ request()->routeIs('events') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Events</a> --}}
                     <a href="{{ route('contact') }}" class="p-1 text-sm font-medium {{ request()->routeIs('contact') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Contact Us</a>
                     <a href="{{ route('organizers') }}" class="p-1 text-sm font-medium {{ request()->routeIs('organizers') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Organizer</a>
+                    <a href="{{ route('discover') }}" class="p-1 text-sm font-medium {{ request()->routeIs('discover') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Discover</a>
                     <a href="{{ route('trends') }}" class="p-1 text-sm font-medium {{ request()->routeIs('trends') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Trends</a>
                     <a href="{{ route('events') }}" class="p-2 px-4 flex items-center {{ request()->routeIs('events') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} w-fit bg-black/80 border border-green-400/15 rounded-3xl text-sm font-medium">Events</a>
                     {{-- <a href="" class="p-2 px-4 flex items-center w-fit bg-black/80 border border-green-400/15 rounded-3xl text-orange-400/60 text-sm font-medium">Reels</a> --}}
@@ -142,6 +144,7 @@
                 <a href="{{ route('events') }}" class="p-2 text-sm font-medium {{ request()->routeIs('events') ? 'bg-orange-400/80 text-black font-bold' : 'text-white/80 hover:bg-green-400/10' }} rounded-xl transition" @click="mobileMenuOpen = false">Events</a>
                 <a href="{{ route('contact') }}" class="p-2 text-sm font-medium {{ request()->routeIs('contact') ? 'bg-orange-400/80 text-black font-bold' : 'text-white/80 hover:bg-green-400/10' }} rounded-xl transition" @click="mobileMenuOpen = false">Contact Us</a>
                 <a href="{{ route('organizers') }}" class="p-2 text-sm font-medium {{ request()->routeIs('organizers') ? 'bg-orange-400/80 text-black font-bold' : 'text-white/80 hover:bg-green-400/10' }} rounded-xl transition" @click="mobileMenuOpen = false">Organizer</a>
+                <a href="{{ route('discover') }}" class="p-2 text-sm font-medium {{ request()->routeIs('discover') ? 'bg-orange-400/80 text-black font-bold' : 'text-white/80 hover:bg-green-400/10' }} rounded-xl transition" @click="mobileMenuOpen = false">Discover</a>
                 <a href="{{ route('trends') }}" class="p-2 text-sm font-medium {{ request()->routeIs('trends') ? 'bg-orange-400/80 text-black font-bold' : 'text-white/80 hover:bg-green-400/10' }} rounded-xl transition" @click="mobileMenuOpen = false">Trends</a>
                 {{-- <a href="" class="p-3 text-lg font-medium text-orange-400/70 hover:bg-green-400/10 rounded-2xl transition" @click="mobileMenuOpen = false">Reels</a> --}}
 

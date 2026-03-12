@@ -165,6 +165,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Referral::class, 'referred_id');
     }
 
+    public function organizerMemberships()
+    {
+        return $this->hasMany(OrganizerMember::class);
+    }
+
     public function experiences()
     {
         return $this->hasMany(Experience::class);

@@ -59,9 +59,32 @@ class Organizer extends Model
         return $this->belongsToMany(User::class, 'organizer_followers', 'organizer_id', 'user_id');
     }
 
+    public function members()
+    {
+        return $this->hasMany(OrganizerMember::class);
+    }
+
+    public function hasMember(User $user): bool
+    {
+        return $this->members()->where('user_id', $user->id)->exists();
+    }
+
+    public function hasRole(User $user, array $roles): bool
+    {
+        return $this->members()
+            ->where('user_id', $user->id)
+            ->whereIn('role', $roles)
+            ->exists();
+    }
+
     public function payoutRequests()
     {
         return $this->hasMany(PayoutRequest::class);
+    }
+
+    public function promoCodes()
+    {
+        return $this->hasMany(PromoCode::class);
     }
 
     public function getTotalEarnings()

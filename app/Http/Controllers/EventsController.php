@@ -9,10 +9,12 @@ use App\Models\Organizer;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
+use App\Support\ContentFormatter;
 
 // ✅ Send confirmation email with the ticket
 use App\Mail\TicketPurchased;
 use Illuminate\Support\Facades\Mail;
+use App\Models\TicketPurchase;
 
 class EventsController extends Controller
 {
@@ -101,7 +103,31 @@ class EventsController extends Controller
     public function singleEvent($id)
     {
 
-        $event = Event::with('organizer')->findOrFail($id);
+        $event = Event::with(['organizer', 'comments.user', 'comments.likes'])->findOrFail($id);
+
+        $similarEvents = Event::with('organizer')
+            ->where('category', $event->category)
+            ->where('id', '!=', $event->id)
+            ->whereDate('event_date', '>=', now())
+            ->take(6)
+            ->get();
+
+        $buyerUserIds = TicketPurchase::where('event_id', $event->id)
+            ->where('status', 'paid')
+            ->pluck('user_id')
+            ->unique()
+            ->values();
+
+        $alsoBoughtEvents = Event::with('organizer')
+            ->whereIn('id', function ($query) use ($buyerUserIds) {
+                $query->select('event_id')
+                    ->from('ticket_purchases')
+                    ->whereIn('user_id', $buyerUserIds)
+                    ->where('status', 'paid');
+            })
+            ->where('id', '!=', $event->id)
+            ->take(6)
+            ->get();
 
         // Record View (Optional: prevent multiple hits from same session if needed)
         \App\Models\EventView::create([
@@ -109,7 +135,7 @@ class EventsController extends Controller
             'ip_address' => request()->ip(),
         ]);
 
-        return view('singleEvent', compact('event'));
+        return view('singleEvent', compact('event', 'similarEvents', 'alsoBoughtEvents'));
     }
 
     public function create_event()
@@ -300,6 +326,69 @@ class EventsController extends Controller
             ->get();
 
         return view('byDate', ['events' => $events, 'label' => $label]);
+    }
+
+    public function comment(Request $request, Event $event)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $request->validate([
+            'comment' => 'required|string|max:500',
+        ]);
+
+        $comment = $event->comments()->create([
+            'user_id' => auth()->id(),
+            'comment' => $request->comment,
+        ]);
+
+        $user = auth()->user();
+
+        return response()->json([
+            'id' => $comment->id,
+            'comment' => $comment->comment,
+            'comment_html' => ContentFormatter::linkify($comment->comment),
+            'user_name' => $user->first_name . ' ' . $user->last_name,
+            'user_photo' => $user->profile_pic
+                ? asset('storage/' . $user->profile_pic)
+                : asset('default.png'),
+            'created_at' => 'just now',
+            'likes_count' => 0,
+        ]);
+    }
+
+    public function likeComment(\App\Models\EventComment $comment)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userId = auth()->id();
+        $existing = $comment->likes()->where('user_id', $userId)->first();
+
+        if ($existing) {
+            $existing->delete();
+            $liked = false;
+        } else {
+            $comment->likes()->create(['user_id' => $userId]);
+            $liked = true;
+        }
+
+        return response()->json([
+            'liked' => $liked,
+            'likes_count' => $comment->likes()->count(),
+        ]);
+    }
+
+    public function deleteComment(\App\Models\EventComment $comment)
+    {
+        if (!auth()->check() || $comment->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $comment->delete();
+        return response()->json(['success' => true]);
     }
   
 

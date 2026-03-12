@@ -1,4 +1,12 @@
 <x-layout>
+    @push('meta')
+        <meta property="og:title" content="{{ $event->event_name }}">
+        <meta property="og:description" content="{{ \Illuminate\Support\Str::limit($event->description ?? 'Event details', 150) }}">
+        <meta property="og:image" content="{{ $event->event_image ? asset('storage/'.$event->event_image) : asset('default.png') }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:type" content="website">
+        <meta name="twitter:card" content="summary_large_image">
+    @endpush
     <div class="grid md:grid-cols-1 lg:grid-cols-2 grid-rows-1 gap-10 p-5 overflow-hidden" x-data="ticketHandler({
             regular: {{ $event->regular_price ?? 0 }},
             vip: {{ $event->vip_price ?? 0 }},
@@ -12,11 +20,12 @@
 
         <!-- Event Info -->
         <div class="grid grid-cols-2 lg:flex flex-col justify-center my-auto gap-5 h-fit">
+            <div id="event-details-section" class="col-span-2 lg:col-span-2 flex flex-col gap-5">
 
             <h1 class="text-2xl col-span-2 text-orange-400/80">{{ $event->event_name }}</h1>
 
             <p class="text-sm col-span-2 text-white/60 font-mono font-light w-full md:w-[80%]">
-                {{ $event->description ?? 'No description available.' }}
+                {!! \App\Support\ContentFormatter::linkify($event->description ?? 'No description available.') !!}
             </p>
 
             <!-- Ticket Section -->
@@ -204,6 +213,57 @@
                         {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }} - {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
                     </span>
                 </div>
+
+            </div>
+            </div>
+
+            <div id="event-comments-section" class="col-span-2 lg:col-span-2 bg-green-400/10 border border-green-400/10 rounded-3xl p-4 hidden opacity-0 transition-all duration-500 ease-out">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-white/80 font-bold text-[11px] uppercase">Event Comments</h2>
+                    <span class="text-white/40 text-[10px]">{{ $event->comments->count() }} comments</span>
+                </div>
+
+                <div id="event-comments-list" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+                    @forelse($event->comments as $comment)
+                        <div id="event-comment-{{ $comment->id }}" class="flex items-start gap-3 p-2 rounded-2xl bg-black/50">
+                            <img src="{{ $comment->user?->profile_pic ? asset('storage/'.$comment->user->profile_pic) : asset('default.png') }}" class="w-8 h-8 rounded-full object-cover" alt="">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-white/80 text-[10px] font-bold">
+                                        {{ $comment->user?->first_name ?? 'Unknown' }}
+                                        {{ $comment->user?->last_name ?? '' }}
+                                    </div>
+                                    <span class="text-white/30 text-[10px]">{{ $comment->created_at->diffForHumans() }}</span>
+                                </div>
+                                <div class="text-white/60 text-xs">
+                                    {!! \App\Support\ContentFormatter::linkify($comment->comment) !!}
+                                </div>
+                                <div class="flex items-center gap-3 mt-2 text-[10px]">
+                                    <button class="event-like-comment-btn text-orange-400/80 hover:text-orange-400" data-comment="{{ $comment->id }}">
+                                        ❤️ <span class="like-count">{{ $comment->likes->count() }}</span>
+                                    </button>
+                                    @if(auth()->check() && $comment->user_id === auth()->id())
+                                        <button class="event-delete-comment-btn text-red-400 hover:text-red-300" data-comment="{{ $comment->id }}">
+                                            Delete
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-white/40 text-xs">No comments yet — be the first to comment.</p>
+                    @endforelse
+                </div>
+
+                @auth
+                <form id="eventCommentForm" data-event="{{ $event->id }}" class="mt-3 flex items-center gap-2">
+                    @csrf
+                    <input type="text" name="comment" maxlength="500" placeholder="Add a comment..." class="flex-1 p-2 bg-black/50 text-white rounded-xl outline-none placeholder:text-white/60 text-xs">
+                    <button type="submit" class="px-3 py-2 bg-orange-400 text-black rounded-xl text-[10px] font-bold uppercase">Post</button>
+                </form>
+                @else
+                    <p class="text-white/40 text-[10px] mt-3">Login to comment.</p>
+                @endauth
             </div>
 
             <!-- Organizer -->
@@ -229,6 +289,12 @@
                         </span>
                     </div>
 
+                    <button id="toggle-event-comments" class="size-9 flex items-center justify-center border border-green-400/20 bg-green-400/10 rounded-[14px] text-orange-400/80 hover:text-orange-400 transition" title="Comments">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle">
+                            <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+                        </svg>
+                    </button>
+
                     <div class="flex items-center gap-2" x-data="shareHandler('{{ url()->current() }}', '{{ $event->event_name }}')">
                         <button @click="share" class="size-9 flex items-center justify-center rounded-[14px] bg-white/5 border border-white/20 text-orange-400/70 hover:bg-orange-400/80 hover:text-black transition" title="Share Event">
                             <i class="fa-solid fa-share-nodes"></i>
@@ -246,8 +312,52 @@
 
     </div>
     </div>
+
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-green-400/10 border border-green-400/10 rounded-3xl p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-white/80 font-bold text-[11px] uppercase">Similar Events</h3>
+                <span class="text-white/30 text-[10px]">{{ $similarEvents->count() }} found</span>
+            </div>
+            <div class="space-y-3">
+                @forelse($similarEvents as $similar)
+                    <a href="{{ route('event.show', $similar->id) }}" class="flex items-center gap-3 p-2 rounded-2xl bg-black/50 hover:bg-black/60 transition">
+                        <img src="{{ $similar->event_image ? asset('storage/'.$similar->event_image) : asset('default.png') }}" class="w-12 h-12 rounded-xl object-cover" alt="">
+                        <div class="flex-1">
+                            <div class="text-white/80 text-xs font-bold">{{ $similar->event_name }}</div>
+                            <div class="text-white/40 text-[10px] font-mono">{{ $similar->event_date }} · {{ $similar->location }}</div>
+                        </div>
+                    </a>
+                @empty
+                    <p class="text-white/40 text-xs">No similar events yet.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="bg-green-400/10 border border-green-400/10 rounded-3xl p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-white/80 font-bold text-[11px] uppercase">People Also Bought</h3>
+                <span class="text-white/30 text-[10px]">{{ $alsoBoughtEvents->count() }} found</span>
+            </div>
+            <div class="space-y-3">
+                @forelse($alsoBoughtEvents as $also)
+                    <a href="{{ route('event.show', $also->id) }}" class="flex items-center gap-3 p-2 rounded-2xl bg-black/50 hover:bg-black/60 transition">
+                        <img src="{{ $also->event_image ? asset('storage/'.$also->event_image) : asset('default.png') }}" class="w-12 h-12 rounded-xl object-cover" alt="">
+                        <div class="flex-1">
+                            <div class="text-white/80 text-xs font-bold">{{ $also->event_name }}</div>
+                            <div class="text-white/40 text-[10px] font-mono">{{ $also->event_date }} · {{ $also->location }}</div>
+                        </div>
+                    </a>
+                @empty
+                    <p class="text-white/40 text-xs">No related purchases yet.</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
 </x-layout>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('ticketHandler', (prices) => ({
@@ -320,6 +430,111 @@
     document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('ticket_type_input').value = 'regular';
         document.getElementById('quantity_input').value = 1;
+    });
+
+    function escapeHtml(str) {
+        return str
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    $(document).on('submit', '#eventCommentForm', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const eventId = form.data('event');
+        const input = form.find('input[name="comment"]');
+        const comment = input.val().trim();
+
+        if (!comment) return;
+
+        $.post(`/events/${eventId}/comment`, {
+            _token: "{{ csrf_token() }}",
+            comment
+        }).done((res) => {
+            input.val('');
+            $('#event-comments-list').prepend(`
+                <div id="event-comment-${res.id}" class="flex items-start gap-3 p-2 rounded-2xl bg-black/50">
+                    <img src="${res.user_photo}" class="w-9 h-9 rounded-full object-cover" alt="">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <div class="text-white/80 text-xs font-bold">${escapeHtml(res.user_name)}</div>
+                            <span class="text-white/30 text-[10px]">${escapeHtml(res.created_at)}</span>
+                        </div>
+                        <div class="text-white/60 text-sm">${res.comment_html ?? escapeHtml(res.comment)}</div>
+                        <div class="flex items-center gap-3 mt-2 text-xs">
+                            <button class="event-like-comment-btn text-orange-400/80 hover:text-orange-400" data-comment="${res.id}">
+                                ❤️ <span class="like-count">0</span>
+                            </button>
+                            <button class="event-delete-comment-btn text-red-400 hover:text-red-300" data-comment="${res.id}">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }).fail((xhr) => {
+            if (xhr.status === 401) alert('Please log in to comment.');
+            else alert('Error posting comment.');
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('toggle-event-comments');
+        const details = document.getElementById('event-details-section');
+        const comments = document.getElementById('event-comments-section');
+        if (!toggleBtn || !details || !comments) return;
+
+        toggleBtn.addEventListener('click', () => {
+            const isOpen = !comments.classList.contains('hidden');
+            if (isOpen) {
+                comments.classList.add('opacity-0');
+                setTimeout(() => comments.classList.add('hidden'), 200);
+                details.classList.remove('hidden');
+                details.classList.remove('opacity-0');
+                details.classList.add('opacity-100');
+            } else {
+                details.classList.add('opacity-0');
+                setTimeout(() => details.classList.add('hidden'), 200);
+                comments.classList.remove('hidden');
+                setTimeout(() => comments.classList.remove('opacity-0'), 10);
+                comments.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    });
+
+    $(document).on('click', '.event-like-comment-btn', function() {
+        const btn = $(this);
+        const commentId = btn.data('comment');
+
+        $.post(`/events/comment/${commentId}/like`, {
+            _token: "{{ csrf_token() }}"
+        }).done((res) => {
+            btn.find('.like-count').text(res.likes_count);
+        }).fail((xhr) => {
+            if (xhr.status === 401) alert('Login required to like comments.');
+        });
+    });
+
+    $(document).on('click', '.event-delete-comment-btn', function() {
+        if (!confirm('Delete this comment?')) return;
+        const commentId = $(this).data('comment');
+
+        $.ajax({
+            url: `/events/comment/${commentId}`,
+            type: 'DELETE',
+            data: {
+                _token: "{{ csrf_token() }}"
+            }
+        }).done(() => {
+            $(`#event-comment-${commentId}`).fadeOut(200, function() { $(this).remove(); });
+        }).fail((xhr) => {
+            if (xhr.status === 401) alert('Login required to delete comments.');
+            else if (xhr.status === 403) alert('You can only delete your own comments.');
+            else alert('Error deleting comment.');
+        });
     });
 
 </script>
