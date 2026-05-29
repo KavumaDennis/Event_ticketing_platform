@@ -75,7 +75,9 @@
                                     </button>
                                 </form>
                             </div>
-                            <a href="{{ route('trends.show', $trend->id) }}" class="text-xs p-1 font-mono font-medium bg-orange-400 rounded-2xl w-fit text-black/90">View Details</a>
+                            <a href="{{ route('trends.show', $trend->id) }}" class="px-2 p-1.5 uppercase text-[10px] font-bold bg-orange-400 rounded-lg w-fit text-black/90">
+                                View Details
+                            </a>
                         </div>
                     </div>
                     @empty

@@ -33,7 +33,8 @@ use App\Http\Controllers\{
     ExperienceController,
     OrganizerTeamController,
     TagController,
-    DiscoveryController
+    DiscoveryController,
+    GeocodeController,
 };
 
 // ADMIN DASHBOARD
@@ -68,7 +69,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/payouts', [AdminController::class, 'payouts'])->name('admin.payouts');
     Route::post('/payouts/{payout}/status', [AdminController::class, 'updatePayoutStatus'])->name('admin.payouts.update-status');
 
-    Route::get('/referrals', [AdminController::class, 'referrals'])->name('admin.referrals');
 
     Route::get('/organizers/{organizer}/edit', [AdminController::class, 'editOrganizer'])->name('admin.organizers.edit');
     Route::put('/organizers/{organizer}', [AdminController::class, 'updateOrganizer'])->name('admin.organizers.update');
@@ -88,6 +88,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/dashboard/organizer/team', [OrganizerTeamController::class, 'add'])->name('organizer.team.add');
     Route::put('/dashboard/organizer/team/{member}', [OrganizerTeamController::class, 'updateRole'])->name('organizer.team.update');
     Route::delete('/dashboard/organizer/team/{member}', [OrganizerTeamController::class, 'remove'])->name('organizer.team.remove');
+    // Organizer Analytics & Promotions
+    Route::get('/organizer/analytics', [OrganizerAnalyticsController::class, 'index'])
+        ->name('organizer.analytics');
+    Route::post('/organizer/promo/store', [OrganizerAnalyticsController::class, 'storePromo'])->name('organizer.promo.store');
+    Route::post('/organizer/promo/{promoCode}/toggle', [OrganizerAnalyticsController::class, 'togglePromo'])->name('organizer.promo.toggle');
+
+    // Payout Requests
+    Route::get('/organizer/payouts', [PayoutController::class, 'index'])->name('organizer.payouts');
+    Route::post('/organizer/payouts/request', [PayoutController::class, 'store'])->name('organizer.payouts.request');
     Route::get('/dashboard/organizer/profile', [DashboardController::class, 'organizerProfile'])->name('user.dashboard.organizer-profile');
     Route::get('/user/dashboard/following', [DashboardController::class, 'following'])->name('user.dashboard.following');
     Route::get('/user/dashboard/followers', [DashboardController::class, 'followers'])->name('user.dashboard.followers');
@@ -129,6 +138,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/organizer/{organizer}/follow', [DashboardController::class, 'toggleOrganizerFollow'])->name('dashboard.organizer.follow');
     Route::post('/event/{event}/save', [DashboardController::class, 'toggleEventSave'])->name('dashboard.event.save');
     Route::post('/trend/share', [DashboardController::class, 'sharePost'])->name('dashboard.trend.share');
+
+    // Real-Time Messaging (Dashboard Only)
+    Route::get('/user/dashboard/messages', [\App\Http\Controllers\ChatController::class, 'index'])->name('user.dashboard.messages');
+    Route::get('/user/dashboard/messages/recipients', [\App\Http\Controllers\ChatController::class, 'recipients'])->name('messages.recipients');
+    Route::post('/user/dashboard/messages/conversations', [\App\Http\Controllers\ChatController::class, 'createConversation'])->name('messages.conversations.create');
+    Route::get('/user/dashboard/messages/conversations/{conversation}/messages', [\App\Http\Controllers\ChatController::class, 'messages'])->name('messages.conversations.messages');
+    Route::get('/user/dashboard/messages/conversations/{conversation}/info', [\App\Http\Controllers\ChatController::class, 'conversationInfo'])->name('messages.conversations.info');
+    Route::post('/user/dashboard/messages/conversations/{conversation}/read', [\App\Http\Controllers\ChatController::class, 'markRead'])->name('messages.conversations.read');
+    Route::post('/user/dashboard/messages/conversations/{conversation}/clear', [\App\Http\Controllers\ChatController::class, 'clearConversation'])->name('messages.conversations.clear');
+    Route::delete('/user/dashboard/messages/conversations/{conversation}', [\App\Http\Controllers\ChatController::class, 'deleteConversation'])->name('messages.conversations.delete');
+    Route::get('/user/dashboard/messages/attachments/{attachment}', [\App\Http\Controllers\ChatController::class, 'downloadAttachment'])->name('messages.attachments.download');
+    Route::get('/user/dashboard/messages/attachments/{attachment}/view', [\App\Http\Controllers\ChatController::class, 'viewAttachment'])->name('messages.attachments.view');
+    Route::post('/user/dashboard/messages/messages/{message}/reactions', [\App\Http\Controllers\ChatController::class, 'toggleReaction'])->name('messages.reactions.toggle');
+    Route::get('/user/dashboard/messages/events', [\App\Http\Controllers\ChatController::class, 'eventSearch'])->name('messages.events.search');
+    Route::post('/messages/{conversation}', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('messages.send');
+    Route::post('/messages/group/{event}', [\App\Http\Controllers\ChatController::class, 'joinGroup'])->name('messages.join-group');
+
+    // Presence (online/offline)
+    Route::post('/user/presence/ping', [\App\Http\Controllers\PresenceController::class, 'ping'])->name('presence.ping');
+    Route::get('/user/presence/{user}', [\App\Http\Controllers\PresenceController::class, 'status'])->name('presence.status');
 });
 
 // 🏠 Public pages
@@ -139,6 +168,10 @@ Route::post('/site-reviews', [HomeController::class, 'store'])->middleware('auth
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
+Route::get('/api/locations/autocomplete', [GeocodeController::class, 'autocomplete'])
+    ->middleware('throttle:60,1')
+    ->name('locations.autocomplete');
+
 // 📧 Newsletter
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::post('/newsletter/unsubscribe/{email}', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
@@ -146,7 +179,6 @@ Route::post('/newsletter/unsubscribe/{email}', [NewsletterController::class, 'un
 // 🎤 Trends (public + protected create)
 Route::get('/trends', [TrendsController::class, 'index'])->name('trends');
 Route::post('/trends/{trend}/comment', [TrendsController::class, 'comment'])->middleware('auth')->name('trends.comment');
-Route::get('/trend/{trend}/comments', [TrendsController::class, 'loadComments'])->name('trends.comments');
 Route::get('/events/search', [TrendsController::class, 'search'])->name('events.search');
 
 Route::post('/trends/comment/{comment}/like', [TrendsController::class, 'likeComment'])->name('trends.comment.like');
@@ -171,7 +203,6 @@ Route::get('/by-date', [EventsController::class, 'byDate'])->name('events.byDate
 Route::middleware('auth')->group(function () {
     Route::get('/events/create', [EventsController::class, 'create_event'])->name('events.create');
     Route::post('/events/store', [EventsController::class, 'store'])->name('events.store');
-    Route::get('/events/saved', [SavedEventController::class, 'index'])->name('events.saved');
     Route::post('/events/{id}/like', [LikeController::class, 'toggle'])->name('events.like');
     Route::post('/events/{id}/save', [SavedEventController::class, 'toggle'])->name('events.save');
     Route::post('/events/{event}/comment', [EventsController::class, 'comment'])->name('events.comment');
@@ -187,23 +218,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/events/{event}/boost/select', [BoostController::class, 'selectPlan'])->name('boost.select');
     Route::post('/dashboard/events/{event}/boost/init', [BoostController::class, 'initialize'])->name('boost.init');
     Route::get('/boost/callback', [BoostController::class, 'callback'])->name('boost.callback');
+    Route::get('/dashboard/events/{event}/boost/momo/status', [BoostController::class, 'momoStatus'])->name('boost.momo.status');
 });
 
 Route::get('/events/{id}', [EventsController::class, 'singleEvent'])->name('event.show');
 
 // 👥 Organizers
 Route::get('/organizers', [OrganizersController::class, 'index'])->name('organizers');
-    // Organizer Analytics & Promotions
-    Route::get('/organizer/analytics', [OrganizerAnalyticsController::class, 'index'])
-        ->middleware('auth')
-        ->name('organizer.analytics');
-    Route::post('/organizer/promo/store', [OrganizerAnalyticsController::class, 'storePromo'])->name('organizer.promo.store');
-    Route::post('/organizer/promo/{promoCode}/toggle', [OrganizerAnalyticsController::class, 'togglePromo'])->name('organizer.promo.toggle');
-
-    // Payout Requests
-    Route::get('/organizer/payouts', [PayoutController::class, 'index'])->name('organizer.payouts');
-    Route::post('/organizer/payouts/request', [PayoutController::class, 'store'])->name('organizer.payouts.request');
-
     // Waitlist
     Route::post('/events/{event}/waitlist/join', [WaitlistController::class, 'join'])->name('waitlist.join');
     Route::post('/events/{event}/waitlist/leave', [WaitlistController::class, 'leave'])->name('waitlist.leave');
@@ -232,6 +253,7 @@ Route::get('/discover', [DiscoveryController::class, 'index'])->name('discover')
 
 //User
 Route::get('/user/{user}', [UserController::class, 'show'])->name('user.profile');
+Route::get('/api/users/{user}/experiences', [ExperienceController::class, 'userExperiences'])->name('api.user.experiences');
 Route::get('/u/{username}', [UserController::class, 'showByUsername'])->name('user.profile.username');
 Route::post('/user/{user}/follow', [UserController::class, 'follow'])->name('user.follow');
 Route::delete('/user/{user}/unfollow', [UserController::class, 'unfollow'])->name('user.unfollow');
@@ -245,7 +267,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
 
     // MTN Mobile Money (MoMo) Integration
-    Route::get('/momo/init', [MomoController::class, 'init'])->name('momo.init');
     Route::post('/momo/pay', [MomoController::class, 'pay'])->name('momo.pay');
     Route::post('/momo/callback', [MomoController::class, 'callback'])->name('momo.callback');
     Route::get('/momo/check/{purchase}', [MomoController::class, 'checkPayment']);

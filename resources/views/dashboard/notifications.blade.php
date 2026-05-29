@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="px-6 pb-20">
+<div class="md:px-6 pb-20">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
         <div>
             <h1 class="text-4xl font-black text-white uppercase tracking-tighter">Notifications</h1>

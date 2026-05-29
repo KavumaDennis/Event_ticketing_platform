@@ -15,21 +15,21 @@ class TicketFeeService
      */
     public function calculateFee($amount, Organizer $organizer = null)
     {
-        $tier = $organizer ? $organizer->tier : 'free';
-        $config = config("monetization.tiers.{$tier}");
+        $tierRaw = $organizer ? strtolower((string) $organizer->tier) : 'free';
+        $config = config("monetization.tiers.{$tierRaw}");
 
         if (!$config) {
-            $config = config("monetization.tiers.free");
+            $config = config('monetization.tiers.free');
         }
 
-        $fixedFee = $config['fee_fixed'];
-        $percentageFee = ($amount * ($config['fee_percent'] / 100));
+        $fixedFee = (float) ($config['fee_fixed'] ?? 0);
+        $percentageFee = ($amount * ((float) ($config['fee_percent'] ?? 0) / 100));
 
         return [
             'total_fee' => $fixedFee + $percentageFee,
             'fixed_fee' => $fixedFee,
             'percentage_fee' => $percentageFee,
-            'tier' => $tier,
+            'tier' => $tierRaw,
         ];
     }
 

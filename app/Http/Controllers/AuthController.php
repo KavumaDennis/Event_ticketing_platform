@@ -85,23 +85,6 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        if ($request->ref) {
-            $referrer = User::where('referral_code', $request->ref)->first();
-            if ($referrer) {
-                Referral::create([
-                    'referrer_id' => $referrer->id,
-                    'referred_id' => $user->id,
-                ]);
-
-                // Notify Referrer
-                \App\Models\Notification::create([
-                    'user_id' => $referrer->id,
-                    'title' => 'New Referral!',
-                    'message' => $user->first_name . " joined using your referral code. You'll earn commissions on their ticket purchases!",
-                    'type' => 'success',
-                ]);
-            }
-        }
 
         event(new \Illuminate\Auth\Events\Registered($user));
 

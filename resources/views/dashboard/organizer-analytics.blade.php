@@ -23,7 +23,7 @@
     {{-- Key Metrics --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
         {{-- Revenue --}}
-        <div class="p-6 bg-green-400/10 border border-green-400/20 rounded-2xl relative overflow-hidden group">
+        <div class="p-6 bg-green-400/10 border border-green-400/10 rounded-2xl relative overflow-hidden group">
             <div class="absolute -right-6 -top-6 w-24 h-24 bg-green-400/10 rounded-full group-hover:scale-110 transition-transform"></div>
             <div class="relative z-10">
                 <div class="flex items-center gap-3 mb-2">
@@ -39,7 +39,7 @@
         </div>
 
         {{-- Tickets Sold --}}
-        <div class="p-6 bg-orange-400/10 border border-orange-400/20 rounded-2xl relative overflow-hidden group">
+        <div class="p-6 bg-orange-400/10 border border-orange-400/10 rounded-2xl relative overflow-hidden group">
             <div class="absolute -right-6 -top-6 w-24 h-24 bg-orange-400/10 rounded-full group-hover:scale-110 transition-transform"></div>
             <div class="relative z-10">
                 <div class="flex items-center gap-3 mb-2">
@@ -55,7 +55,7 @@
         </div>
 
         {{-- Views --}}
-        <div class="p-6 bg-blue-400/10 border border-blue-400/20 rounded-2xl relative overflow-hidden group">
+        <div class="p-6 bg-blue-400/10 border border-blue-400/10 rounded-2xl relative overflow-hidden group">
             <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-400/10 rounded-full group-hover:scale-110 transition-transform"></div>
             <div class="relative z-10">
                 <div class="flex items-center gap-3 mb-2">
@@ -73,11 +73,7 @@
 
     {{-- Advanced Insights (New) --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-5">
-        <div class="p-4 bg-purple-400/5 border border-purple-400/10 rounded-2xl">
-            <p class="text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-1">Affiliate Sales</p>
-            <p class="text-xl font-bold text-white">UGX {{ number_format($referralRevenue) }}</p>
-            <p class="text-[10px] text-white/40 mt-1">Generated via user referrals</p>
-        </div>
+
         <div class="p-4 bg-red-400/5 border border-red-400/10 rounded-2xl">
             <p class="text-[10px] text-red-400 font-bold uppercase tracking-wider mb-1">Waitlist Total</p>
             <p class="text-xl font-bold text-white">{{ number_format($waitlistTotal) }}</p>
@@ -101,16 +97,16 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
         {{-- Chart Section --}}
-        <div class="lg:col-span-2 p-3 bg-white/5 border border-white/10 rounded-2xl">
-            <h3 class="text-lg font-bold text-white mb-6">Revenue Trend (Last 7 Days)</h3>
+        <div class="lg:col-span-2 p-3 bg-white/5 border border-white/5 rounded-2xl">
+            <h3 class="text-lg font-bold text-white/80 mb-6">Revenue Trend (Last 7 Days)</h3>
             <div class="relative h-[350px] w-full">
                 <canvas id="revenueChart"></canvas>
             </div>
         </div>
 
         {{-- Ticket Type Breakdown (New) --}}
-        <div class="p-3 bg-white/5 border border-white/10 flex flex-col justify-between rounded-2xl">
-            <h3 class="text-lg font-bold text-white mb-6">Ticket Distribution</h3>
+        <div class="p-3 bg-white/5 border border-white/5 flex flex-col justify-between rounded-2xl">
+            <h3 class="text-lg font-bold text-white/80 mb-6">Ticket Distribution</h3>
             <div class="relative h-[250px] w-full flex justify-center items-center mb-4">
                 <canvas id="typeChart"></canvas>
             </div>
@@ -126,7 +122,7 @@
     </div>
 
     {{-- Event Performance Table (New) --}}
-    <div class="p-3 bg-white/5 border border-white/10 rounded-2xl mb-5">
+    <div class="p-3 bg-white/5 border border-white/5 rounded-2xl mb-5">
         <h3 class="text-lg font-bold text-white mb-3">Detailed Event Performance</h3>
         <div class="overflow-x-auto max-h-[500px] overflow-y-auto custom-scrollbar">
             <table class="w-full text-left border-collapse">
@@ -165,12 +161,12 @@
     </div>
 
     {{-- Recent Sales --}}
-    <div class="p-3 bg-white/5 border border-white/10 rounded-2xl">
+    <div class="p-3 bg-white/5 border border-white/5 rounded-2xl">
         <h3 class="text-lg font-bold text-white mb-3">Recent Transactions</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @forelse($recentSales as $sale)
             <div class="flex items-center gap-4 p-4 bg-black/20 rounded-2xl border border-white/5">
-                <img src="{{ $sale->user->profile_pic ? asset('storage/'.$sale->user->profile_pic) : asset('default.png') }}" class="w-12 h-12 rounded-full object-cover border border-white/10">
+                <x-user-avatar :user="$sale->user" size="w-12 h-12 rounded-full object-cover border border-white/10" />
                 <div class="flex-1 min-w-0">
                     <h4 class="text-sm font-bold text-white truncate">{{ $sale->user->first_name }} {{ $sale->user->last_name }}</h4>
                     <p class="text-xs text-white/40 truncate">{{ $sale->event->event_name }}</p>

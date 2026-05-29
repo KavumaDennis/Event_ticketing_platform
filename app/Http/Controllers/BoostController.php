@@ -27,7 +27,9 @@ class BoostController extends Controller
             abort(403);
         }
 
-        $plans = config('monetization.boosting');
+        $plans = collect(config('monetization.boosting', []))
+            ->only(['24_hours', '7_days', '30_days'])
+            ->toArray();
 
         return view('dashboard.boost.select-plan', compact('event', 'plans'));
     }
@@ -44,8 +46,13 @@ class BoostController extends Controller
             abort(403);
         }
 
-        $plans = config('monetization.boosting');
-        $amount = $plans[$request->plan];
+        $plans = collect(config('monetization.boosting', []))
+            ->only(['24_hours', '7_days', '30_days'])
+            ->toArray();
+        $amount = $plans[$request->plan] ?? null;
+        if ($amount === null) {
+            return back()->with('error', 'Invalid boost plan selected.');
+        }
         $txRef = 'boost-' . $event->id . '-' . $request->plan . '-' . Str::random(6);
 
         if ($request->payment_method === 'momo') {
@@ -60,12 +67,19 @@ class BoostController extends Controller
                     return back()->with('error', 'MTN Error: ' . $referenceId);
                 }
 
-                // We need a way to track boost payments. 
-                // For now, let's use a generic table or just reuse a logic.
-                // Actually, creating a dedicated 'purchases' or repurposing TicketPurchase might be messy.
-                // Let's assume we have a simple way to track these by the external_id/txRef.
-                
-                return render_view_or_redirect('waiting_for_momo', ['tx_ref' => $txRef]);
+                session([
+                    'boost_payment' => [
+                        'reference_id' => $referenceId,
+                        'tx_ref' => $txRef,
+                        'event_id' => $event->id,
+                        'plan' => $request->plan,
+                    ],
+                ]);
+
+                return view('dashboard.boost.waiting-momo', [
+                    'event' => $event,
+                    'txRef' => $txRef,
+                ]);
 
             } catch (\Exception $e) {
                 return back()->with('error', 'Boost initialization failed: ' . $e->getMessage());
@@ -111,6 +125,39 @@ class BoostController extends Controller
         }
 
         return redirect()->route('user.dashboard.overview')->with('error', 'Boost payment failed.');
+    }
+
+    public function momoStatus(Event $event)
+    {
+        $sessionData = session('boost_payment');
+        if (!$sessionData || ($sessionData['event_id'] ?? null) !== $event->id) {
+            return response()->json(['status' => 'error', 'message' => 'Boost session not found.'], 404);
+        }
+
+        try {
+            $status = $this->mtn->getPaymentStatus($sessionData['reference_id']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Unable to check payment status.'], 500);
+        }
+
+        $remoteStatus = strtoupper($status['status'] ?? 'PENDING');
+
+        if ($remoteStatus === 'SUCCESSFUL') {
+            $this->applyBoost($sessionData['tx_ref']);
+            session()->forget('boost_payment');
+
+            return response()->json([
+                'status' => 'paid',
+                'redirect' => route('user.dashboard.events'),
+            ]);
+        }
+
+        if ($remoteStatus === 'FAILED') {
+            session()->forget('boost_payment');
+            return response()->json(['status' => 'failed']);
+        }
+
+        return response()->json(['status' => 'pending']);
     }
 
     protected function applyBoost($txRef)

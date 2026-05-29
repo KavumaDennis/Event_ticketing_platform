@@ -77,8 +77,7 @@
                 class="block p-3 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Overview</a>
             <a href="{{ route('admin.users') }}"
                 class="block p-3 rounded-xl {{ request()->routeIs('admin.users') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Users</a>
-            <a href="{{ route('admin.referrals') }}"
-                class="block p-3 rounded-xl {{ request()->routeIs('admin.referrals') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Referrals</a>
+
             <a href="{{ route('admin.organizers') }}"
                 class="block p-3 rounded-xl {{ request()->routeIs('admin.organizers') ? 'bg-orange-500 text-black font-bold' : 'text-zinc-400' }}">Organizers</a>
             <a href="{{ route('admin.events') }}"
@@ -151,20 +150,7 @@
 
 
 
-                <a href="{{ route('admin.referrals') }}"
-                    class="flex items-center gap-2 text-sm px-4 py-3 rounded-lg {{ request()->routeIs('admin.referrals') ? 'bg-green-400/10 border border-green-400/5 text-orange-400/90' : 'text-zinc-400' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-share-2">
-                        <circle cx="18" cy="5" r="3" />
-                        <circle cx="6" cy="12" r="3" />
-                        <circle cx="18" cy="19" r="3" />
-                        <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
-                        <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
-                    </svg>
-                    <span
-                        class='font-medium flex items-center pl-2.5 relative after:content-[""] after:bg-zinc-400 after:absolute after:w-[3px] after:h-[10px] after:rounded-lg after:left-0'>Referrals</span>
-                </a>
+
 
 
 

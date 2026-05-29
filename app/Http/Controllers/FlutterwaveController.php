@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\PromoCode;
 use App\Models\TicketPurchase;
 use App\Models\Ticket;
+use App\Services\EventCheckoutPricing;
 use App\Services\FlutterwaveService;
 use App\Services\FxService;
 use Illuminate\Http\Request;
@@ -28,9 +30,10 @@ class FlutterwaveController extends Controller
     {
         $request->validate([
             'event_id' => 'required|integer',
-            'ticket_type' => 'required|string',
+            'ticket_type' => 'required|in:regular,vip,vvip',
             'quantity' => 'required|integer|min:1',
-            'total' => 'required|numeric|min:1',
+            'total' => 'nullable|numeric|min:0',
+            'promo_code' => 'nullable|string|max:80',
             'currency' => 'nullable|string|max:5',
             'email' => 'required|email',
             'phone' => 'nullable|string',
@@ -40,17 +43,18 @@ class FlutterwaveController extends Controller
         $event = Event::findOrFail($request->event_id);
         $txRef = 'fly-' . $event->id . '-' . Str::random(10);
 
-        $prices = [
-            'regular' => $event->regular_price,
-            'vip' => $event->vip_price,
-            'vvip' => $event->vvip_price,
-        ];
-        $calcBaseTotal = ($prices[$request->ticket_type] ?? 0) * $request->quantity;
-        
-        $feeConfig = config('monetization.service_fee', ['type' => 'percentage', 'amount' => 5]);
-        $serviceFee = ($feeConfig['type'] === 'percentage') 
-            ? ($calcBaseTotal * $feeConfig['amount'] / 100) 
-            : $feeConfig['amount'];
+        $ticketType = strtolower((string) $request->ticket_type);
+        $pricing = EventCheckoutPricing::compute($event, $ticketType, (int) $request->quantity, $request->input('promo_code'));
+        $desiredPromo = PromoCode::normalizedCode($request->input('promo_code'));
+        if ($desiredPromo && ! $pricing['promo_code_id']) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid or expired promo code.',
+            ], 422);
+        }
+
+        $calcBaseTotal = $pricing['base_total'];
+        $serviceFee = $pricing['service_fee'];
 
         $baseCurrency = config('app.currency', 'UGX');
         $supportedCurrencies = config('monetization.supported_currencies', [$baseCurrency]);
@@ -59,14 +63,14 @@ class FlutterwaveController extends Controller
             $chargeCurrency = $baseCurrency;
         }
 
-        $totalBase = $calcBaseTotal + $serviceFee;
+        $totalBase = $pricing['total_base'];
         $fxQuote = $fx->quote((float) $totalBase, $baseCurrency, $chargeCurrency);
         $chargeTotal = $fxQuote['converted'];
 
         $purchaseData = [
             'user_id'        => auth()->id(),
             'event_id'       => $event->id,
-            'ticket_type'    => $request->ticket_type,
+            'ticket_type'    => $ticketType,
             'quantity'       => $request->quantity,
             'base_total'     => $calcBaseTotal,
             'service_fee'    => $serviceFee,
@@ -92,6 +96,15 @@ class FlutterwaveController extends Controller
         }
         if (Schema::hasColumn('ticket_purchases', 'fx_at')) {
             $purchaseData['fx_at'] = $fxQuote['timestamp'];
+        }
+
+        if (Schema::hasColumn('ticket_purchases', 'promo_code_id')) {
+            $purchaseData['promo_code_id'] = $pricing['promo_code_id'];
+            $purchaseData['promo_redeemed'] = false;
+        }
+        if (Schema::hasColumn('ticket_purchases', 'platform_fee_percent')) {
+            $pct = $pricing['platform_fee_percent'];
+            $purchaseData['platform_fee_percent'] = $pct === null ? null : round((float) $pct, 4);
         }
 
         $purchase = TicketPurchase::create($purchaseData);
@@ -142,10 +155,14 @@ class FlutterwaveController extends Controller
                             'paid_at' => now(),
                         ]);
 
+                        PromoCode::redeemForPaidPurchase($purchase);
                         $this->generateTickets($purchase);
                     }
 
-                    return redirect()->route('ticket.view', $purchase->id)->with('success', 'Payment successful!');
+                    return redirect()
+                        ->route('ticket.view', $purchase->id)
+                        ->with('success', 'Payment successful!')
+                        ->with('prompt_join_group_event_id', $purchase->event_id);
                 }
             }
         }
@@ -199,8 +216,6 @@ class FlutterwaveController extends Controller
             'type' => 'success',
         ]);
 
-        \App\Models\Referral::processCommission($purchase);
-
-        \App\Jobs\SendTicketNotifications::dispatch($purchase);
+        \App\Jobs\SendTicketNotifications::dispatchSync($purchase);
     }
 }

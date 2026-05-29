@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Support\ContentFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,7 +56,7 @@ class TrendsController extends Controller
 
         // --- NEW MONETIZATION FEEDS (For future use/demonstration) ---
         // 1. 🔥 Trending Near You
-        $location = $request->query('location', ($user ? $user->location : 'Kampala')); 
+        $location = $request->query('location', ($user ? $user->location : 'Kampala'));
         $trendingNear = Trend::with(['user', 'event'])
             ->trendingNear($location)
             ->activeBoost()
@@ -78,9 +79,9 @@ class TrendsController extends Controller
                 ->get()
                 ->pluck('event.category')
                 ->unique();
-            
+
             $personalized = Trend::with(['user', 'event'])
-                ->whereHas('event', function($q) use ($likedEventCategories) {
+                ->whereHas('event', function ($q) use ($likedEventCategories) {
                     $q->whereIn('category', $likedEventCategories);
                 })
                 ->where('user_id', '!=', $user->id)
@@ -94,7 +95,7 @@ class TrendsController extends Controller
             $userLikedTrendIds = TrendLike::where('user_id', $user->id)
                 ->pluck('trend_id')
                 ->toArray();
-            
+
             $feedsToMap = [$topTrends, $trends, $trendingNear, $editorsPicks, $personalized];
             foreach ($feedsToMap as $feed) {
                 foreach ($feed as $trend) {
@@ -124,7 +125,7 @@ class TrendsController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'media.*' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,wmv,webm|max:51200', // 50MB max
+            'media.*' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,wmv,webm|max:51200',
             'media' => 'nullable|array|max:5',
             'event_id' => 'nullable|exists:events,id',
         ]);
@@ -139,14 +140,53 @@ class TrendsController extends Controller
 
         // Handle multiple media uploads
         if ($request->hasFile('media')) {
+
             foreach ($request->file('media') as $index => $file) {
+
                 $path = $file->store('trends', 'public');
-                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
-                
+
+                $mime = $file->getMimeType();
+
+                $type = str_contains($mime, 'video') ? 'video' : 'image';
+
+                $width = null;
+                $height = null;
+
+                $fullPath = storage_path('app/public/' . $path);
+
+                // IMAGE DIMENSIONS
+                if ($type === 'image') {
+
+                    [$width, $height] = getimagesize($fullPath);
+                }
+
+                // VIDEO DIMENSIONS
+                if ($type === 'video') {
+
+                    try {
+
+                        $ffprobe = \FFMpeg\FFProbe::create();
+
+                        $videoStream = $ffprobe
+                            ->streams($fullPath)
+                            ->videos()
+                            ->first();
+
+                        $width = $videoStream->get('width');
+                        $height = $videoStream->get('height');
+                    } catch (\Exception $e) {
+
+                        $width = null;
+                        $height = null;
+                    }
+                }
+
                 $trend->media()->create([
                     'path' => $path,
                     'type' => $type,
                     'order' => $index,
+                    'width' => $width,
+                    'height' => $height,
                 ]);
             }
         }
@@ -202,7 +242,7 @@ class TrendsController extends Controller
             foreach ($request->file('media') as $index => $file) {
                 $path = $file->store('trends', 'public');
                 $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
-                
+
                 $trend->media()->create([
                     'path' => $path,
                     'type' => $type,
@@ -240,10 +280,12 @@ class TrendsController extends Controller
             'user',
             'media',
             'likes',
-            'comments.user',
-            'comments.likes',
+            'rootComments.user',
+            'rootComments.likes',
+            'rootComments.replies.user',
+            'rootComments.replies.likes',
         ])->loadCount('likes'); // <-- ensures likes_count is populated
-   
+
 
         $topOrganizers = Organizer::withCount('followers')
             ->orderByDesc('followers_count')
@@ -299,17 +341,28 @@ class TrendsController extends Controller
 
         $request->validate([
             'comment' => 'required|string|max:500',
+            'parent_id' => 'nullable|integer|exists:trend_comments,id',
         ]);
+
+        $parentId = $request->input('parent_id');
+        if ($parentId) {
+            TrendComment::where('trend_id', $trend->id)
+                ->whereNull('parent_id')
+                ->findOrFail($parentId);
+        }
 
         $comment = $trend->comments()->create([
             'user_id' => Auth::id(),
+            'parent_id' => $parentId,
             'comment' => $request->comment,
         ]);
+        $comment->load(['user', 'likes']);
 
         $user = Auth::user();
 
         return response()->json([
             'id' => $comment->id,
+            'parent_id' => $comment->parent_id ? (int) $comment->parent_id : null,
             'comment' => $comment->comment,
             'comment_html' => ContentFormatter::linkify($comment->comment),
             'user_name' => $user->first_name . ' ' . $user->last_name,
@@ -317,6 +370,11 @@ class TrendsController extends Controller
                 ? asset('storage/' . $user->profile_pic)
                 : asset('default-profile.png'),
             'created_at' => 'just now',
+            'likes_count' => 0,
+            'html' => view('partials.trend-comment-item', [
+                'comment' => $comment,
+                'isReply' => $comment->parent_id !== null,
+            ])->render(),
         ]);
     }
 
@@ -330,11 +388,13 @@ class TrendsController extends Controller
 
         $user = Auth::user();
 
-        if ($comment->likes()->where('user_id', $user->id)->exists()) {
-            $comment->likes()->detach($user->id);
+        $existing = $comment->likes()->where('user_id', $user->id)->first();
+
+        if ($existing) {
+            $existing->delete();
             $liked = false;
         } else {
-            $comment->likes()->attach($user->id);
+            $comment->likes()->create(['user_id' => $user->id]);
             $liked = true;
         }
 
@@ -355,8 +415,4 @@ class TrendsController extends Controller
 
         return response()->json(['success' => true]);
     }
-
-
-
-
 }

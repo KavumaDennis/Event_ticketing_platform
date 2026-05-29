@@ -12,6 +12,7 @@ class EventComment extends Model
     protected $fillable = [
         'event_id',
         'user_id',
+        'parent_id',
         'comment',
     ];
 
@@ -28,5 +29,15 @@ class EventComment extends Model
     public function likes()
     {
         return $this->hasMany(EventCommentLike::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(self::class, 'parent_id')->oldest();
     }
 }

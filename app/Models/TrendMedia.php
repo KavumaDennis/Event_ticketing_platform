@@ -14,6 +14,8 @@ class TrendMedia extends Model
         'path',
         'type',
         'order',
+        'width',
+        'height',
     ];
 
     public function trend()

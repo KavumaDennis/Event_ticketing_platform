@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event; // ✅ CORRECT
+use App\Models\PromoCode;
+use App\Services\EventCheckoutPricing;
 use App\Services\FxService;
 use Illuminate\Http\Request;
 
@@ -13,29 +15,26 @@ class PaymentController extends Controller
      */
     public function paymentPage(Request $request, Event $event, FxService $fx)
     {
-        $ticketType = $request->ticket_type;
-        $quantity = $request->quantity;
+        $ticketType = strtolower((string) $request->ticket_type);
+        $quantity = (int) $request->quantity;
 
         // Validate inputs
-        if (!$ticketType || !$quantity) {
+        if (!$ticketType || !$quantity || ! in_array($ticketType, ['regular', 'vip', 'vvip'], true)) {
             return redirect()->back()->with('error', 'Please select ticket type and quantity.');
         }
 
-        $prices = [
-            'regular' => $event->regular_price,
-            'vip' => $event->vip_price,
-            'vvip' => $event->vvip_price,
-        ];
+        $promoInput = (string) $request->query('promo_code', '');
+        $quote = EventCheckoutPricing::compute($event, $ticketType, $quantity, $promoInput);
+        // Invalid client-supplied promo: treat as warning on page instead of silent ignore
+        $promoError = PromoCode::normalizedCode($promoInput) && ! $quote['promo']
+            ? 'That promo code is not valid or has expired.'
+            : null;
 
-        $baseTotal = ($prices[$ticketType] ?? 0) * (int) $quantity;
-
-        // Calculate Service Fee
-        $feeConfig = config('monetization.service_fee', ['type' => 'percentage', 'amount' => 5]);
-        $serviceFee = ($feeConfig['type'] === 'percentage')
-            ? ($baseTotal * $feeConfig['amount'] / 100)
-            : $feeConfig['amount'];
-
-        $totalBase = $baseTotal + $serviceFee;
+        $baseTotal = $quote['base_total'];
+        $serviceFee = $quote['service_fee'];
+        $totalBase = $quote['total_base'];
+        $grossBaseTotal = $quote['gross_base_total'];
+        $discountAmount = $quote['discount_amount'];
 
         $baseCurrency = config('app.currency', 'UGX');
         $supportedCurrencies = config('monetization.supported_currencies', [$baseCurrency]);
@@ -53,7 +52,11 @@ class PaymentController extends Controller
             'event',
             'ticketType',
             'quantity',
+            'promoInput',
+            'promoError',
             'baseTotal',
+            'grossBaseTotal',
+            'discountAmount',
             'serviceFee',
             'total',
             'totalBase',
@@ -94,44 +97,17 @@ class PaymentController extends Controller
             'quantity' => 'required|integer|min:1',
             'phone' => 'required|string', // Add phone validation for MoMo
             'currency' => 'nullable|string|max:5',
+            'promo_code' => 'nullable|string|max:80',
         ]);
 
         $event = Event::findOrFail($request->event_id);
 
-        // PRICE LOOKUP
-        $prices = [
-            'regular' => $event->regular_price,
-            'vip' => $event->vip_price,
-            'vvip' => $event->vvip_price,
-        ];
-
-        $baseTotal = ($prices[$request->ticket_type] ?? 0) * $request->quantity;
-
-        // Recalculate Service Fee for server-side validation/consistency
-        $feeConfig = config('monetization.service_fee', ['type' => 'percentage', 'amount' => 5]);
-        $serviceFee = ($feeConfig['type'] === 'percentage')
-            ? ($baseTotal * $feeConfig['amount'] / 100)
-            : $feeConfig['amount'];
-
-        $totalBase = $baseTotal + $serviceFee;
-        $baseCurrency = config('app.currency', 'UGX');
-        $currency = strtoupper($request->input('currency', $baseCurrency));
-        $supportedCurrencies = config('monetization.supported_currencies', [$baseCurrency]);
-        if (!in_array($currency, $supportedCurrencies, true)) {
-            $currency = $baseCurrency;
-        }
-
-        $fxQuote = app(FxService::class)->quote((float) $totalBase, $baseCurrency, $currency);
-        $total = $fxQuote['converted'];
-
-        // Redirect to MOMO (MTN/Airtel)
-        return redirect()->route('momo.init', [
-            'event_id' => $event->id,
+        return redirect()->route('payment.page', [
+            'event' => $event,
             'ticket_type' => $request->ticket_type,
             'quantity' => $request->quantity,
-            'total' => $total,
-            'phone' => $request->phone,
-            'currency' => $currency,
+            'currency' => strtoupper((string) $request->currency),
+            'promo_code' => $request->promo_code,
         ]);
     }
 }

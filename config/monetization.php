@@ -52,14 +52,21 @@ return [
         'free' => [
             'name' => 'Free',
             'trend_multiplier' => 1.0,
+            /** Platform fee applied to post-discount ticket subtotal */
+            'fee_fixed' => 0,
+            'fee_percent' => 5,
         ],
         'pro' => [
             'name' => 'Pro',
             'trend_multiplier' => 1.5,
+            'fee_fixed' => 0,
+            'fee_percent' => 3,
         ],
         'elite' => [
             'name' => 'Elite',
             'trend_multiplier' => 2.5,
+            'fee_fixed' => 0,
+            'fee_percent' => 0,
         ],
     ],
 

@@ -9,7 +9,6 @@ use App\Models\Trend;
 use App\Models\TicketPurchase;
 use App\Models\Faq;
 use App\Models\PayoutRequest;
-use App\Models\Referral;
 use App\Models\PromoCode;
 use App\Models\Waitlist;
 use App\Models\PaymentFlag;
@@ -140,8 +139,11 @@ class AdminController extends Controller
         } else {
             $totalRevenue = TicketPurchase::sum('total');
         }
-        
-        return view('admin.finance', compact('purchases', 'totalRevenue'));
+        $totalCommission = Schema::hasColumn('ticket_purchases', 'service_fee')
+            ? TicketPurchase::where('status', 'paid')->sum('service_fee')
+            : 0;
+
+        return view('admin.finance', compact('purchases', 'totalRevenue', 'totalCommission'));
     }
 
     // MANAGE FAQs
@@ -233,36 +235,18 @@ class AdminController extends Controller
     public function updatePayoutStatus(Request $request, PayoutRequest $payout)
     {
         $request->validate([
-            'status' => 'required|in:approved,rejected',
-            'admin_notes' => 'nullable|string|max:1000'
+            'status' => 'required|in:pending,processing,completed,rejected',
+            'admin_note' => 'nullable|string|max:1000'
         ]);
 
         $payout->update([
             'status' => $request->status,
-            'admin_notes' => $request->admin_notes,
+            'admin_note' => $request->admin_note,
             'processed_at' => now(),
-            'processed_by' => auth()->id()
         ]);
 
         return back()->with('success', 'Payout request updated.');
     }
-
-    // 2. Referral & Affiliate Tracking
-    public function referrals()
-    {
-        $referrals = Referral::with(['referrer', 'referredUser'])->latest()->paginate(20);
-        $totalEarned = Referral::sum('commission_earned');
-        
-        $topReferrers = User::whereHas('referrals')
-            ->withCount('referrals')
-            ->withSum('referrals as total_commissions', 'commission_earned')
-            ->orderByDesc('referrals_count')
-            ->take(10)
-            ->get();
-
-        return view('admin.referrals', compact('referrals', 'totalEarned', 'topReferrers'));
-    }
-
     // 3. Organizer Settings Overrides
     public function editOrganizer(Organizer $organizer)
     {
@@ -334,3 +318,5 @@ class AdminController extends Controller
         return app(OrganizerAnalyticsController::class)->indexForAdmin($organizer);
     }
 }
+
+

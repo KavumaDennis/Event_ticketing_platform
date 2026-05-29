@@ -43,7 +43,7 @@
 
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-15">
-            <div class="flex flex-col p-2 justify-between bg-green-400/10 backdrop-blur-[1px] rounded-4xl overflow-hidden">
+            <div class="flex flex-col p-2 justify-between bg-green-400/10 border border-green-400/5 backdrop-blur-[1px] rounded-3xl overflow-hidden">
                 <div class="flex flex-col gap-3 md:gap-2 lg:gap-4 p-2 px-2">
                     <div class="flex justify-between">
                         <div class="flex justify-between items-center gap-3">
@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="h-52 md:h-38 lg:h-52 relative">
-                    <img src="{{ asset('img1.jpg') }}" class="h-full w-full absolute object-cover rounded-3xl z-10 opacity-50 right-0 left-0" alt="" />
+                    <img src="{{ asset('img1.jpg') }}" class="h-full w-full absolute object-cover rounded-2xl z-10 opacity-50 right-0 left-0" alt="" />
                     <a href="{{ route('events') }}" class="p-0.5 absolute left-3 bottom-3 text-sm bg-orange-400 border border-green-400/15 z-50 font-medium rounded-3xl flex items-center gap-2">
                         <span class='bg-black/90 border border-green-400/15 size-8 flex items-center justify-center rounded-[50%]'>
                             <p class='text-sm text-orange-400/90'>
@@ -78,7 +78,7 @@
                     </a>
                 </div>
             </div>
-            <div class="flex flex-col p-2 justify-between bg-green-400/10 backdrop-blur-[1px]  rounded-4xl overflow-hidden">
+            <div class="flex flex-col p-2 justify-between bg-green-400/10 border border-green-400/5 backdrop-blur-[1px]  rounded-3xl overflow-hidden">
                 <div class="flex flex-col gap-3 md:gap-2 lg:gap-4 p-2 px-2">
                     <div class="flex justify-between">
                         <div class="flex justify-between items-center gap-3">
@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div class="h-52 md:h-38 lg:h-52 relative">
-                    <img src="{{ asset('trends.jpg') }}" class="h-full w-full absolute object-cover rounded-3xl z-10 opacity-50 right-0 left-0" alt="" />
+                    <img src="{{ asset('trends.jpg') }}" class="h-full w-full absolute object-cover rounded-2xl z-10 opacity-50 right-0 left-0" alt="" />
                     <a href="{{ route('trends') }}" class="p-0.5 absolute left-3 bottom-3 text-sm bg-orange-400 border border-green-400/15 z-50 font-medium rounded-3xl flex items-center gap-2">
                         <span class='bg-black/90 border border-green-400/15 size-8 flex items-center justify-center rounded-[50%]'>
                             <p class='text-sm text-orange-400/90'>
@@ -113,7 +113,7 @@
                     </a>
                 </div>
             </div>
-            <div class="flex flex-col p-2 justify-between bg-green-400/10 backdrop-blur-[1px]  rounded-4xl overflow-hidden">
+            <div class="flex flex-col p-2 justify-between bg-green-400/10 border border-green-400/5 backdrop-blur-[1px]  rounded-3xl overflow-hidden">
                 <div class="flex flex-col gap-3 md:gap-2 lg:gap-4 p-2 px-2">
                     <div class="flex justify-between">
                         <div class="flex justify-between items-center gap-3">
@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 <div class="h-52 md:h-38 lg:h-52 relative">
-                    <img src="{{ asset('business.jpg') }}" class="h-full w-full absolute object-cover rounded-3xl z-10 opacity-50 right-0 left-0" alt="" />
+                    <img src="{{ asset('business.jpg') }}" class="h-full w-full absolute object-cover rounded-2xl z-10 opacity-50 right-0 left-0" alt="" />
                     <a href="{{ route('organizers') }}" class="p-0.5 absolute left-3 bottom-3 text-sm bg-orange-400 border border-green-400/15 z-50 font-medium rounded-3xl flex items-center gap-2">
                         <span class='bg-black/90 border border-green-400/15 size-8 flex items-center justify-center rounded-[50%]'>
                             <p class='text-sm text-orange-400/90'>
@@ -159,7 +159,7 @@
             <div class="col-span-1 w-full h-ful relative">
                 <img src="{{ asset('reviews.jpg') }}" class="absolute w-full h-full object-cover opacity-50" alt="" />
             </div>
-            <div x-data='reviewSlider(@json($reviewsForAlpine))' class="col-span-2 grid grid-cols-3 p-4 bg-green-400/10 backdrop-blur-[1px]">
+            <div x-data='reviewSlider(@json($reviewsForAlpine))' class="col-span-2 grid grid-cols-3 p-4 bg-green-400/10 border border-green-400/5 backdrop-blur-[1px]">
                 <div class="flex flex-col justify-between col-span-2 pr-3">
                     <div class="text-4xl">
                         <h1 class="tracking-wide text-orange-400/70">Help deliver extraordinary experiences on our platform with your review</h1>
@@ -337,12 +337,12 @@
 
     <div class="p-5 ">
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 mb-6">
-            <h1 class='text-3xl font-medium text-white/80'>Events</h1>
+            <h1 class='text-2xl font-medium text-white/80'>Events</h1>
             <div class="flex gap-5 items-center">
                 <form id="search-form" method="GET" action="{{ route('home') }}" class="relative">
                     <div class="h-full relative flex items-center ">
-                        <input type="search" name="search" value="{{ request('search') }}" class="p-2  bg-orange-400 border border-green-400/15 w-80 rounded-3xl pr-10 outline-0 text-black/80 font-medium text-sm placeholder:text-black/80" placeholder="Search events..." />
-                        <button type="submit" class="absolute right-1 size-8 flex items-center justify-center bg-black/95 text-orange-400/80 p-2 rounded-[50%] border border-green-400/15 hover:bg-black transition">
+                        <input type="search" name="search" value="{{ request('search') }}" class="p-[9px]  bg-orange-400 border border-green-400/15 w-80 rounded-3xl pr-10 outline-0 text-black/80 font-medium text-sm placeholder:text-black/80" placeholder="Search events..." />
+                        <button type="submit" class="absolute right-1 size-8.5 flex items-center justify-center bg-black/95 text-orange-400/80 p-2 rounded-[50%] border border-green-400/15 hover:bg-black transition">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
                                 <path d="m21 21-4.34-4.34" />
                                 <circle cx="11" cy="11" r="8" /></svg>

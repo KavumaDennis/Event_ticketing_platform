@@ -64,7 +64,7 @@
 
 
         <div class="w-[45%] mt-10 mx-auto">
-            <form action="{{ route('contact.submit') }}" method="POST" class="flex flex-col gap-5 w-full p-5 rounded-2xl border border-green-400/10 bg-green-400/10">
+            <form action="{{ route('contact.submit') }}" method="POST" class="flex flex-col gap-5 w-full p-5 border border-green-400/5 bg-green-400/10">
                 @csrf
 
                 @if(session('success'))
@@ -106,17 +106,17 @@
 
     </div>
 
-    <div class="grid grid-cols-2 gap-20 mt-20 p-5">
-        <div class="w-full flex flex-col justify-between h-auto">
-            <div class="">
-                <h1 class='text-3xl tracking-wide leading-15 text-white/80 mb-5'>Frequently Asked Questions</h1>
+    <div class="w-full flex justify-center items-center mt-10 p-5">
+        <div class="flex flex-col justify-between h-auto">
+            <div class="w-full">
+                <h1 class='text-2xl tracking-wide leading-15 text-white mb-5 text-center'>Frequently Asked Questions</h1>
 
                 <div class="flex flex-col gap-3">
                     @foreach($faqs as $faq)
-                    <div class="bg-green-400/10 rounded-4xl overflow-hidden">
+                    <div class="bg-green-400/10 border border-green-400/5 rounded-4xl overflow-hidden w-full md:w-150">
                         <button onclick="toggleFaq({{ $faq->id }})" class="w-full p-1.5 pl-4 flex justify-between items-center text-left text-white/80 transition-colors">
                             <span class="font-medium">{{ $faq->question }}</span>
-                            <span id="icon-{{ $faq->id }}" class="p-3 border border-green-400/10 rounded-[50%] text-orange-400/70 transform transition-transform duration-300">
+                            <span id="icon-{{ $faq->id }}" class="p-2.5 border border-green-400/10 rounded-[50%] text-orange-400/70 transform transition-transform duration-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-down-dash-icon lucide-arrow-big-down-dash">
                                     <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z" />
                                     <path d="M9 4h6" /></svg>

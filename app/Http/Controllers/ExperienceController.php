@@ -74,4 +74,18 @@ class ExperienceController extends Controller
 
         return response()->json(['message' => 'View recorded'], 200);
     }
+
+    public function userExperiences(\App\Models\User $user)
+    {
+        $experiences = $user->activeExperiences()->get()->map(function ($exp) {
+            return [
+                'id' => $exp->id,
+                'media_url' => asset('storage/' . $exp->media_path),
+                'media_type' => $exp->media_type,
+                'caption' => $exp->caption,
+            ];
+        });
+
+        return response()->json($experiences);
+    }
 }

@@ -56,6 +56,11 @@ class Trend extends Model
         return $this->hasMany(TrendComment::class)->latest();
     }
 
+    public function rootComments()
+    {
+        return $this->hasMany(TrendComment::class)->whereNull('parent_id')->latest();
+    }
+
     public function event()
     {
         return $this->belongsTo(Event::class);

@@ -239,7 +239,7 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
+            class="bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply border border-green-400/30 backdrop-blur-[1px] shadow-2xl w-full max-w-sm overflow-hidden"
         >
             {{-- Modal header colour bar --}}
             <div class="h-1.5" :class="modalEvent && modalEvent.source === 'ticket' ? 'bg-orange-400' : 'bg-blue-400'"></div>
@@ -287,9 +287,9 @@
                 <div class="mt-5 flex gap-2">
                     <a
                         :href="modalEvent ? '/events/' + modalEvent.id : '#'"
-                        class="flex-1 text-center text-xs font-bold py-2 rounded-xl bg-orange-400 text-black hover:bg-orange-300 transition"
+                        class="flex-1 px-3 py-1.5 bg-orange-400 text-black text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase"
                     >View Event</a>
-                    <button @click="closeModal()" class="px-4 text-xs font-bold py-2 rounded-xl bg-white/5 text-zinc-400 hover:bg-white/10 transition">Close</button>
+                    <button @click="closeModal()" class="px-3 py-1.5 bg-white/5 border border-white/20 text-orange-400 text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase">Close</button>
                 </div>
             </div>
 

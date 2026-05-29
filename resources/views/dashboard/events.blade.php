@@ -36,7 +36,7 @@
                 {{-- DISCOVERY FEED (Infinite Scroll) --}}
                 <div x-show="activeTab === 'discovery'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" id="discovery-feed">
                     <div id="event-feed-container" class="space-y-8">
-                        @include('partials.event-dashboard-card', ['events' => $events])
+                        @include('partials.event-dashboard-card', ['events' => $events, 'savedEventIds' => $saved->pluck('event_id')->toArray()])
                     </div>
 
                     {{-- Loading Indicator --}}
@@ -115,7 +115,7 @@
                     <div class="">
                         {{-- Search Bar for Events --}}
                         <div class="mb-6 relative group">
-                            <input type="text" id="events-search" placeholder="Search events, venues..." class="w-full bg-green-400/10 border border-green-400/10 rounded-2xl py-3 px-11 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-400/30 transition-all">
+                            <input type="text" id="events-search" value="{{ request('search') }}" placeholder="Search events, venues..." class="w-full bg-green-400/10 border border-green-400/10 rounded-2xl py-3 px-11 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-400/30 transition-all">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-orange-400/70 transition-colors"></i>
                             <div id="events-search-loader" class="hidden absolute right-4 top-1/2 -translate-y-1/2">
                                 <div class="size-4 border-2 border-orange-400/20 border-t-orange-400 rounded-full animate-spin"></div>
@@ -187,7 +187,12 @@
                 <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2 ml-1">Venue & Location</label>
                 <div class="grid grid-cols-2 gap-4">
                     <input type="text" id="edit_venue" name="venue" placeholder="Venue Name" class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
-                    <input type="text" id="edit_location" name="location" placeholder="City/Town" class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
+                    <div class="relative geo-ac-wrap">
+                        <input type="text" id="edit_location" name="location" placeholder="City/Town"
+                            data-geocode-autocomplete
+                            autocomplete="street-address"
+                            class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70">
+                    </div>
                 </div>
             </div>
 
@@ -332,24 +337,86 @@
     }
 
     // --- SEARCH LOGIC ---
-    // (Basic search if needed, but UI is removed as per request)
+    const eventsSearchInput = document.getElementById('events-search');
+    const eventsSearchLoader = document.getElementById('events-search-loader');
+    let searchDebounce;
+
+    function navigateWithSearch(value) {
+        const url = new URL(window.location.href);
+        const q = (value || '').trim();
+        if (q) url.searchParams.set('search', q);
+        else url.searchParams.delete('search');
+        url.searchParams.delete('page'); // reset pagination for infinite scroll
+        window.location.href = url.toString();
+    }
+
+    if (eventsSearchInput) {
+        eventsSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                navigateWithSearch(eventsSearchInput.value);
+            }
+        });
+
+        eventsSearchInput.addEventListener('input', () => {
+            clearTimeout(searchDebounce);
+            if (eventsSearchLoader) eventsSearchLoader.classList.remove('hidden');
+            searchDebounce = setTimeout(() => {
+                navigateWithSearch(eventsSearchInput.value);
+            }, 450);
+        });
+
+        window.addEventListener('pageshow', () => {
+            if (eventsSearchLoader) eventsSearchLoader.classList.add('hidden');
+        });
+    }
 
     // --- SAVE EVENT LOGIC ---
-    async function toggleSaveEvent(eventId) {
+    async function toggleSaveEvent(button) {
+        if (!button) return;
+        const url = button.getAttribute('data-save-url');
+        if (!url) return;
+
+        button.disabled = true;
         try {
-            const response = await fetch(`/user/dashboard/event/${eventId}/save`, {
+            const response = await fetch(url, {
                 method: 'POST'
                 , headers: {
-                    'Content-Type': 'application/json'
-                    , 'X-CSRF-TOKEN': window.csrfToken
+                    'X-CSRF-TOKEN': window.csrfToken
+                    , 'X-Requested-With': 'XMLHttpRequest'
                 }
             });
             const data = await response.json();
             if (data.status) {
-                alert(data.status === 'saved' ? 'Event saved!' : 'Event removed from saved');
+                const isSaved = data.status === 'saved';
+                button.setAttribute('data-saved', isSaved ? '1' : '0');
+                button.classList.toggle('bg-black/90', isSaved);
+                button.classList.toggle('text-orange-400', isSaved);
+                button.classList.toggle('bg-orange-400/80', !isSaved);
+                button.classList.toggle('text-black', !isSaved);
+
+                const icon = button.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-solid', isSaved);
+                    icon.classList.toggle('fa-regular', !isSaved);
+                }
+
+                const badge = document.getElementById('saved-count-badge');
+                if (badge && typeof data.saved_count !== 'undefined') {
+                    badge.textContent = data.saved_count;
+                    if (data.saved_count > 0) {
+                        badge.classList.remove('hidden');
+                        badge.classList.add('flex');
+                    } else {
+                        badge.classList.add('hidden');
+                        badge.classList.remove('flex');
+                    }
+                }
             }
         } catch (error) {
             console.error('Error saving event:', error);
+        } finally {
+            button.disabled = false;
         }
     }
 
@@ -409,5 +476,6 @@
     });
 
 </script>
+@include('partials.location-autocomplete')
 @endpush
 @endsection

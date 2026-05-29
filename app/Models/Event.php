@@ -20,6 +20,7 @@ class Event extends Model
         'start_time',
         'end_time',
         'description',
+        'ticket_instructions',
         'event_image',
         'regular_price',
         'regular_quantity',
@@ -66,6 +67,11 @@ class Event extends Model
         return $this->hasMany(EventComment::class)->latest();
     }
 
+    public function rootComments()
+    {
+        return $this->hasMany(EventComment::class)->whereNull('parent_id')->latest();
+    }
+
     /**
      * Check if the event is liked by a specific user
      */
@@ -91,11 +97,33 @@ class Event extends Model
         return $this->savedBy()->where('user_id', $user->id)->exists();
     }
 
-    // Event.php
     // One event has many trends
     public function trends()
     {
         return $this->hasMany(Trend::class);
+    }
+
+    public function media()
+    {
+        return $this->hasMany(EventMedia::class)->orderBy('order');
+    }
+
+    public function getFirstMediaUrlAttribute()
+    {
+        $first = $this->media->first();
+        if ($first) {
+            return asset('storage/' . $first->path);
+        }
+        return $this->event_image ? asset('storage/' . $this->event_image) : asset('default.png');
+    }
+
+    public function getIsVideoAttribute()
+    {
+        $first = $this->media->first();
+        if ($first) {
+            return $first->is_video;
+        }
+        return false;
     }
 
     public function ticketTypes()

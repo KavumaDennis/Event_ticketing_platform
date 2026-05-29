@@ -14,6 +14,7 @@ class TicketPurchase extends Model
         'total',
         'base_total',
         'service_fee',
+        'platform_fee_percent',
         'total_base',
         'currency',
         'base_currency',
@@ -30,11 +31,14 @@ class TicketPurchase extends Model
 
         'status',         // pending, paid, failed
         'paid_at',
+        'promo_code_id',
+        'promo_redeemed',
     ];
 
     protected $casts = [
         'paid_at' => 'datetime',
         'fx_at' => 'datetime',
+        'promo_redeemed' => 'boolean',
     ];
 
     /* ===================== RELATIONSHIPS ===================== */

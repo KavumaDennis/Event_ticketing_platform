@@ -10,6 +10,7 @@ use App\Models\Faq;
 use App\Models\User;
 use App\Models\ExperienceView;
 use App\Models\Experience;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -256,13 +257,14 @@ class DashboardController extends Controller
             });
         }
 
-        $events = $eventsQuery->latest()->paginate(6);
+        $events = $eventsQuery->latest()->paginate(6)->withQueryString();
 
         // Saved events
         $saved = $user->savedEvents()
             ->with('event.organizer')
             ->latest()
             ->get();
+        $savedEventIds = $saved->pluck('event_id')->toArray();
 
         // Get random organizers for sidebar (Increased to 7 as requested)
         $randomOrganizers = \App\Models\Organizer::inRandomOrder()->take(6)->get();
@@ -272,7 +274,10 @@ class DashboardController extends Controller
         $topTrends = $trendRankingService->getTrendingFeed(5);
 
         if ($request->ajax()) {
-            $view = view('partials.event-dashboard-card', compact('events'))->render();
+            $view = view('partials.event-dashboard-card', [
+                'events' => $events,
+                'savedEventIds' => $savedEventIds,
+            ])->render();
             return response()->json([
                 'html' => $view,
                 'next_page' => $events->nextPageUrl()
@@ -399,7 +404,11 @@ class DashboardController extends Controller
             $status = 'saved';
         }
 
-        return response()->json(['status' => $status]);
+        return response()->json([
+            'status' => $status,
+            'saved_count' => $user->savedEvents()->count(),
+            'event_id' => $event->id,
+        ]);
     }
 
 
@@ -668,12 +677,7 @@ class DashboardController extends Controller
     public function organizerSettings()
     {
         $user = Auth::user();
-        $organizer = $user->organizer;
-        if (!$organizer) {
-            $organizer = Organizer::whereHas('members', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->first();
-        }
+        $organizer = Organizer::forManagingUser($user);
 
         if (!$organizer) {
             return redirect()->route('organizer.create')->with('error', 'You need an organizer profile to view settings.');
@@ -681,24 +685,40 @@ class DashboardController extends Controller
 
         $organizer->load('members.user', 'promoCodes');
 
-        return view('dashboard.organizer-settings', compact('organizer', 'user'));
+        $balance = $organizer->getAvailableBalance();
+        $payoutRequests = $organizer->payoutRequests()->latest()->take(10)->get();
+        $payoutFrequency = $organizer->payout_frequency ?? 'monthly';
+
+        $now = Carbon::now();
+        if ($payoutFrequency === 'daily') {
+            $nextPayoutDate = $now->copy()->addDay()->startOfDay();
+        } elseif ($payoutFrequency === 'weekly') {
+            $nextPayoutDate = $now->copy()->addWeek()->startOfDay();
+        } else {
+            $nextPayoutDate = $now->copy()->addMonthNoOverflow()->startOfMonth();
+        }
+
+        return view('dashboard.organizer-settings', compact(
+            'organizer',
+            'user',
+            'balance',
+            'payoutRequests',
+            'payoutFrequency',
+            'nextPayoutDate'
+        ));
     }
 
     public function updateOrganizerSettings(Request $request)
     {
         $user = Auth::user();
-        $organizer = $user->organizer;
-        if (!$organizer) {
-            $organizer = Organizer::whereHas('members', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->first();
-        }
+        $organizer = Organizer::forManagingUser($user);
 
         if (!$organizer) {
             return response()->json(['success' => false, 'message' => 'Organizer not found.'], 404);
         }
 
-        if (!$organizer->hasRole($user, ['owner', 'editor', 'finance'])) {
+        $ownsProfile = (int) $organizer->user_id === (int) $user->id;
+        if (! $ownsProfile && ! $organizer->hasRole($user, ['owner', 'editor', 'finance'])) {
             return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
         }
 
@@ -728,7 +748,6 @@ class DashboardController extends Controller
             'instagram_url' => 'nullable|url|max:255',
             'twitter_url' => 'nullable|url|max:255',
             'linkedin_url' => 'nullable|url|max:255',
-            'ticket_instructions' => 'nullable|string',
             'payout_frequency' => 'nullable|in:daily,weekly,monthly',
             'tax_id' => 'nullable|string|max:50',
             'google_analytics_id' => 'nullable|string|max:50',

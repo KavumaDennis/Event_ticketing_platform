@@ -78,7 +78,8 @@
                                 <td class="py-4 text-white/60 uppercase">{{ $request->payment_method }}</td>
                                 <td class="py-4">
                                     <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase 
-                                        {{ in_array($request->status, ['completed', 'approved']) ? 'bg-green-500/20 text-green-400' : '' }}
+                                        {{ in_array($request->status, ['completed']) ? 'bg-green-500/20 text-green-400' : '' }}
+                                        {{ $request->status === 'processing' ? 'bg-yellow-500/20 text-yellow-400' : '' }}
                                         {{ $request->status === 'pending' ? 'bg-orange-400/20 text-orange-400' : '' }}
                                         {{ $request->status === 'rejected' ? 'bg-red-500/20 text-red-400' : '' }}">
                                         {{ $request->status }}

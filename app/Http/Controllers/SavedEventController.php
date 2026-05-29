@@ -7,16 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class SavedEventController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
-
-        // Eager-load event and its organizer
-        $savedEvents = $user->savedEvents()->with('event.organizer')->get();
-
-        return view('saved', ['savedEvents' => $savedEvents]);
-    }
-
     public function toggle($eventId)
     {
         $user = Auth::user();
@@ -42,7 +32,8 @@ class SavedEventController extends Controller
 
         return response()->json([
             'status' => $status,
-            'has_saved_events' => $hasSavedEvents
+            'has_saved_events' => $hasSavedEvents,
+            'saved_count' => SavedEvent::where('user_id', $user->id)->count(),
         ]);
     }
 }

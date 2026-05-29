@@ -56,6 +56,13 @@
                             <div class="text-green-400 font-medium uppercase">{{ $ticket->ticket_type }}</div>
                         </div>
                     </div>
+
+                    @if(!empty($ticket->event->ticket_instructions))
+                        <div class="mt-4 bg-orange-400/5 border border-orange-400/20 p-4 rounded-xl text-left">
+                            <div class="text-[10px] text-orange-400 uppercase font-mono tracking-wider mb-1">Special instructions</div>
+                            <div class="text-white/70 text-sm leading-relaxed">{{ $ticket->event->ticket_instructions }}</div>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Actions --}}

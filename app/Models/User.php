@@ -28,8 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_admin',
         'google_id',
         'avatar',
-        'referral_code',
-        'affiliate_earnings',
+        
     ];
 
     /**
@@ -52,18 +51,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'affiliate_earnings' => 'decimal:2',
+            
         ];
     }
 
     protected static function boot()
     {
         parent::boot();
-        static::creating(function ($user) {
-            if (!$user->referral_code) {
-                $user->referral_code = strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
-            }
-        });
+        
     }
 
     public function likes()
@@ -155,15 +150,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->notifications()->whereNull('read_at')->count();
     }
 
-    public function referrals()
-    {
-        return $this->hasMany(Referral::class, 'referrer_id');
-    }
-
-    public function referredBy()
-    {
-        return $this->hasOne(Referral::class, 'referred_id');
-    }
 
     public function organizerMemberships()
     {
@@ -198,3 +184,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return asset('default.png');
     }
 }
+
+
+

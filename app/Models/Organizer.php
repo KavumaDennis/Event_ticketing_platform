@@ -38,6 +38,8 @@ class Organizer extends Model
         'google_analytics_id',
         'facebook_pixel_id',
         'is_verified',
+        'ticket_custom_background',
+        'ticket_custom_logo',
     ];
 
     const TIER_FREE = 'free';
@@ -85,6 +87,25 @@ class Organizer extends Model
     public function promoCodes()
     {
         return $this->hasMany(PromoCode::class);
+    }
+
+    /**
+     * Organizer profile tied to dashboard/settings: primary owner profile or membership.
+     */
+    public static function forManagingUser(?User $user): ?self
+    {
+        if (! $user) {
+            return null;
+        }
+
+        $owned = static::where('user_id', $user->id)->first();
+        if ($owned) {
+            return $owned;
+        }
+
+        return static::whereHas('members', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->first();
     }
 
     public function getTotalEarnings()

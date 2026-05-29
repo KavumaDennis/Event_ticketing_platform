@@ -1,4 +1,7 @@
 <x-layout>
+    @push('marketing')
+        @include('partials.organizer-marketing', ['organizer' => $organizer])
+    @endpush
 
 
     <section class="p-5">
@@ -129,7 +132,7 @@
             </h1>
             <div class="grid grid-cols-7 gap-3 justify-between min-w-full">
                 @foreach($suggestedOrganizers as $suggested)
-                <div class="col-span-1 w-full flex flex-col gap-3 items-center p-1.5 bg-green-400/10 border border-green-400/5 rounded-2xl min-w-[140px] relative group hover:bg-green-400/20 transition-all">
+                <div class="col-span-1 w-full flex flex-col gap-3 items-center p-1.5 bg-green-400/10 border border-green-400/5 rounded-xl min-w-[140px] relative group hover:bg-green-400/20 transition-all">
 
                     <img src="{{ $suggested->organizer_image ? asset('storage/'.$suggested->organizer_image) : asset('default.png') }}" alt="{{ $suggested->business_name }}" class="w-16 h-16 rounded-full object-cover border-2 border-orange-400/30 group-hover:border-orange-400/60 transition-colors">
 
@@ -138,7 +141,7 @@
                         <span class="text-white/50 text-[10px] font-mono">{{ $suggested->followers_count ?? 0 }} followers</span>
                     </div>
 
-                    <a href="{{ route('organizer.details', $suggested->id) }}" class="w-full py-2 text-center text-xs bg-orange-400/80 font-mono text-black rounded-2xl font-medium hover:bg-orange-400 transition-colors">
+                    <a href="{{ route('organizer.details', $suggested->id) }}" class="w-full px-3 py-1.5 bg-orange-400 text-black text-center rounded-lg flex items-center justify-center gap-2 hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase">
                         View
                     </a>
                 </div>

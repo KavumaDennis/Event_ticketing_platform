@@ -32,7 +32,7 @@
             @csrf
             <div class="flex flex-col gap-2">
                 <label class="text-white/60 font-medium ml-1 text-sm">Email Address</label>
-                <input type="email" name="email" placeholder="Enter your email" required class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" />
+                <input type="email" name="email" placeholder="Enter your email" required class="p-3 rounded-xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/20 text-orange-400/70 text-sm font-semibold placeholder-orange-400/70" />
             </div>
 
             <button type="submit" class="w-full p-3 bg-black/80 text-white/80 font-medium font-mono text-sm border border-green-400/10 rounded-3xl hover:bg-black/90 transition-all">

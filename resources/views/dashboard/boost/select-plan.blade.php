@@ -7,12 +7,13 @@
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                 @foreach($plans as $plan => $price)
-                <label class="relative block bg-white/5 border border-white/10 p-6 rounded-2xl cursor-pointer hover:border-orange-400 transition group">
+                <label class="relative block bg-white/5 border border-white/10 p-6 rounded-2xl cursor-pointer transition group hover:border-orange-400 peer-checked:border-orange-400 peer-checked:bg-orange-400/10">
                     <input type="radio" name="plan" value="{{ $plan }}" class="hidden peer" {{ $loop->first ? 'checked' : '' }}>
-                    <div class="peer-checked:text-orange-400">
-                        <h3 class="text-xl font-bold text-white group-hover:text-orange-400">{{ str_replace('_', ' ', ucfirst($plan)) }}</h3>
-                        <p class="text-2xl font-mono text-white mt-4">UGX {{ number_format($price) }}</p>
+                    <div class="text-white/90 peer-checked:text-orange-400">
+                        <h3 class="text-xl font-bold text-white group-hover:text-orange-400 peer-checked:text-orange-400">{{ str_replace('_', ' ', ucfirst($plan)) }}</h3>
+                        <p class="text-2xl font-mono text-white mt-4 peer-checked:text-orange-400">UGX {{ number_format($price) }}</p>
                     </div>
+                    <div class="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-orange-400/40 peer-checked:ring-2"></div>
                 </label>
                 @endforeach
             </div>

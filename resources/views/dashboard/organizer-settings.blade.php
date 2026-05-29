@@ -11,10 +11,10 @@
     {{-- Header --}}
     <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-white mb-1">Organizer Settings</h1>
+            <h1 class="text-xl font-bold text-white mb-1">Organizer Settings</h1>
             <p class="text-white/60 text-sm">Manage your organizer profile, payouts, and page settings.</p>
         </div>
-        <a href="{{ route('organizer.details', $organizer->id) }}" class="flex items-center gap-2 bg-green-400/10 hover:bg-green-400/20 text-green-400 px-4 py-2 rounded-xl transition-colors text-sm font-medium w-fit">
+        <a href="{{ route('organizer.details', $organizer->id) }}" class="flex items-center gap-2 px-3 py-1.5 border border-white/20 text-center rounded-lg justify-center hover:text-white duration-150 transition-colors text-[10px] font-bold uppercase bg-green-400/10 hover:bg-green-400/20 text-green-400 text-sm w-fit">
             <span>View Public Profile</span>
             <i class="fas fa-external-link-alt"></i>
         </a>
@@ -207,19 +207,6 @@
 
                     <div class="border-t border-white/5"></div>
 
-                    {{-- Special Instructions --}}
-                    <div>
-                        <h3 class="text-sm font-semibold text-orange-400/80 mb-2 flex items-center gap-2">
-                             Special Instructions 
-                        </h3>
-                        <p class="text-white/40 text-xs mb-4 leading-relaxed">Add any specific instructions (e.g. parking info, dress code, entry requirements) that should appear on every ticket issued.</p>
-                        <textarea name="ticket_instructions" rows="3" 
-                                  class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400"
-                                  placeholder="e.g. Please arrive 30 minutes early...">{{ old('ticket_instructions', $organizer->ticket_instructions) }}</textarea>
-                    </div>
-
-                    <div class="border-t border-white/5"></div>
-
                     {{-- Branding --}}
                     <div>
                         <h3 class="text-sm font-semibold text-orange-400/80 mb-4 flex items-center gap-2">
@@ -274,7 +261,7 @@
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-white/5">
-                    <button type="submit" class="px-6 py-2 bg-orange-400 text-black font-bold rounded-xl hover:bg-orange-500 transition shadow-lg shadow-orange-400/20">
+                    <button type="submit" class="px-4 py-2 rounded-lg flex items-center gap-2 bg-orange-400 text-black border border-orange-400 hover:bg-orange-500 transition-all text-[10px] font-bold uppercase">
                         Save Ticket Settings
                     </button>
                 </div>
@@ -286,6 +273,27 @@
                 <p class="text-white/40 text-sm mb-6">Choose how you want to receive your earnings from ticket sales.</p>
                 
                 <div class="space-y-8">
+                    {{-- Balance & Schedule --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-green-400/10 border border-green-400/20 rounded-2xl">
+                            <div class="text-white/40 text-[10px] uppercase font-mono tracking-wider">Available balance</div>
+                            <div class="text-white/80 text-2xl font-mono mt-1">UGX {{ number_format((int) ($balance ?? 0)) }}</div>
+                            <div class="text-white/30 text-[10px] mt-1">Money remaining on your account</div>
+                        </div>
+                        <div class="p-4 bg-white/5 border border-white/10 rounded-2xl">
+                            <div class="text-white/40 text-[10px] uppercase font-mono tracking-wider">Payout frequency</div>
+                            <div class="text-orange-400/80 text-lg font-mono mt-1">{{ ucfirst($payoutFrequency ?? ($organizer->payout_frequency ?? 'monthly')) }}</div>
+                            <div class="text-white/30 text-[10px] mt-1">You can request payout anytime</div>
+                        </div>
+                        <div class="p-4 bg-white/5 border border-white/10 rounded-2xl">
+                            <div class="text-white/40 text-[10px] uppercase font-mono tracking-wider">Next scheduled payout</div>
+                            <div class="text-white/80 text-lg font-mono mt-1">
+                                {{ isset($nextPayoutDate) ? $nextPayoutDate->format('M d, Y') : '—' }}
+                            </div>
+                            <div class="text-white/30 text-[10px] mt-1">Schedule is informational (early payout allowed)</div>
+                        </div>
+                    </div>
+
                     <div class="flex flex-wrap gap-3">
                         <button type="button" @click="payoutMethod = 'momo'"
                                 :class="payoutMethod === 'momo' ? 'bg-orange-400 text-black' : 'bg-white/10 text-white/70 hover:bg-white/20'"
@@ -365,10 +373,69 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="border-t border-white/5"></div>
+
+                    {{-- Request Payout (Early allowed) --}}
+                    <div>
+                        <h3 class="text-sm font-semibold text-orange-400/80 mb-2 flex items-center gap-2">
+                            <i class="fas fa-hand-holding-usd"></i> Request payout now
+                        </h3>
+                        <p class="text-white/40 text-xs mb-4 leading-relaxed">
+                            You can request a payout even before the next payout time. Requests are reviewed by admin.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="flex flex-col gap-2">
+                                <label class="text-white/60 text-sm font-medium ml-1">Amount (UGX)</label>
+                                <input type="number" name="amount" min="5000" step="1"
+                                       max="{{ (int) ($balance ?? 0) }}"
+                                       form="payoutRequestForm"
+                                       placeholder="e.g. 50000"
+                                       class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
+                                <p class="text-white/30 text-[10px] ml-1">Max: UGX {{ number_format((int) ($balance ?? 0)) }}</p>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="text-white/60 text-sm font-medium ml-1">Method</label>
+                                <select name="payment_method" form="payoutRequestForm"
+                                        class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold focus:border-orange-400">
+                                    <option value="momo" class="bg-zinc-900">Mobile Money</option>
+                                    <option value="bank" class="bg-zinc-900">Bank Account</option>
+                                </select>
+                                <p class="text-white/30 text-[10px] ml-1">Uses the destination you’ve saved above.</p>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" form="payoutRequestForm"
+                                        class="w-fit px-5 py-3 rounded-lg flex items-center gap-2 bg-green-400/80 text-black border border-green-400/40 hover:bg-green-400 transition-all text-[10px] font-bold uppercase">
+                                    Submit request
+                                </button>
+                            </div>
+                        </div>
+
+                        @if(!empty($payoutRequests) && $payoutRequests->count())
+                            <div class="mt-5 space-y-2">
+                                <div class="text-white/50 text-[10px] uppercase font-mono tracking-wider">Recent requests</div>
+                                @foreach($payoutRequests as $req)
+                                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-2xl">
+                                        <div class="min-w-0">
+                                            <div class="text-white/80 text-sm font-mono truncate">UGX {{ number_format((int) $req->amount) }}</div>
+                                            <div class="text-white/30 text-[10px] font-mono">
+                                                {{ ucfirst($req->payment_method) }} • {{ $req->created_at->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                        <div class="text-[10px] font-bold uppercase px-3 py-1 rounded-full
+                                            {{ $req->status === 'completed' ? 'bg-green-400/20 text-green-400' : ($req->status === 'rejected' ? 'bg-red-400/20 text-red-400' : ($req->status === 'processing' ? 'bg-orange-400/20 text-orange-400' : 'bg-white/10 text-white/50')) }}">
+                                            {{ $req->status }}
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-white/5">
-                    <button type="submit" class="px-6 py-2 bg-orange-400 text-black font-bold rounded-xl hover:bg-orange-500 transition shadow-lg shadow-orange-400/20">
+                    <button type="submit" class="px-4 py-2 rounded-lg flex items-center gap-2 bg-orange-400 text-black border border-orange-400 hover:bg-orange-500 transition-all text-[10px] font-bold uppercase">
                         Save Payout Settings
                     </button>
                 </div>
@@ -462,6 +529,7 @@
                                        placeholder="e.g. 123456789012345"
                                        class="w-full p-3 rounded-xl bg-white/5 outline outline-white/20 backdrop-blur-4xl text-orange-400/70 text-sm font-semibold placeholder-orange-400/70 focus:border-orange-400">
                                 <p class="text-white/30 text-[10px] ml-1">Optimize your ad spend and track conversions.</p>
+                                <p class="text-white/25 text-[10px] ml-1 leading-snug">These snippets are injected automatically on your public organizer profile and each published event detail page tied to your brand.</p>
                             </div>
                         </div>
                     </div>
@@ -477,12 +545,17 @@
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-white/5">
-                    <button type="submit" class="px-6 py-2 bg-orange-400 text-black font-bold rounded-xl hover:bg-orange-500 transition shadow-lg shadow-orange-400/20">
+                    <button type="submit" class="px-4 py-2 rounded-lg flex items-center gap-2 bg-orange-400 text-black border border-orange-400 hover:bg-orange-500 transition-all text-[10px] font-bold uppercase">
                         Save Marketing Settings
                     </button>
                 </div>
             </div>
         </div>
+    </form>
+
+    {{-- Separate (non-nested) payout request form --}}
+    <form id="payoutRequestForm" action="{{ route('organizer.payouts.request') }}" method="POST" class="hidden">
+        @csrf
     </form>
 
     {{-- PROMOTIONS --}}
@@ -545,9 +618,18 @@
                     @forelse($organizer->promoCodes ?? [] as $promo)
                     <div class="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl" x-data="{ active: {{ $promo->status ? 'true' : 'false' }} }">
                         <div>
-                            <div class="flex items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-3">
                                 <span class="text-white font-mono font-bold">{{ $promo->code }}</span>
                                 <span class="px-2 py-0.5 bg-white/10 text-white/60 text-[10px] rounded uppercase">{{ $promo->discount_type }}</span>
+                                @if($promo->isValid())
+                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-orange-400/15 text-orange-400 border border-orange-400/25">Eligible</span>
+                                @elseif($promo->expires_at && $promo->expires_at->isPast())
+                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-white/10 text-white/40 border border-white/10">Expired</span>
+                                @elseif($promo->usage_limit && $promo->used_count >= $promo->usage_limit)
+                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-white/10 text-white/40 border border-white/10">Used up</span>
+                                @else
+                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-400/15 text-red-400 border border-red-400/25">Unavailable</span>
+                                @endif
                             </div>
                             <p class="text-white/40 text-xs mt-1">
                                 {{ $promo->discount_type == 'percentage' ? $promo->discount_amount . '% off' : number_format($promo->discount_amount) . ' UGX off' }}
@@ -556,7 +638,7 @@
                         </div>
                         <div class="flex items-center gap-4">
                             <span class="text-xs text-white/40">{{ $promo->expires_at ? 'Expires ' . $promo->expires_at->format('M d') : 'No expiry' }}</span>
-                            <button @click="fetch('{{ route('organizer.promo.toggle', $promo->id) }}', {method: 'POST', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}}).then(r => r.json()).then(d => active = d.status)" 
+                            <button @click="fetch('{{ route('organizer.promo.toggle', $promo->id) }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' }).then(async r => { const d = await r.json().catch(() => ({})); if (!r.ok) { alert(d.message || 'Could not toggle promo'); return; } active = d.status ?? active; }).catch(() => alert('Could not toggle promo'))" 
                                     :class="active ? 'bg-green-400/20 text-green-400' : 'bg-red-400/20 text-red-400'"
                                     class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-colors">
                                 <span x-text="active ? 'Active' : 'Inactive'"></span>

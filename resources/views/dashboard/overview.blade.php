@@ -44,7 +44,7 @@
                 <p class="text-xs text-orange-200/50">Manage page & promos</p>
             </a>
 
-            <a href="{{ route('organizer.create') }}" class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl hover:bg-blue-500/20 transition group">
+            <a href="{{ route('events.create') }}" class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl hover:bg-blue-500/20 transition group">
                 <div class="flex justify-between items-center mb-2">
                     <div class="size-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
                         <i class="fas fa-plus"></i>
@@ -156,12 +156,12 @@
                 <h4 class="text-xs p-1 font-mono font-medium bg-orange-400 rounded-2xl w-fit text-black/90">Organizers you follow</h4>
                 @if(count($followedOrganizers) > 1)
                 <div class="flex gap-2">
-                    <button @click="currentStep = (currentStep - 1 + total) % total" class="size-6.5 flex items-center justify-center rounded-full bg-black/40 border border-green-400/20 text-orange-400/70 hover:bg-black/60 transition">
+                    <button @click="currentStep = (currentStep - 1 + total) % total" class="size-6.5 flex items-center justify-center rounded-full bg-orange-400 border border-green-400/20 text-black transition">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-left-dash-icon lucide-arrow-big-left-dash">
                             <path d="M13 9a1 1 0 0 1-1-1V5.061a1 1 0 0 0-1.811-.75l-6.835 6.836a1.207 1.207 0 0 0 0 1.707l6.835 6.835a1 1 0 0 0 1.811-.75V16a1 1 0 0 1 1-1h2a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z" />
                             <path d="M20 9v6" /></svg>
                     </button>
-                    <button @click="currentStep = (currentStep + 1) % total" class="size-6.5 flex items-center justify-center rounded-full bg-black/40 border border-green-400/20 text-orange-400/70 hover:bg-black/60 transition">
+                    <button @click="currentStep = (currentStep + 1) % total" class="size-6.5 flex items-center justify-center rounded-full bg-orange-400 border border-green-400/20 text-black transition">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-right-dash-icon lucide-arrow-big-right-dash">
                             <path d="M11 9a1 1 0 0 0 1-1V5.061a1 1 0 0 1 1.811-.75l6.836 6.836a1.207 1.207 0 0 1 0 1.707l-6.836 6.835a1 1 0 0 1-1.811-.75V16a1 1 0 0 0-1-1H9a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z" />
                             <path d="M4 9v6" /></svg>
@@ -257,7 +257,7 @@
                         {{-- Content --}}
                         <div class="absolute bottom-0 left-0 w-full p-4">
                             <div class="flex items-center gap-2 mb-2">
-                                <img src="{{ $trend->user->profile_pic ? asset('storage/'.$trend->user->profile_pic) : asset('default.png') }}" class="size-6 rounded-full border border-orange-400/30">
+                                <x-user-avatar :user="$trend->user" size="size-6 rounded-full border border-orange-400/30" />
                                 <span class="text-xs text-orange-400 font-bold truncate">{{ $trend->user->first_name }}</span>
                             </div>
                             <h3 class="text-white font-bold text-lg leading-tight mb-2 line-clamp-2">{{ $trend->title }}</h3>

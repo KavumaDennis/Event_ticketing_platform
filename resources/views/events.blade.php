@@ -36,7 +36,7 @@
         <div class="grid grid-cols-1 md:grid-cols-6 gap-5 lg:gap-10">
             <!-- Left Column: Event Details -->
             <div class="md:col-span-6 lg:col-span-2 col-span-1 flex flex-col justify-between gap-5">
-                <h1 class="text-2xl ml-1 text-orange-400/60 mt-2">
+                <h1 class="text-2xl ml-1 text-orange-400 mt-2">
                     {{ $event->event_name }}
                 </h1>
                 <div class="grid grid-cols-3 rounded-2xl w-full bg-green-400/10 border border-green-400/10 gap-3 p-3">
@@ -142,7 +142,8 @@
 
                                     if (distance < 0) {
                                         clearInterval(timer);
-                                        countdownElement.innerHTML = "EVENT STARTED";
+                                        countdownElement.innerHTML = "Event started • refreshing…";
+                                        setTimeout(() => window.location.reload(), 1200);
                                         return;
                                     }
 
@@ -183,9 +184,9 @@
                                         alt="{{ $event->organizer->business_name }}" />
                                 </div>
                                 <div class="flex flex-col text-white text-sm">
-                                    <h1 class='text-orange-400/70 font-medium'>{{ $event->organizer->business_name }}
+                                    <h1 class='text-orange-400 font-medium'>{{ $event->organizer->business_name }}
                                     </h1>
-                                    <p class='text-white/60 font-mono font-light text-sm'>Organizer</p>
+                                    <p class='text-white/80 font-mono font-light text-sm'>Organizer</p>
 
                                 </div>
                             </div>
@@ -207,17 +208,17 @@
                         <div class="grid grid-cols-3 justify-between items-center mt-5">
                             <div
                                 class="border-r border-black/60 flex flex-col items-center justify-center pr-5 text-white/60">
-                                <p class="text-xs text-white/50">Events</p>
+                                <p class="text-xs text-white/50 font-mono">Events</p>
                                 <h1 class="text-lg font-semibold">
                                     {{ $event->organizer->events_count ?? $event->organizer->events()->count() }}</h1>
                             </div>
                             <div class="text-white/60 flex flex-col items-center justify-center">
-                                <p class="text-xs text-white/50">Likes</p>
+                                <p class="text-xs text-white/50 font-mono">Likes</p>
                                 <h1 class="text-lg font-semibold">{{ $event->likes_count ?? 0 }}</h1>
                             </div>
                             <div
                                 class="border-l border-black/60 flex flex-col items-center justify-center pl-5 text-white/60">
-                                <p class="text-xs text-white/50">Rating</p>
+                                <p class="text-xs text-white/50 font-mono">Rating</p>
                                 <h1 class="text-lg font-semibold">4.5</h1>
                             </div>
                         </div>
@@ -282,8 +283,8 @@
 
 
     <div class="p-5 ">
-        <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 mb-6">
-            <h1 class='text-3xl text-white/80'>Events</h1>
+        <div class="flex flex-col md:flex-row justify-between md:items-end gap-3 mb-4">
+            <h1 class='text-white text-2xl'>Events</h1>
             <div class="flex gap-5 items-center">
                 <form id="search-form" method="GET" action="{{ route('events') }}" class="relative">
                     <div class="h-full relative flex items-center ">
@@ -305,7 +306,7 @@
 
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open"
-                        class="w-fit bg-orange-400 border border-green-400/15 p-0.5 rounded-3xl flex items-center gap-1 cursor-pointer hover:bg-orange-400/80 transition">
+                        class="w-fit bg-orange-400 border border-green-400/15 p-0.5 rounded-3xl flex items-center gap-1 cursor-pointer hover:bg-orange-400 transition">
                         <div
                             class="flex justify-center items-center size-8 bg-black/95 text-orange-400/80 p-2 rounded-2xl border border-green-400/15">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
@@ -366,7 +367,7 @@
 
 
     <div class="p-5">
-        <h1 class='text-white/80 text-3xl mb-5'>Explore Events by Date</h1>
+        <h1 class='text-white text-2xl mb-3'>Explore Events by Date</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
             {{-- Tomorrow --}}
@@ -390,7 +391,7 @@
                     </div>
                     <div class="flex justify-between ">
                         <a href="{{ route('events.byDate', ['type' => 'tomorrow']) }}"
-                            class="w-fit flex items-center gap-1 bg-orange-400/80 border border-green-400/20 p-0.5 rounded-3xl">
+                            class="w-fit flex items-center gap-1 bg-orange-400 border border-green-400/20 p-0.5 rounded-3xl">
                             <p
                                 class='size-8 flex items-center justify-center rounded-[50%] text-orange-400/70 bg-black/95 border border-green-400/20 text-md'>
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -398,7 +399,7 @@
                             <span class='font-medium text-black/90 mr-1 text-xs font-mono'>Find events</span>
                         </a>
                         <p
-                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400/80 border border-green-400/20 flex items-center justify-center'>
+                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400 border border-green-400/20 flex items-center justify-center'>
                             {{ $tomorrowCount }}
                         </p>
                     </div>
@@ -426,7 +427,7 @@
                     </div>
                     <div class="flex justify-between ">
                         <a href="{{ route('events.byDate', ['type' => 'week']) }}"
-                            class="w-fit flex items-center gap-1 bg-orange-400/80 border border-green-400/20 p-0.5 rounded-3xl">
+                            class="w-fit flex items-center gap-1 bg-orange-400 border border-green-400/20 p-0.5 rounded-3xl">
                             <p
                                 class='size-8 flex items-center justify-center rounded-[50%] text-orange-400/70 bg-black/95 border border-green-400/20 text-md'>
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -434,7 +435,7 @@
                             <span class='font-medium text-black/90 mr-1 text-xs font-mono'>Find events</span>
                         </a>
                         <p
-                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400/80 border border-green-400/20 flex items-center justify-center'>
+                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400 border border-green-400/20 flex items-center justify-center'>
                             {{ $weekCount }}
                         </p>
                     </div>
@@ -462,7 +463,7 @@
                     </div>
                     <div class="flex justify-between ">
                         <a href="{{ route('events.byDate', ['type' => 'weekend']) }}"
-                            class="w-fit flex items-center gap-1 bg-orange-400/80 border border-green-400/20 p-0.5 rounded-3xl">
+                            class="w-fit flex items-center gap-1 bg-orange-400 border border-green-400/20 p-0.5 rounded-3xl">
                             <p
                                 class='size-8 flex items-center justify-center rounded-[50%] text-orange-400/70 bg-black/95 border border-green-400/20 text-md'>
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -470,7 +471,7 @@
                             <span class='font-medium text-black/90 mr-1 text-xs font-mono'>Find events</span>
                         </a>
                         <p
-                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400/80 border border-green-400/20 flex items-center justify-center'>
+                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400 border border-green-400/20 flex items-center justify-center'>
                             {{ $weekendCount }}
                         </p>
                     </div>
@@ -498,7 +499,7 @@
                     </div>
                     <div class="flex justify-between ">
                         <a href="{{ route('events.byDate', ['type' => 'month']) }}"
-                            class="w-fit flex items-center gap-1 bg-orange-400/80 border border-green-400/20 p-0.5 rounded-3xl">
+                            class="w-fit flex items-center gap-1 bg-orange-400 border border-green-400/20 p-0.5 rounded-3xl">
                             <p
                                 class='size-8 flex items-center justify-center rounded-[50%] text-orange-400/70 bg-black/95 border border-green-400/20 text-md'>
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -506,7 +507,7 @@
                             <span class='font-medium text-black/90 mr-1 text-xs font-mono'>Find events</span>
                         </a>
                         <p
-                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400/80 border border-green-400/20 flex items-center justify-center'>
+                            class='size-9 font-medium text-sm rounded-[50%] bg-orange-400 border border-green-400/20 flex items-center justify-center'>
                             {{ $monthCount }}
                         </p>
                     </div>

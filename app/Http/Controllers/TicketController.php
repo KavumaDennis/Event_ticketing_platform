@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -28,7 +29,7 @@ class TicketController extends Controller
     /**
      * View all tickets in a purchase
      */
-    public function viewPurchase(\App\Models\TicketPurchase $purchase)
+    public function viewPurchase(Request $request, \App\Models\TicketPurchase $purchase)
     {
         // Ensure user owns the purchase
         if (auth()->check() && $purchase->user_id !== auth()->id()) {
@@ -38,7 +39,20 @@ class TicketController extends Controller
         $tickets = $purchase->tickets;
         $event = $purchase->event;
 
-        return view('ticket.index', compact('purchase', 'tickets', 'event'));
+        $conversation = Conversation::query()
+            ->where('is_group', true)
+            ->where('event_id', $event?->id)
+            ->first();
+
+        $alreadyInGroup = $conversation
+            ? $conversation->participants()->where('user_id', auth()->id())->exists()
+            : false;
+
+        $shouldPromptJoinGroup = (bool) ($event?->id)
+            && ! $alreadyInGroup
+            && ($request->boolean('join_group') || session()->has('prompt_join_group_event_id'));
+
+        return view('ticket.index', compact('purchase', 'tickets', 'event', 'shouldPromptJoinGroup', 'alreadyInGroup'));
     }
 
     /**

@@ -9,10 +9,10 @@
             <h1 class="text-2xl text-white/70">My Tickets</h1>
             <p class="text-orange-400/70 font-mono text-sm">Manage your event access and gifts</p>
         </div>
-        <div class="bg-green-400/10 p-1 rounded-2xl flex border border-green-400/5 w-full sm:w-auto overflow-x-auto">
-            <button onclick="switchTab('upcoming')" id="tab-upcoming" class="tab-btn flex-1 sm:flex-none px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-orange-400 text-black whitespace-nowrap">Upcoming</button>
-            <button onclick="switchTab('past')" id="tab-past" class="tab-btn flex-1 sm:flex-none px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-zinc-500 hover:text-white whitespace-nowrap">Past Events</button>
-            <button onclick="switchTab('cancelled')" id="tab-cancelled" class="tab-btn flex-1 sm:flex-none px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-zinc-500 hover:text-white whitespace-nowrap">Cancelled</button>
+        <div class="bg-green-400/10 p-1 rounded-xl flex border border-green-400/5 w-full sm:w-auto overflow-x-auto">
+            <button onclick="switchTab('upcoming')" id="tab-upcoming" class="tab-btn up flex-1 sm:flex-none px-6 py-2 rounded-lg text-[10px] tracking-wider uppercase font-bold transition-all bg-orange-400 text-black whitespace-nowrap">Upcoming</button>
+            <button onclick="switchTab('past')" id="tab-past" class="tab-btn up flex-1 sm:flex-none px-6 py-2 rounded-lg text-[10px] tracking-wider uppercase font-bold transition-all text-zinc-500 hover:text-white whitespace-nowrap">Past Events</button>
+            <button onclick="switchTab('cancelled')" id="tab-cancelled" class="tab-btn up flex-1 sm:flex-none px-6 py-2 rounded-lg text-[10px] tracking-wider uppercase font-bold transition-all text-zinc-500 hover:text-white whitespace-nowrap">Cancelled</button>
         </div>
     </div>
 

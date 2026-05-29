@@ -3,27 +3,47 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\PromoCode;
 use App\Models\TicketPurchase;
 use App\Models\EventView;
 use App\Models\Event;
 use App\Models\Waitlist;
-use App\Models\Referral;
 use App\Models\Organizer;
 
 class OrganizerAnalyticsController extends Controller
 {
+    protected function authorizeOrganizerPromotionAccess(Organizer $organizer): void
+    {
+        $user = auth()->user();
+        if (! $user) {
+            abort(403);
+        }
+
+        // Primary organizer account may lack a members row; treat as privileged.
+        if ((int) $organizer->user_id === (int) $user->id) {
+            return;
+        }
+
+        if (! $organizer->hasRole($user, ['owner', 'editor', 'finance'])) {
+            abort(403);
+        }
+    }
+
     public function index()
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('show.login');
         }
 
-        $organizer = auth()->user()->organizer;
+        $organizer = Organizer::forManagingUser(auth()->user());
 
-        if (!$organizer) {
+        if (! $organizer) {
             return redirect()->route('organizer.create');
         }
+
+        $organizer->load('events');
 
         return view('dashboard.organizer-analytics', $this->asData($organizer));
     }
@@ -77,13 +97,7 @@ class OrganizerAnalyticsController extends Controller
             })
             ->sortByDesc('total_revenue');
 
-        // 4. Referral & Community Impact
-        $referralRevenue = TicketPurchase::whereIn('event_id', $organizer->events->pluck('id'))
-            ->where('status', 'paid')
-            ->whereHas('user', function($q) {
-                $q->whereHas('referredBy');
-            })
-            ->sum('total');
+        
 
         $waitlistTotal = Waitlist::whereIn('event_id', $organizer->events->pluck('id'))->count();
 
@@ -117,44 +131,70 @@ class OrganizerAnalyticsController extends Controller
             'organizer',
             'ticketTypeData',
             'eventPerformance',
-            'referralRevenue',
             'waitlistTotal'
         );
     }
 
-    public function storePromo(Request $request) 
+    public function storePromo(Request $request)
     {
+        $organizer = Organizer::forManagingUser(auth()->user());
+        if (! $organizer) {
+            return redirect()->route('organizer.create');
+        }
+
+        $this->authorizeOrganizerPromotionAccess($organizer);
+
+        $codeNorm = PromoCode::normalizedCode($request->input('code', ''));
+        if (! $codeNorm) {
+            return back()->withErrors(['code' => 'Enter a valid promo code.'])->withInput();
+        }
+
         $request->validate([
-            'code' => 'required|unique:promo_codes,code',
             'discount_type' => 'required|in:fixed,percentage',
             'discount_amount' => 'required|numeric|min:0',
             'usage_limit' => 'nullable|integer|min:1',
-            'expires_at' => 'nullable|date|after:today',
+            'expires_at' => 'nullable|date|after_or_equal:today',
         ]);
 
-        $organizer = auth()->user()->organizer;
+        if (PromoCode::where('code', $codeNorm)->exists()) {
+            return back()->withErrors(['code' => 'This code is already taken.'])->withInput();
+        }
 
-        \App\Models\PromoCode::create([
+        if ($request->discount_type === 'percentage' && (float) $request->discount_amount > 100) {
+            return back()->withErrors(['discount_amount' => 'Percentage cannot exceed 100%.'])->withInput();
+        }
+
+        $expiresAt = $request->filled('expires_at')
+            ? Carbon::parse($request->expires_at)->endOfDay()
+            : null;
+
+        PromoCode::create([
             'organizer_id' => $organizer->id,
-            'code' => strtoupper($request->code),
+            'code' => $codeNorm,
             'discount_type' => $request->discount_type,
             'discount_amount' => $request->discount_amount,
             'usage_limit' => $request->usage_limit,
-            'expires_at' => $request->expires_at,
-            'status' => true
+            'expires_at' => $expiresAt,
+            'status' => true,
         ]);
 
         return back()->with('success', 'Promo Code created successfully!');
     }
 
-    public function togglePromo(\App\Models\PromoCode $promoCode)
+    public function togglePromo(PromoCode $promoCode)
     {
-        if ($promoCode->organizer_id !== auth()->user()->organizer->id) {
+        $organizer = Organizer::forManagingUser(auth()->user());
+        if (! $organizer || (int) $promoCode->organizer_id !== (int) $organizer->id) {
             abort(403);
         }
 
-        $promoCode->update(['status' => !$promoCode->status]);
-        
+        $this->authorizeOrganizerPromotionAccess($organizer);
+
+        $promoCode->update(['status' => ! $promoCode->status]);
+
         return response()->json(['success' => true, 'status' => $promoCode->status]);
     }
 }
+
+
+

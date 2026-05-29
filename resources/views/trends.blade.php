@@ -1,6 +1,42 @@
 <x-layout>
+    @push('before-alpine')
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('trendsFeedCarousel', (total) => ({
+                    currentIndex: 0,
+                    total: Math.max(1, parseInt(total, 10) || 1),
+                    interval: null,
+                    init() {
+                        this.startAutoplay();
+                    },
+                    next() {
+                        if (this.total < 2) return;
+                        this.currentIndex = (this.currentIndex + 1) % this.total;
+                        this.resetAutoplay();
+                    },
+                    prev() {
+                        if (this.total < 2) return;
+                        this.currentIndex = (this.currentIndex - 1 + this.total) % this.total;
+                        this.resetAutoplay();
+                    },
+                    startAutoplay() {
+                        clearInterval(this.interval);
+                        if (this.total > 1) {
+                            this.interval = setInterval(() => {
+                                this.currentIndex = (this.currentIndex + 1) % this.total;
+                            }, 5000);
+                        }
+                    },
+                    resetAutoplay() {
+                        clearInterval(this.interval);
+                        this.startAutoplay();
+                    },
+                }));
+            });
+        </script>
+    @endpush
     <div class="p-5 h-fit">
-        <h1 class="text-3xl text-white/60 w-fit">On the move: these are our latest news</h1>
+        <h1 class="text-2xl text-white/90 w-fit">On the move: these are our latest news</h1>
         <div class="grid grid-cols-10 gap-5 mt-5">
             <div class="hidden col-span-1 lg:flex justify-end items-end">
                 <div
@@ -41,16 +77,16 @@
                 </div>
             </div>
             <div
-                class="col-span-10 lg:col-span-9 grid grid-cols-3 gap-5 p-2 rounded-4xl h-fit bg-green-400/10 border border-green-400/5">
+                class="col-span-10 lg:col-span-9 grid grid-cols-3 gap-5 p-2 rounded-3xl h-fit bg-green-400/10 border border-green-400/5">
                 @foreach ($topTrends as $trend)
-                    <div class="h-full p-2 col-span-3 md:col-span-1 flex flex-col gap-3 rounded-3xl bg-green-400/10">
+                    <div class="h-full p-2 col-span-3 md:col-span-1 flex flex-col gap-3 rounded-2xl bg-green-400/10">
                         <div class="w-full h-[180px] md:h-[150px] lg:h-[180px]">
                             @if ($trend->is_video)
                                 <video src="{{ $trend->first_media_url }}"
-                                    class="w-full h-full rounded-2xl object-cover" autoplay muted loop
+                                    class="w-full h-full rounded-xl object-cover" autoplay muted loop
                                     playsinline></video>
                             @else
-                                <img src="{{ $trend->first_media_url }}" class="w-full h-full rounded-2xl object-cover"
+                                <img src="{{ $trend->first_media_url }}" class="w-full h-full rounded-xl object-cover"
                                     alt="{{ $trend->title }}" />
                             @endif
                         </div>
@@ -74,7 +110,7 @@
 
                                 <div class="flex items-center gap-1">
                                     <button
-                                        class="trend-like-btn cursor-pointer size-9 flex items-center justify-center border border-green-400/20 bg-green-400/10 rounded-[14px] font-medium"
+                                        class="trend-like-btn cursor-pointer size-9 flex items-center justify-center bg-white/5 border border-white/20 rounded-[14px] font-medium"
                                         data-trend-id="{{ $trend->id }}"
                                         data-is-liked="{{ isset($trend->is_liked) && $trend->is_liked ? 'true' : 'false' }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
@@ -106,7 +142,7 @@
     <div class="p-5">
         <div class="grid grid-cols-10 gap-5">
             <div class="col-span-10 md:col-span-6 lg:col-span-7">
-                <div class="relative w-full h-fit p-5 rounded-4xl bg-black/70 bg-blend-darken overflow-hidden">
+                <div class="relative w-full h-fit p-5 rounded-3xl bg-black/70 bg-blend-darken overflow-hidden">
                     <img src="{{ asset('img2.jpg') }}" class="absolute object-cover top-0 left-0 w-full h-full -z-1"
                         alt="" />
                     <h1 class="text-4xl md:w-full lg:w-[70%] text-orange-400/70">Discover, experience and at the same
@@ -117,12 +153,12 @@
                                 class='size-8 flex items-center justify-center rounded-[50%] text-orange-400/80 bg-black/95 border border-green-400/15 text-md'>
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </p>
-                            <span class='text-sm pr-2 font-semibold'>Create your own events</span>
+                            <span class='text-sm pr-2 font-medium text-xs font-mono'>Create your own events</span>
                         </a>
                     </div>
                 </div>
-                <div class="lg:p-5 md:p-0 pb-0">
-                    <h1 class='text-white/60 text-3xl md:text-2xl lg:text-3xl mt-2 lg:mt-0 mb-3'>Trending Creators</h1>
+                <div class="lg:py-5 md:p-0 pb-0">
+                    <h1 class='text-white/90 text-2xl mt-2 lg:mt-0 mb-3'>Trending Creators</h1>
 
                     <div class="grid grid-cols-4 gap-2 md:flex justify-between items-center">
                         @foreach ($topCreators as $creator)
@@ -158,7 +194,7 @@
             </div>
 
             <div
-                class="col-span-10 md:col-span-4 lg:col-span-3 flex flex-col gap-2 justify-between w-full h-full p-3 bg-green-400/10 rounded-3xl">
+                class="col-span-10 md:col-span-4 lg:col-span-3 flex flex-col gap-2 justify-between w-full h-full p-3 bg-green-400/10 border border-green-400/5 rounded-3xl">
 
                 @if ($topEvent)
                     <h1 class='text-orange-400/70 w-full h-fit text-xl'>
@@ -216,7 +252,7 @@
                             <a href="{{ route('event.show', $topEvent->id) }}" class='flex gap-1 items-center'>
                                 <span class='text-black/95 '>
                                     <p
-                                        class='size-8 flex items-center justify-center rounded-[50%] 
+                                        class='size-7.5 flex items-center justify-center rounded-[50%] 
                                 text-orange-400/70 bg-black/90 border border-green-400/15 text-md'>
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </p>
@@ -226,7 +262,7 @@
                         </div>
                         <div class="flex items-center gap-1">
                             <button
-                                class="like-btn cursor-pointer size-8 flex items-center justify-center border border-green-400/20 bg-green-400/10 rounded-[14px] font-medium"
+                                class="like-btn cursor-pointer size-8.5 flex items-center justify-center bg-white/5 border border-white/20 rounded-[14px] font-medium"
                                 data-event="{{ $topEvent->id }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -256,58 +292,38 @@
     </div>
     </div>
 
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-    <style>
-        .trend-slider {
-            width: 100%;
-            height: auto;
-            padding-bottom: 2rem !important;
-        }
-
-        .swiper-pagination-bullet {
-            background: rgba(251, 146, 60, 0.5) !important;
-        }
-
-        .swiper-pagination-bullet-active {
-            background: rgba(251, 146, 60, 1) !important;
-        }
-
-        .swiper-button-next,
-        .swiper-button-prev {
-            color: rgba(251, 146, 60, 0.7) !important;
-            transform: scale(0.6);
-        }
-    </style>
-
     @auth
+        @php
+            $epCarouselCount = max($editorsPicks->count(), 1);
+            $pCarouselCount = max($personalized->count(), 1);
+        @endphp
         <div class="p-5">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
+                {{-- Editor's Picks carousel (Alpine, matches dashboard rhythm) --}}
+                <div x-data="trendsFeedCarousel({{ $epCarouselCount }})"
+                    class="col-span-2 flex flex-col h-[400px] relative group">
 
-                {{-- 🌟 Editor's Picks Slider (Public) --}}
-                <div class="col-span-2 flex flex-col h-[400px] relative group">
+                    <div class="grow h-[400px] overflow-hidden rounded-3xl relative">
+                        <div class="absolute inset-0 flex transition-transform duration-500 ease-out"
+                            :style="'transform: translateX(-' + (currentIndex * 100) + '%)'">
 
-                    <div class="swiper trend-slider grow" id="editors-picks-slider">
-                        <div class="swiper-wrapper">
                             @forelse($editorsPicks as $trend)
-                                <div class="swiper-slide h-full">
+                                <div class="min-w-full h-full relative shrink-0">
                                     <div
                                         class="flex flex-col relative h-full bg-white/5 rounded-3xl overflow-hidden border border-white/5 hover:border-orange-400/30 transition-all duration-300">
                                         <h2
                                             class="text-xs absolute z-10 top-3 left-3 p-1 font-mono font-medium bg-orange-400 rounded-2xl w-fit text-black/90 mb-3">
                                             Editor's Picks
                                         </h2>
-                                        <div class="relative h-full">
-
+                                        <div class="relative h-full min-h-[280px]">
                                             @if ($trend->is_video)
                                                 <video src="{{ $trend->first_media_url }}"
-                                                    class="w-full h-full object-cover" autoplay muted loop
-                                                    playsinline></video>
+                                                    class="w-full h-full object-cover" autoplay muted loop playsinline></video>
                                             @else
                                                 <img src="{{ $trend->first_media_url }}"
-                                                    class="w-full h-full object-cover" />
+                                                    class="w-full h-full object-cover"
+                                                    alt="{{ $trend->title }}" />
                                             @endif
                                             <div
                                                 class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent">
@@ -319,138 +335,134 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        <div class="absolute bottom-0 left-0 p-4 flex flex-col justify-between grow">
-                                            <div class="flex items-center gap-2 mb-2">
-                                                <img src="{{ $trend->user->profile_pic ? asset('storage/' . $trend->user->profile_pic) : asset('default.png') }}"
-                                                    class="size-6 rounded-full border border-orange-400/30">
+                                        <div class="absolute bottom-0 left-0 p-4 flex flex-col justify-between grow pointer-events-none">
+                                            <div class="flex items-center gap-2 mb-2 pointer-events-auto">
+                                                <x-user-avatar :user="$trend->user" size="size-6 rounded-full border border-orange-400/30" />
                                                 <span
                                                     class="text-xs text-orange-400 font-bold truncate">{{ $trend->user->first_name }}</span>
                                             </div>
                                             <h3 class="text-white/90 font-bold line-clamp-2 leading-tight mb-2">
                                                 {{ $trend->title }}</h3>
                                             <a href="{{ route('trends.show', $trend->id) }}"
-                                                class="inline-block w-fit text-[10px] font-mono font-bold uppercase py-1.5 px-3 bg-orange-400 text-black rounded-2xl hover:bg-white transition-colors">
+                                                class="inline-block w-fit pointer-events-auto text-[10px] font-mono font-bold uppercase py-1.5 px-3 bg-orange-400 text-black rounded-2xl hover:bg-white transition-colors">
                                                 Exclusive Insight
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             @empty
-                                <div class="swiper-slide flex items-center justify-center h-full">
+                                <div
+                                    class="min-w-full h-full relative shrink-0 flex items-center justify-center bg-white/5 rounded-3xl border border-white/5">
                                     <p class="text-white/40 text-sm">No editor picks yet.</p>
                                 </div>
                             @endforelse
+
                         </div>
-                        <!-- Arrows -->
-                        <div class="swiper-button-next opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="swiper-button-prev opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                        @if ($epCarouselCount > 1)
+                            <div class="absolute left-3 top-1/2 -translate-y-1/2 flex gap-3 items-center z-20">
+                                <button type="button" @click="prev()"
+                                    class="size-9 bg-black/60 border border-white/20 text-white rounded-full flex items-center justify-center hover:bg-orange-400 hover:text-black transition-colors backdrop-blur-lg opacity-0 group-hover:opacity-100 shadow-lg">
+                                    <i class="fas fa-chevron-left text-xs"></i>
+                                </button>
+                                <button type="button" @click="next()"
+                                    class="size-9 bg-black/60 border border-white/20 text-white rounded-full flex items-center justify-center hover:bg-orange-400 hover:text-black transition-colors backdrop-blur-lg opacity-0 group-hover:opacity-100 shadow-lg">
+                                    <i class="fas fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="absolute top-3 right-3 flex gap-1 z-20">
+                                @for ($i = 0; $i < $epCarouselCount; $i++)
+                                    <div class="h-1 rounded-full transition-all duration-300"
+                                        :class="currentIndex === {{ $i }} ? 'w-4 bg-orange-400' : 'w-1.5 bg-white/30'">
+                                    </div>
+                                @endfor
+                            </div>
+                        @endif
                     </div>
                 </div>
 
+                {{-- Because You Liked --}}
+                <div x-data="trendsFeedCarousel({{ $pCarouselCount }})" class="flex flex-col h-[400px] relative group">
 
-                {{-- ❤️ Because You Liked Slider --}}
-                <div class="flex flex-col h-[400px] relative group">
+                    <div class="grow h-[400px] overflow-hidden rounded-3xl relative">
+                        <div class="absolute inset-0 flex transition-transform duration-500 ease-out"
+                            :style="'transform: translateX(-' + (currentIndex * 100) + '%)'">
 
-                    <div class="swiper trend-slider grow" id="personalized-slider">
-                        <div class="swiper-wrapper">
                             @forelse($personalized as $trend)
-                                <div class="swiper-slide h-full">
+                                <div class="min-w-full h-full relative shrink-0">
                                     <div
                                         class="flex flex-col relative h-full bg-white/5 rounded-3xl overflow-hidden border border-white/5 hover:border-orange-400/30 transition-all duration-300">
                                         <h2
                                             class="text-xs p-1 absolute z-10 left-3 top-3 font-mono font-medium bg-orange-400 rounded-2xl w-fit text-black/90 mb-3">
                                             Because You Liked
                                         </h2>
-                                        <div class="relative h-full">
+                                        <div class="relative h-full min-h-[280px]">
                                             @if ($trend->is_video)
                                                 <video src="{{ $trend->first_media_url }}"
-                                                    class="w-full h-full object-cover" autoplay muted loop
-                                                    playsinline></video>
+                                                    class="w-full h-full object-cover" autoplay muted loop playsinline></video>
                                             @else
                                                 <img src="{{ $trend->first_media_url }}"
-                                                    class="w-full h-full object-cover" />
+                                                    class="w-full h-full object-cover"
+                                                    alt="{{ $trend->title }}" />
                                             @endif
                                             <div
                                                 class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent">
                                             </div>
-                                            {{-- <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] text-white/80 font-mono">
-                                        Highly Relevant
-                                    </div> --}}
                                         </div>
-                                        <div class="absolute bottom-0 left-0 p-4 flex flex-col justify-between grow">
-                                            <div class="flex items-center gap-2 mb-2">
-                                                <img src="{{ $trend->user->profile_pic ? asset('storage/' . $trend->user->profile_pic) : asset('default.png') }}"
-                                                    class="size-6 rounded-full border border-orange-400/30">
+                                        <div class="absolute bottom-0 left-0 p-4 flex flex-col justify-between grow pointer-events-none">
+                                            <div class="flex items-center gap-2 mb-2 pointer-events-auto">
+                                                <x-user-avatar :user="$trend->user" size="size-6 rounded-full border border-orange-400/30" />
                                                 <span
                                                     class="text-xs text-orange-400 font-bold truncate">{{ $trend->user->first_name }}</span>
                                             </div>
                                             <h3 class="text-white font-bold text-lg leading-tight mb-2 line-clamp-2">
                                                 {{ $trend->title }}</h3>
                                             <a href="{{ route('trends.show', $trend->id) }}"
-                                                class="inline-block w-fit text-[10px] font-mono font-bold uppercase py-1.5 px-3 bg-orange-400 text-black rounded-2xl hover:bg-white transition-colors">
+                                                class="inline-block w-fit pointer-events-auto text-[10px] font-mono font-bold uppercase py-1.5 px-3 bg-orange-400 text-black rounded-2xl hover:bg-white transition-colors">
                                                 View Details
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             @empty
-                                <div class="swiper-slide flex items-center justify-center h-full">
-                                    <div class="text-center p-4">
-                                        <p class="text-white/40 text-sm mb-2">Like more events to see recommendations!</p>
-                                        <a href="{{ route('events') }}"
-                                            class="text-orange-400/60 text-xs underline">Browse Events</a>
-                                    </div>
+                                <div
+                                    class="min-w-full h-full relative shrink-0 flex flex-col items-center justify-center gap-3 bg-white/5 rounded-3xl border border-white/5 p-6 text-center">
+                                    <p class="text-white/40 text-sm">Like more events to see recommendations!</p>
+                                    <a href="{{ route('events') }}" class="text-orange-400/80 text-xs underline">Browse Events</a>
                                 </div>
                             @endforelse
+
                         </div>
-                        <!-- Arrows -->
-                        <div class="swiper-button-next opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="swiper-button-prev opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                        @if ($pCarouselCount > 1)
+                            <div class="absolute left-3 top-1/2 -translate-y-1/2 flex gap-3 items-center z-20">
+                                <button type="button" @click="prev()"
+                                    class="size-9 bg-black/60 border border-white/20 text-white rounded-full flex items-center justify-center hover:bg-orange-400 hover:text-black transition-colors backdrop-blur-lg opacity-0 group-hover:opacity-100 shadow-lg">
+                                    <i class="fas fa-chevron-left text-xs"></i>
+                                </button>
+                                <button type="button" @click="next()"
+                                    class="size-9 bg-black/60 border border-white/20 text-white rounded-full flex items-center justify-center hover:bg-orange-400 hover:text-black transition-colors backdrop-blur-lg opacity-0 group-hover:opacity-100 shadow-lg">
+                                    <i class="fas fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="absolute top-3 right-3 flex gap-1 z-20">
+                                @for ($i = 0; $i < $pCarouselCount; $i++)
+                                    <div class="h-1 rounded-full transition-all duration-300"
+                                        :class="currentIndex === {{ $i }} ? 'w-4 bg-orange-400' : 'w-1.5 bg-white/30'">
+                                    </div>
+                                @endfor
+                            </div>
+                        @endif
                     </div>
                 </div>
 
             </div>
         </div>
     @endauth
-    @push('scripts')
-        <!-- Swiper JS -->
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const swiperOptions = {
-                    slidesPerView: 1,
-                    spaceBetween: 30,
-                    loop: true,
-                    autoplay: {
-                        delay: 4000,
-                        disableOnInteraction: false,
-                    },
-                    pagination: {
-                        el: ".swiper-pagination",
-                        clickable: true,
-                    },
-                    navigation: {
-                        nextEl: ".swiper-button-next",
-                        prevEl: ".swiper-button-prev",
-                    },
-                    keyboard: {
-                        enabled: true,
-                    },
-                };
-
-                if (document.querySelector("#trending-near-slider")) new Swiper("#trending-near-slider", swiperOptions);
-                if (document.querySelector("#editors-picks-slider")) new Swiper("#editors-picks-slider", swiperOptions);
-                if (document.querySelector("#personalized-slider")) new Swiper("#personalized-slider", swiperOptions);
-
-
-            });
-        </script>
-    @endpush
-
 
     <section class="p-5">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl text-white/60">
+        <div class="flex justify-between items-center mb-3">
+            <h1 class="text-white text-2xl">
                 Events are better with trends
             </h1>
         </div>
@@ -477,11 +489,11 @@
                     <div class="overflow-hidden w-full h-[150px]">
                         @if ($trend->is_video)
                             <video src="{{ $trend->first_media_url }}"
-                                class="h-full w-full rounded-3xl object-cover opacity-80" autoplay muted loop
+                                class="h-full w-full rounded-2xl object-cover opacity-80" autoplay muted loop
                                 playsinline></video>
                         @else
                             <img src="{{ $trend->first_media_url }}"
-                                class='h-full w-full rounded-3xl object-cover opacity-80'
+                                class='h-full w-full rounded-2xl object-cover opacity-80'
                                 alt="{{ $trend->title }}" />
                         @endif
                     </div>
@@ -489,7 +501,7 @@
                     <div class="flex justify-between items-center">
                         <div class="text-white/70 flex items-center gap-2">
                             <button
-                                class="trend-like-btn size-8 flex justify-center items-center rounded-xl ml-2 bg-green-400/10 border border-green-400/20"
+                                class="trend-like-btn size-8 flex justify-center items-center rounded-xl ml-2 bg-white/5 border border-white/20"
                                 data-trend-id="{{ $trend->id }}"
                                 data-is-liked="{{ isset($trend->is_liked) && $trend->is_liked ? 'true' : 'false' }}">
                                 {{-- <i class="fa-solid fa-heart {{ isset($trend->is_liked) && $trend->is_liked ? 'text-red-500' : 'text-white/70' }}"></i> --}}
@@ -515,14 +527,14 @@
                         <a href="{{ route('trends.show', $trend->id) }}"
                             class="w-fit bg-orange-400 border border-green-400/15 p-0.5 rounded-3xl flex items-center gap-1 cursor-pointer">
                             <p
-                                class="size-8 flex items-center justify-center rounded-[50%] text-orange-400/80 bg-black/95 border border-green-400/15">
+                                class="size-7.5 flex items-center justify-center rounded-[50%] text-orange-400/80 bg-black/95 border border-green-400/15">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </p>
                             <span class="text-xs font-mono font-medium mr-1">Read Post</span>
                         </a>
                     </div>
 
-                    <div class="p-4 h-[150px] bg-green-400/10 rounded-3xl">
+                    <div class="p-4 h-[150px] bg-green-400/10 border border-green-400/5 rounded-2xl">
                         <h2 class="text-md font-semibold text-orange-400/70 mb-2">{{ $trend->title }}</h2>
                         <p class="text-sm font-light font-mono text-white/70 line-clamp-3">
                             {{ Str::limit($trend->body, 200) }}

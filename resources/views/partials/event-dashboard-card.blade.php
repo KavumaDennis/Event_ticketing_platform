@@ -1,4 +1,5 @@
 @foreach($events as $event)
+@php($isSaved = isset($savedEventIds) && in_array($event->id, $savedEventIds))
 <div class="event-card group hover:border-orange-400/20 transition-all duration-500 shadow-xl shadow-black/20" data-id="{{ $event->id }}">
     {{-- Event Image --}}
     <div class="relative overflow-hidden">
@@ -53,8 +54,13 @@
             <a href="{{ route('event.show', $event->id) }}" class="flex-1 bg-black/90 text-orange-400 font-bold py-3 rounded-3xl text-xs text-center transition-all duration-300">
                 View Details
             </a>
-            <button onclick="toggleSaveEvent({{ $event->id }})" class="size-10 flex items-center justify-center  hover:bg-white/10 text-black rounded-full bg-orange-400/80 transition-all">
-                <i class="fa-regular fa-bookmark"></i>
+            <button
+                onclick="toggleSaveEvent(this)"
+                data-event-id="{{ $event->id }}"
+                data-save-url="{{ route('dashboard.event.save', $event->id) }}"
+                data-saved="{{ $isSaved ? '1' : '0' }}"
+                class="save-event-btn size-10 flex items-center justify-center hover:bg-white/10 rounded-full transition-all {{ $isSaved ? 'bg-black/90 text-orange-400' : 'bg-orange-400/80 text-black' }}">
+                <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark"></i>
             </button>
         </div>
     </div>

@@ -44,15 +44,16 @@
                                 </td>
                                 <td class="px-6 py-4 text-white font-mono">UGX {{ number_format($req->amount) }}</td>
                                 <td class="px-6 py-4">
-                                    <div class="text-xs text-zinc-400 uppercase">{{ $req->method }}</div>
-                                    <div class="text-xs text-zinc-500">{{ $req->account_details }}</div>
+                                    <div class="text-xs text-zinc-400 uppercase">{{ $req->payment_method }}</div>
+                                    <div class="text-xs text-zinc-500">{{ $req->payment_details }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-zinc-500 text-sm">{{ $req->created_at->format('M d, Y') }}</td>
                                 <td class="px-6 py-4">
                                     @php
                                         $statusClasses = [
                                             'pending' => 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-                                            'approved' => 'bg-green-500/10 text-green-400 border-green-500/20',
+                                            'processing' => 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+                                            'completed' => 'bg-green-500/10 text-green-400 border-green-500/20',
                                             'rejected' => 'bg-red-500/10 text-red-400 border-red-500/20',
                                         ];
                                     @endphp
@@ -82,7 +83,8 @@
                                                                 class="block text-sm font-medium text-zinc-400 mb-2">Action</label>
                                                             <select name="status"
                                                                 class="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-orange-500">
-                                                                <option value="approved">Approve & Mark as Paid</option>
+                                                                <option value="processing">Mark as Processing</option>
+                                                                <option value="completed">Mark as Paid (Completed)</option>
                                                                 <option value="rejected">Reject Request</option>
                                                             </select>
                                                         </div>
@@ -90,7 +92,7 @@
                                                             <label
                                                                 class="block text-sm font-medium text-zinc-400 mb-2">Internal
                                                                 Note</label>
-                                                            <textarea name="admin_notes" rows="3"
+                                                            <textarea name="admin_note" rows="3"
                                                                 class="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-orange-500"
                                                                 placeholder="Transaction ID, reason for rejection, etc."></textarea>
                                                         </div>

@@ -4,13 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-
 class TrendComment extends Model
 {
-    protected $fillable = ['trend_id', 'user_id', 'comment'];
+    protected $fillable = ['trend_id', 'user_id', 'parent_id', 'comment'];
 
     public function user()
     {
@@ -22,7 +18,16 @@ class TrendComment extends Model
         return $this->belongsTo(Trend::class);
     }
 
-    // Polymorphic likes
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(self::class, 'parent_id')->oldest();
+    }
+
     public function likes()
     {
         return $this->morphMany(TrendCommentLike::class, 'likeable');
@@ -33,6 +38,3 @@ class TrendComment extends Model
         return $this->likes()->where('user_id', $user->id)->exists();
     }
 }
-
-
-

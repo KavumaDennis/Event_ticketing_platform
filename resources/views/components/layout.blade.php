@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Document</title>
     @stack('meta')
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="//unpkg.com/alpinejs" defer></script>
 
 
@@ -59,45 +59,33 @@
 
     </style>
 
+    @stack('marketing')
 
 </head>
 <body class="bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed  bg-blend-multiply relative" x-data="{ mobileMenuOpen: false }">
     <header>
-        <div class="flex justify-between items-center p-5 relative">
-            <div class="flex justify-between items-center gap-1 p-0.5 pr-1.5 border border-purple-100/20 rounded-2xl">
-                <p class='p-0.5 px-1.5 bg-orange-400 rounded-xl border border-green-400/30 text-black/80'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon">
-                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
-                </p>
-                <p class='text-amber-400'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-medium">
-                        <circle cx="12" cy="12" r="4" />
-                        <path d="M12 3v1" />
-                        <path d="M12 20v1" />
-                        <path d="M3 12h1" />
-                        <path d="M20 12h1" />
-                        <path d="m18.364 5.636-.707.707" />
-                        <path d="m6.343 17.657-.707.707" />
-                        <path d="m5.636 5.636.707.707" />
-                        <path d="m17.657 17.657.707.707" /></svg>
+        <div class="pb-0 pt-3 px-4 flex justify-between items-center md:p-5 relative">
+            <div class="hidden md:flex justify-between items-center gap-1 p-0.5 text-xs border border-green-400/20 bg-green-400/10 rounded-3xl">
+                <p class='p-0.5 px-2 bg-orange-400 rounded-2xl font-mono font-medium border border-green-400/20 text-black/90'>
+                   Hey, {{ session('username', 'Guest') }}
                 </p>
             </div>
-            <div class="p-2 bg-green-400/10 flex justify-between items-center gap-8 rounded-4xl md:gap-28">
-                <p class="text-sm text-orange-400/70 ml-2">AKAVAAKO</p>
+            <div class="p-2.5 md:p-1.5 bg-green-400/10 border border-green-400/5 flex justify-between items-center gap-8 rounded-4xl md:gap-28">
+                <p class="text-sm  text-orange-400 ml-3">AKAVAAKO</p>
                 <div class="hidden lg:flex items-center gap-5">
-                    <a href="{{ route('home') }}" class="p-1 text-sm font-medium {{ request()->routeIs('home') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Home</a>
-                    {{-- <a href="{{ route('events') }}" class="p-1 text-sm font-medium {{ request()->routeIs('events') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Events</a> --}}
-                    <a href="{{ route('contact') }}" class="p-1 text-sm font-medium {{ request()->routeIs('contact') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Contact Us</a>
-                    <a href="{{ route('organizers') }}" class="p-1 text-sm font-medium {{ request()->routeIs('organizers') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Organizer</a>
-                    <a href="{{ route('discover') }}" class="p-1 text-sm font-medium {{ request()->routeIs('discover') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Discover</a>
-                    <a href="{{ route('trends') }}" class="p-1 text-sm font-medium {{ request()->routeIs('trends') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} transition-colors">Trends</a>
-                    <a href="{{ route('events') }}" class="p-2 px-4 flex items-center {{ request()->routeIs('events') ? 'text-orange-400 font-bold' : 'text-white/60 hover:text-white' }} w-fit bg-black/80 border border-green-400/15 rounded-3xl text-sm font-medium">Events</a>
+                    <a href="{{ route('home') }}" class="p-1 text-sm font-medium {{ request()->routeIs('home') ? 'text-orange-400 font-bold' : 'text-white/65 hover:text-white' }} transition-colors">Home</a>
+                    {{-- <a href="{{ route('events') }}" class="p-1 text-sm font-medium {{ request()->routeIs('events') ? 'text-orange-400 font-bold' : 'text-white/65 hover:text-white' }} transition-colors">Events</a> --}}
+                    <a href="{{ route('contact') }}" class="p-1 text-sm font-medium {{ request()->routeIs('contact') ? 'text-orange-400 font-bold' : 'text-white/65 hover:text-white' }} transition-colors">Contact Us</a>
+                    <a href="{{ route('organizers') }}" class="p-1 text-sm font-medium {{ request()->routeIs('organizers') ? 'text-orange-400 font-bold' : 'text-white/65 hover:text-white' }} transition-colors">Organizer</a>
+                    <a href="{{ route('discover') }}" class="p-1 text-sm font-medium {{ request()->routeIs('discover') ? 'text-orange-400 font-bold' : 'text-white/65 hover:text-white' }} transition-colors">Discover</a>
+                    <a href="{{ route('trends') }}" class="p-1 text-sm font-medium {{ request()->routeIs('trends') ? 'text-orange-400 font-bold' : 'text-white/65 hover:text-white' }} transition-colors">Trends</a>
+                    <a href="{{ route('events') }}" class="p-2 px-5 flex items-center {{ request()->routeIs('events') ? 'text-orange-400 font-bold' : 'text-white/65 hover:text-white' }} w-fit bg-black/10 border border-orange-400/90 rounded-3xl text-sm font-medium">Events</a>
                     {{-- <a href="" class="p-2 px-4 flex items-center w-fit bg-black/80 border border-green-400/15 rounded-3xl text-orange-400/60 text-sm font-medium">Reels</a> --}}
                 </div>
 
                 {{-- Hamburger Menu Button --}}
-                <div class="lg:hidden flex items-center pr-2">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-orange-400/70 p-2 focus:outline-none">
+                <div class="lg:hidden flex items-center pl-12 pr-2">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-orange-400/70 focus:outline-none">
                         <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu">
                             <line x1="4" x2="20" y1="12" y2="12" />
                             <line x1="4" x2="20" y1="6" y2="6" />
@@ -109,12 +97,10 @@
                 </div>
             </div>
             <div class="flex justify-between items-center gap-3">
-                <div class="p-2 rounded-[50%] text-orange-400/70 font-medium font- text-sm">
-                    Hey, {{ session('username', 'Guest') }}
-                </div>
+                
                 @guest
                 <div class="hidden md:flex justify-between items-center gap-3 p-0.5 bg-orange-400 border border-green-400/10 rounded-3xl pl-3">
-                    <a href="{{ route('show.signup') }}" class='text-black/80 font-medium text-xs font-mono'>Sign Up</a>
+                    <a href="{{ route('show.signup') }}" class='text-black/90 font-medium text-xs font-mono'>Sign Up</a>
                     <a href="{{ route('show.login') }}" class='bg-black/90 border border-green-400/15 text-xs font-mono font-medium text-orange-400/60 p-2 px-3 rounded-3xl flex items-center'>Log In</a>
                 </div>
                 @endguest
@@ -249,12 +235,12 @@
                         </div>
                     </div>
 
-                    <div class="col-span-2 p-5 bg-green-400/20 border border-green-400/20 backdrop-blur-[1px] rounded-4xl">
+                    <div class="col-span-2 p-5 bg-green-400/20 border border-green-400/20 backdrop-blur-[1px] rounded-2xl">
                         <div class="flex flex-col items-center gap-3 mb-5">
-                            <h1 class="text-xl md:text-3xl text-center text-orange-400/60">Stay in touch</h1>
-                            <p class="font-light text-center w-[80%] text-white/60 text-xs md:text-sm">Sign up to ur newsletter for daily info about Akavaako</p>
+                            <h1 class="text-xl md:text-3xl text-center text-orange-400">Stay in touch</h1>
+                            <p class="font-light text-center w-[80%] text-white/80 text-xs md:text-sm">Sign up to ur newsletter for daily info about Akavaako</p>
                         </div>
-                        <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col gap-5 text-white/60 font-light text-sm">
+                        <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col gap-3 text-white/60 font-light text-sm">
                             @csrf
 
                             @if(session('newsletter_success'))
@@ -269,12 +255,12 @@
                             </div>
                             @endif
 
-                            <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter your email address" required class="p-3 rounded-3xl bg-[#b0a6df]/30 outline outline-[#b0a6df]/35 backdrop-blur-4xl placeholder:text-center @error('email') border border-red-400/50 @enderror" />
+                            <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter your email address" required class="p-3 rounded-3xl bg-[#b0a6df]/10 outline outline-[#b0a6df]/55 backdrop-blur-4xl placeholder:text-center @error('email') border border-red-400/50 @enderror" />
                             @error('email')
                             <span class="text-red-400 text-xs text-center">{{ $message }}</span>
                             @enderror
 
-                            <button type="submit" class="p-3 w-full bg-black/80 border border-green-400/15 rounded-3xl text-white/70 text-sm font-light font-mono hover:bg-black/90 transition">SUBSCRIBE</button>
+                            <button type="submit" class="p-3 w-full bg-black/80 border border-green-400/15 rounded-3xl text-white/80 text-sm font-light font-mono hover:bg-black/90 transition">SUBSCRIBE</button>
                         </form>
                     </div>
                 </div>
@@ -307,10 +293,19 @@
             </div>
             @endauth
             <div class="p-2 bg-black/80 border border-black/10 rounded-xl text-orange-400 cursor-pointer">
-                <a href="{{ route('events.saved') }}" id="saved-events-link">
+                <a href="{{ route('user.dashboard.saved') }}" id="saved-events-link" class="relative flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark-icon {{ auth()->check() && auth()->user()->savedEvents()->exists() ? 'text-red-500' : 'text-orange-400' }}">
                         <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
                     </svg>
+                    @auth
+                        @if(auth()->user()->savedEvents()->count() > 0)
+                        <span id="saved-count-badge" class="absolute -top-2 -right-2 size-4 bg-red-500 text-white text-[8px] font-bold flex items-center justify-center rounded-full border border-black">
+                            {{ auth()->user()->savedEvents()->count() }}
+                        </span>
+                        @else
+                        <span id="saved-count-badge" class="hidden absolute -top-2 -right-2 size-4 bg-red-500 text-white text-[8px] font-bold items-center justify-center rounded-full border border-black">0</span>
+                        @endif
+                    @endauth
                 </a>
             </div>
 
@@ -521,6 +516,7 @@
                 const eventId = btn.dataset.event;
                 const icon = btn.querySelector('svg');
                 const savedEventsLink = document.querySelector('#saved-events-link svg');
+                const savedCountBadge = document.querySelector('#saved-count-badge');
 
                 if (!eventId) {
                     console.error('Event ID not found');
@@ -566,6 +562,17 @@
                             } else {
                                 savedEventsLink.classList.remove('text-red-500');
                                 savedEventsLink.classList.add('text-orange-400');
+                            }
+                        }
+
+                        if (savedCountBadge && typeof data.saved_count !== 'undefined') {
+                            savedCountBadge.textContent = data.saved_count;
+                            if (data.saved_count > 0) {
+                                savedCountBadge.classList.remove('hidden');
+                                savedCountBadge.classList.add('flex');
+                            } else {
+                                savedCountBadge.classList.add('hidden');
+                                savedCountBadge.classList.remove('flex');
                             }
                         }
                     })
@@ -688,6 +695,139 @@
 
     {{-- @stack('carousel') --}}
 
+    <!-- Global Experience Viewer -->
+    <div id="global-experience-viewer" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[100]">
+        <div class="w-full max-w-md bg-black/85 bg-[url(/public/bg-img.png)] bg-cover bg-center bg-fixed bg-blend-multiply relative border border-green-400/30 backdrop-blur-[1px] overflow-hidden">
+            <div class="flex items-center justify-between p-0">
+                <div id="global-experience-progress" class="flex gap-1 w-full pl-1"></div>
+                <button id="global-close-experiences" class="text-zinc-500 hover:text-white transition-colors px-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="relative w-full h-[460px] bg-black">
+                <img id="global-experience-image" class="w-full h-full object-cover hidden" alt="Experience">
+                <video id="global-experience-video" class="w-full h-full object-cover hidden" playsinline></video>
+                <button id="global-prev-experience" class="absolute left-0 top-0 w-1/3 h-full"></button>
+                <button id="global-next-experience" class="absolute right-0 top-0 w-1/3 h-full"></button>
+            </div>
+            <div class="p-3 text-white/70 text-sm" id="global-experience-caption"></div>
+        </div>
+    </div>
+
+    <script>
+        let globalExperiences = [];
+        let globalExpIndex = 0;
+        let globalExpTimer = null;
+        
+        const gViewer = document.getElementById('global-experience-viewer');
+        const gCloseBtn = document.getElementById('global-close-experiences');
+        const gImgEl = document.getElementById('global-experience-image');
+        const gVideoEl = document.getElementById('global-experience-video');
+        const gCaptionEl = document.getElementById('global-experience-caption');
+        const gProgressWrap = document.getElementById('global-experience-progress');
+        const gPrevBtn = document.getElementById('global-prev-experience');
+        const gNextBtn = document.getElementById('global-next-experience');
+
+        function buildGlobalProgress() {
+            gProgressWrap.innerHTML = '';
+            globalExperiences.forEach((_, i) => {
+                const bar = document.createElement('div');
+                bar.className = 'h-1 flex-1 bg-white/10 rounded-full overflow-hidden';
+                const fill = document.createElement('div');
+                fill.className = 'h-full bg-orange-400/80 transition-all';
+                fill.style.width = i < globalExpIndex ? '100%' : '0%';
+                bar.appendChild(fill);
+                gProgressWrap.appendChild(bar);
+            });
+        }
+
+        function setGlobalProgress(durationMs) {
+            const bars = gProgressWrap.querySelectorAll('div > div');
+            if (!bars[globalExpIndex]) return;
+            bars[globalExpIndex].style.transition = `width ${durationMs}ms linear`;
+            requestAnimationFrame(() => {
+                bars[globalExpIndex].style.width = '100%';
+            });
+        }
+
+        function showGlobalExperience(index) {
+            if (!globalExperiences.length) return;
+            if (index < 0) index = globalExperiences.length - 1;
+            if (index >= globalExperiences.length) {
+                closeGlobalExperienceViewer();
+                return;
+            }
+            globalExpIndex = index;
+            const exp = globalExperiences[globalExpIndex];
+            gCaptionEl.textContent = exp.caption || '';
+
+            gImgEl.classList.add('hidden');
+            gVideoEl.classList.add('hidden');
+            gVideoEl.pause();
+            gVideoEl.removeAttribute('src');
+
+            buildGlobalProgress();
+
+            if (exp.media_type === 'video') {
+                gVideoEl.src = exp.media_url;
+                gVideoEl.classList.remove('hidden');
+                gVideoEl.play();
+                gVideoEl.onloadedmetadata = () => {
+                    const durationMs = 30000;
+                    setGlobalProgress(durationMs);
+                    clearTimeout(globalExpTimer);
+                    globalExpTimer = setTimeout(() => showGlobalExperience(globalExpIndex + 1), durationMs);
+                };
+                gVideoEl.onended = () => showGlobalExperience(globalExpIndex + 1);
+            } else {
+                gImgEl.src = exp.media_url;
+                gImgEl.classList.remove('hidden');
+                clearTimeout(globalExpTimer);
+                setGlobalProgress(30000);
+                globalExpTimer = setTimeout(() => showGlobalExperience(globalExpIndex + 1), 30000);
+            }
+
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (token) {
+                fetch(`/experiences/${exp.id}/view`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json',
+                    }
+                }).catch(() => {});
+            }
+        }
+
+        function closeGlobalExperienceViewer() {
+            if(gViewer) {
+                gViewer.classList.add('hidden');
+                gViewer.classList.remove('flex');
+            }
+            clearTimeout(globalExpTimer);
+            if(gVideoEl) gVideoEl.pause();
+        }
+
+        window.openExperienceViewer = function(userId) {
+            fetch(`/api/users/${userId}/experiences`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        globalExperiences = data;
+                        if(gViewer) {
+                            gViewer.classList.remove('hidden');
+                            gViewer.classList.add('flex');
+                            showGlobalExperience(0);
+                        }
+                    }
+                })
+                .catch(err => console.error('Error fetching experiences', err));
+        };
+
+        if (gCloseBtn) gCloseBtn.addEventListener('click', closeGlobalExperienceViewer);
+        if (gPrevBtn) gPrevBtn.addEventListener('click', () => showGlobalExperience(globalExpIndex - 1));
+        if (gNextBtn) gNextBtn.addEventListener('click', () => showGlobalExperience(globalExpIndex + 1));
+    </script>
 </body>
 
 

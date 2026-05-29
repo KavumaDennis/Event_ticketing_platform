@@ -17,11 +17,10 @@ class OrganizerTeamController extends Controller
         ]);
 
         $user = $request->user();
-        $organizer = Organizer::whereHas('members', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->first();
+        $organizer = Organizer::forManagingUser($user);
 
-        if (!$organizer || !$organizer->hasRole($user, ['owner'])) {
+        $ownsProfile = $organizer && (int) $organizer->user_id === (int) $user->id;
+        if (! $organizer || (! $organizer->hasRole($user, ['owner']) && ! $ownsProfile)) {
             abort(403);
         }
 
@@ -49,7 +48,8 @@ class OrganizerTeamController extends Controller
         $user = $request->user();
         $organizer = $member->organizer;
 
-        if (!$organizer || !$organizer->hasRole($user, ['owner'])) {
+        $ownsProfile = $organizer && (int) $organizer->user_id === (int) $user->id;
+        if (! $organizer || (! $organizer->hasRole($user, ['owner']) && ! $ownsProfile)) {
             abort(403);
         }
 
@@ -64,7 +64,8 @@ class OrganizerTeamController extends Controller
         $user = $request->user();
         $organizer = $member->organizer;
 
-        if (!$organizer || !$organizer->hasRole($user, ['owner'])) {
+        $ownsProfile = $organizer && (int) $organizer->user_id === (int) $user->id;
+        if (! $organizer || (! $organizer->hasRole($user, ['owner']) && ! $ownsProfile)) {
             abort(403);
         }
 

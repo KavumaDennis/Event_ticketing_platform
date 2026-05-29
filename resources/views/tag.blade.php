@@ -25,7 +25,7 @@
                 @forelse($trends as $trend)
                     <a href="{{ route('trends.show', $trend->id) }}" class="block p-3 mb-3 bg-orange-400/10 border border-orange-400/10 rounded-2xl hover:bg-orange-400/20 transition">
                         <div class="flex items-center gap-3">
-                            <img src="{{ $trend->user->profile_pic ? asset('storage/'.$trend->user->profile_pic) : asset('default.png') }}" class="w-10 h-10 rounded-full object-cover" alt="">
+                            <x-user-avatar :user="$trend->user" size="w-10 h-10 rounded-full object-cover" />
                             <div>
                                 <p class="text-white/80 font-medium">{{ $trend->title }}</p>
                                 <p class="text-white/40 text-xs">{{ $trend->user->first_name }} {{ $trend->user->last_name }}</p>

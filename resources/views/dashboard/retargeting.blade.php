@@ -33,18 +33,18 @@
     </div>
 
     {{-- Leads Table --}}
-    <div class="bg-zinc-950 border border-white/5 rounded-[2.5rem] overflow-hidden">
+    <div class=" border border-white/5 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-                <thead>
+                <thead class="bg-orange-400 text-black/90 font-mono text-xs uppercase font-medium">
                     <tr class="border-b border-white/5 bg-white/5">
-                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-zinc-500">User</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-zinc-500">Contact</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-zinc-500">Status</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-right">Action</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">User</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Contact</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-white/5">
+                <tbody class="divide-y-3 divide-zinc-800">
                     @forelse($leads as $lead)
                     <tr class="group hover:bg-white/[0.02] transition-colors">
                         <td class="px-6 py-4">
@@ -102,7 +102,7 @@
     </div>
 
     {{-- Tip Alert --}}
-    <div class="mt-8 p-6 bg-orange-400/5 border border-orange-400/20 rounded-3xl flex gap-4 items-start">
+    <div class="mt-8 p-3 bg-orange-400/5 border border-orange-400/20 rounded-2xl flex gap-4 items-start">
         <div class="size-10 bg-orange-400/20 rounded-2xl flex items-center justify-center text-orange-400 shrink-0">
             <i class="fa-solid fa-lightbulb"></i>
         </div>

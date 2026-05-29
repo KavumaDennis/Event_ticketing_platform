@@ -7,6 +7,7 @@ use App\Mail\TicketPurchased;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class TicketNotificationService
 {
@@ -47,15 +48,30 @@ class TicketNotificationService
             return false;
         }
 
+        if (!$purchase->phone) {
+            Log::warning("No phone number found for Purchase ID: {$purchase->id}. Skipping WhatsApp delivery.");
+            return false;
+        }
+
         try {
-            $to = "whatsapp:" . preg_replace('/[^0-9]/', '', $purchase->phone);
-            $fromFormatted = "whatsapp:" . preg_replace('/[^0-9]/', '', $from);
+            $to = "whatsapp:+" . preg_replace('/[^0-9]/', '', $purchase->phone);
+            $fromFormatted = "whatsapp:+" . preg_replace('/[^0-9]/', '', $from);
+
+            $startTime = $purchase->event->start_time
+                ? Carbon::parse($purchase->event->start_time)->format('g:i A')
+                : null;
+            $endTime = $purchase->event->end_time
+                ? Carbon::parse($purchase->event->end_time)->format('g:i A')
+                : null;
+            $timeRange = $startTime && $endTime ? "{$startTime} - {$endTime}" : ($startTime ?? 'TBA');
+
+            $ticketUrl = route('ticket.view', $purchase->id);
 
             $message = "Your ticket for {$purchase->event->event_name} is ready! \n\n" .
                        "Date: {$purchase->event->event_date} \n" .
-                       "Time: {$purchase->event->event_time} \n" .
+                       "Time: {$timeRange} \n" .
                        "Order Ref: {$purchase->reference_id} \n\n" .
-                       "View your ticket here: " . route('ticket.view', $purchase->id);
+                       "Download your ticket:\n{$ticketUrl}";
 
             $response = Http::withBasicAuth($sid, $token)
                 ->asForm()
